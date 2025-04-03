@@ -14,10 +14,10 @@ namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public class Customers : ControllerBase
+	public class CustomersController : ControllerBase
 	{
 		static Logger logger;
-		public Customers()
+		public CustomersController()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 

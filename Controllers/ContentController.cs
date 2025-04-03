@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
+using DataIntegrityTool.Db;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -12,5 +13,23 @@ namespace DataIntegrityTool.Controllers
 
 	public class ContentController : ControllerBase
     {
+		[HttpPut, Route("BeginSession")]
+		public async Task<bool> BeginSession(Session session)
+		{
+			bool OK = false;
+
+			using (DataContext context =  new())
+			{
+				context.Session.Add(
+				{ 
+					
+				});
+
+				await context.SaveChangesAsync();
+				await context.DisposeAsync();
+			}
+
+				return OK;
+		}
 	}
 }
