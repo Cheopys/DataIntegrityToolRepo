@@ -29,6 +29,7 @@ namespace DataIntegrityTool.Db
 		public DbSet<Content>        Content       { get; set; }
 		public DbSet<Licenses>       Licenses      { get; set; }
 		public DbSet<LicenseMetered> LicenseMetered { get; set; }
+		public DbSet<LicenseInterval> LicenseInterval { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,7 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<Content>  ().ToTable("Content");
             modelBuilder.Entity<Licenses> ().ToTable("Licenses");
 			modelBuilder.Entity<LicenseMetered>().ToTable("LicenseMetered");
+			modelBuilder.Entity<LicenseInterval>().ToTable("LicenseInterval");
 		}
 	}
 }
