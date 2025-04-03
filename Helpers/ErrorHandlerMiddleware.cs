@@ -1,4 +1,4 @@
-namespace ProxChat.Helpers;
+namespace DataIntegrityTool.Helpers;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using ProxChat.Db;
-using ProxChat.Services;
+using DataIntegrityTool.Db;
+using DataIntegrityTool.Services;
 using System.Configuration;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
@@ -65,7 +65,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 // AWS:   "Host=proxchat.cb4opfsjssoq.us-west-1.rds.amazonaws.com; Database=proxchatAWS; Username=postgres; Password=XPJn7sMReKm0HA6ttB2F"
 // Local: "Host=localhost:5432; Database=proxchat; Username=postgres; Password=foxcj431"
 
-builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql("Host=proxchat.cb4opfsjssoq.us-west-1.rds.amazonaws.com; Port=5432; Database=proxchat; Username=postgres; Password=XPJn7sMReKm0HA6ttB2F"));
+builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql("Host=dataintegritytool.ct6cykcgeval.ca-central-1.rds.amazonaws.com; Port=5432; Database=dataintegritytool; Username=postgres; Password=YD4NKpMxscgQcFsSN8NA6y5"));
 
 WebApplication app = builder.Build();
 

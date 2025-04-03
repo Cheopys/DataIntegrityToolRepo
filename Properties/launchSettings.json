@@ -21,7 +21,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ProxChat-Staging": {
+    "DataIntegrityTool-Staging": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
@@ -32,7 +32,7 @@
         "ASPNETCORE_SHUTDOWNTIMEOUTSECONDS": "3"
       }
     },
-    "ProxChat-Production": {
+    "DataIntegrityTool-Production": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

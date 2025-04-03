@@ -184,13 +184,13 @@ namespace ProxChat.Controllers
 			using (DataContext context = new())
 			{
 				List<UserRegistering> registers		= context.UserRegistering.ToList();
-				List<Users> users					= context.Users.ToList();
+				List<Schema.Customers> users					= context.Users.ToList();
 				List<PrivacySettings> privacies		= context.PrivacySettings.ToList();
 				List<UserProfiles> profiles			= context.UserProfiles.ToList();
-				List<Chats> chats					= context.Chats.ToList();
+				List<Products> chats					= context.Chats.ToList();
 				List<UsersOnline> usersonline		= context.UsersOnline.ToList();
 				List<ChatUsers> chatusers			= context.ChatUsers.ToList();
-				List<ChatMessages> messages			= context.ChatMessages.ToList();
+				List<Licenses> messages			= context.ChatMessages.ToList();
 				List<UserInterests> interests		= context.UserInterests.ToList();
 				List<UserFriends> friends			= context.UserFriends.ToList();
 				List<FriendRequests> friendrequests = context.FriendRequests.ToList();
@@ -228,7 +228,7 @@ namespace ProxChat.Controllers
 
 			using (DataContext context = new())
 			{
-				Chats? chat = await context.Chats.FindAsync(chatId);
+				Products? chat = await context.Chats.FindAsync(chatId);
 				Coordinates location = GetLocationInsideRadius(chatId, context);
 
 				chatusers = await context.ChatUsers.Where(cu => cu.ChatId == chatId).ToListAsync();
@@ -271,7 +271,7 @@ namespace ProxChat.Controllers
 
 				if (chatuser != null)
 				{
-					Chats? chat = await context.Chats.FindAsync(chatuser.ChatId);
+					Products? chat = await context.Chats.FindAsync(chatuser.ChatId);
 					Coordinates location = GetLocationOutsideRadius(chatuser.ChatId, context);
 
 					logger.Info($"user {userId} is in chat {chatuser.ChatId}");
@@ -468,7 +468,7 @@ namespace ProxChat.Controllers
 		private Coordinates GetLocationInsideRadius(Int32 chatId,
 													DataContext context)
 		{
-			Chats? chat = context.Chats.Find(chatId);
+			Products? chat = context.Chats.Find(chatId);
 			Coordinate location = new();
 
 			if (chat != null)
@@ -511,7 +511,7 @@ namespace ProxChat.Controllers
 		private Coordinates GetLocationOutsideRadius(Int32 chatId,
 													DataContext context)
 		{
-			Chats? chat = context.Chats.Find(chatId);
+			Products? chat = context.Chats.Find(chatId);
 			Coordinate location = new();
 
 			if (chat != null)
@@ -577,13 +577,13 @@ namespace ProxChat.Controllers
 		{
 			using (DataContext context = new())
 			{
-				Users? user = await context.Users.FindAsync(userId);
+                Schema.Customers? user = await context.Users.FindAsync(userId);
 
 				if (user != null)
 				{
 					List<UserInterests> userinterests = await context.UserInterests.Where(ui => ui.UserId == userId).ToListAsync();
 					List<ChatUsers> chatusers = await context.ChatUsers.Where(cu => cu.UserId == userId).ToListAsync();
-					List<ChatMessages> messages = await context.ChatMessages.Where(cm => cm.UserIdSender == userId).ToListAsync();
+					List<Licenses> messages = await context.ChatMessages.Where(cm => cm.UserIdSender == userId).ToListAsync();
 					List<UserFriends> friends = await context.UserFriends.Where(uf => uf.userId == userId
 																							  || uf.userIdFriend == userId).ToListAsync();
 					List<FriendRequests> friendrequests = await context.FriendRequests.Where(uf => uf.UserId == userId
@@ -671,7 +671,7 @@ namespace ProxChat.Controllers
 					request.phoneNumber = "PN came in null";
 				}
 
-				Users user = new()
+                Schema.Customers user = new()
 				{
 					Id = new Random().NextInt64(),
 					email = request.email,

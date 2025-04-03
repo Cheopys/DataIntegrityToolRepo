@@ -10,19 +10,28 @@
     <Compile Remove="FromUnity\**" />
     <Compile Remove="Localizations\**" />
     <Compile Remove="LocalizeStrings\**" />
+    <Compile Remove="Migrations - Copy\**" />
+    <Compile Remove="Migrations\**" />
     <Content Remove="FromUnity\**" />
     <Content Remove="Localizations\**" />
     <Content Remove="LocalizeStrings\**" />
+    <Content Remove="Migrations - Copy\**" />
+    <Content Remove="Migrations\**" />
     <EmbeddedResource Remove="FromUnity\**" />
     <EmbeddedResource Remove="Localizations\**" />
     <EmbeddedResource Remove="LocalizeStrings\**" />
+    <EmbeddedResource Remove="Migrations - Copy\**" />
+    <EmbeddedResource Remove="Migrations\**" />
     <None Remove="FromUnity\**" />
     <None Remove="Localizations\**" />
     <None Remove="LocalizeStrings\**" />
+    <None Remove="Migrations - Copy\**" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Controllers\PrivateChatController.cs" />
+    <Compile Remove="Controllers\TestController.cs" />
     <Compile Remove="Services\PrivateChatService.cs" />
     <Compile Remove="Services\PushNotificationService.cs" />
     <Compile Remove="SharedTypes\SharedTypes_original.cs" />
@@ -33,10 +42,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Rekognition" Version="3.7.400.82" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.302" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.300.4" />
-    <PackageReference Include="AWSSDK.Translate" Version="3.7.400.81" />
     <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
@@ -48,7 +55,6 @@
     <PackageReference Include="AWSSDK.SimpleNotificationService.NetCore.Support" Version="1.0.2" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CloudinaryDotNet" Version="1.22.0" />
-    <PackageReference Include="Geolocation" Version="1.2.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
@@ -68,7 +74,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Tests\Requests\" />
     <Folder Include="Tests\Services\" />
   </ItemGroup>

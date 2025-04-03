@@ -35,7 +35,7 @@ typings
 
 # vs
 .vs
-ProxChat.csproj.user
+DataIntegrityTool.csproj.user
 
 # Optional npm cache directory
 .npm
