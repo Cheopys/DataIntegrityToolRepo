@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
@@ -18,18 +19,19 @@ namespace DataIntegrityTool.Controllers
 		{
 			bool OK = false;
 
-			using (DataContext context =  new())
+			session.timeBegin = DateTime.UtcNow;
+
+			using (DataContext context = new())
 			{
-				context.Session.Add(
-				{ 
-					
-				});
+				context.Session.Add(session);
 
 				await context.SaveChangesAsync();
 				await context.DisposeAsync();
+
+				OK = true;
 			}
 
-				return OK;
+			return OK;
 		}
 	}
 }
