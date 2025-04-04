@@ -49,7 +49,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 	// The password you specified when exporting the PFX file using OpenSSL.
 	// This would normally be stored in configuration or an environment variable;
 	// I've hard-coded it here just to make it easier to see what's going on.
-	string pfxPassword = "9CJbHqRaRgH7";
+	string pfxPassword = "foxcj431";
 
 	serverOptions.Listen(IPAddress.Any, port, listenOptions =>
 	{
