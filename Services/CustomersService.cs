@@ -56,7 +56,7 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				customers = context.Customers.OrderByDescending(c => c.DateAdded).ToList();
+				customers = context.Customers.OrderBy(c => c.Name).ToList();
 
 				await context.DisposeAsync();
 			}
