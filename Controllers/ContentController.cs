@@ -3,35 +3,25 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
-using DataIntegrityTool.Db;
+using NuGet.Common;
+using System.Threading.Tasks;
 
 namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-		
-	// for populating the choices on the radius slider
 
 	public class ContentController : ControllerBase
-    {
+	{
 		[HttpPut, Route("BeginSession")]
-		public async Task<bool> BeginSession(Session session)
+		public async Task<bool> BeginSession([FromBody] Session session)
 		{
-			bool OK = false;
+			return await ContentService.BeginSession(session);
+		}
 
-			session.timeBegin = DateTime.UtcNow;
-
-			using (DataContext context = new())
-			{
-				context.Session.Add(session);
-
-				await context.SaveChangesAsync();
-				await context.DisposeAsync();
-
-				OK = true;
-			}
-
-			return OK;
+		public async Task<bool> EndSession(Int32 sessionId0)
+		{
+			return await ContentService.EndSession();
 		}
 	}
 }

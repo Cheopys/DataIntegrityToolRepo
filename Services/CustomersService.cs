@@ -17,10 +17,10 @@ using System.Globalization;
 
 namespace DataIntegrityTool.Services
 {
-	public static class UsersService
+	public static class CustomersService
 	{
 		static Logger logger;
-		static UsersService()
+		static CustomersService()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 
@@ -33,6 +33,44 @@ namespace DataIntegrityTool.Services
 			// Apply config           
 			NLog.LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
+		}
+
+		public async static Task<string> AddCustomer(Customers customer)
+		{
+			using (DataContext context = new())
+			{
+				customer.Unique		= CustomersService.UniqueId();
+				customer.DateAdded	= DateTime.UtcNow;
+
+				await context.AddAsync(customer);
+				await context.SaveChangesAsync();
+				await context.DisposeAsync();
+
+				return customer.Unique;
+			}
+		}
+
+		public static async Task<List<Customers>> GetCustomers()
+		{
+			List<Customers> customers = null;
+
+			using (DataContext context = new())
+			{
+				customers = context.Customers.OrderByDescending(c => c.DateAdded).ToList();
+
+				await context.DisposeAsync();
+			}
+			return customers;
+		}
+
+
+		private static string UniqueId()
+		{
+			byte[] unique = new byte[8]; 
+			
+			new Random().NextBytes(unique);
+
+			return Convert.ToBase64String(unique);
 		}
 	}
 }

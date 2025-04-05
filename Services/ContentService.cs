@@ -27,5 +27,29 @@ namespace DataIntegrityTool.Services
 			logger = NLog.LogManager.GetCurrentClassLogger();
 		}
 
+		public static async Task<bool> BeginSession(Session session)
+		{
+			bool OK = false;
+
+			session.timeBegin = DateTime.UtcNow;
+
+			using (DataContext context = new())
+			{
+				context.Session.Add(session);
+
+				await context.SaveChangesAsync();
+				await context.DisposeAsync();
+
+				OK = true;
+			}
+
+			return OK;
+		}
+
+		public static async Task<bool> EndSession()
+		{
+			return true;
+		}
+
 	} // end class
 } // end namespace

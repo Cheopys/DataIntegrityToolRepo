@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Net;
-using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +31,14 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
+		public async Task<string> AddCustomer(Customers customer)
+		{
+			return await CustomersService.AddCustomer(customer);
+		}
 
-
+		public async Task<List<Customers>> GetCustomers()
+		{
+			return await CustomersService.GetCustomers();
+		}
 	}
 }
