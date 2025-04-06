@@ -19,6 +19,7 @@ namespace DataIntegrityTool.Controllers
 			return await ContentService.BeginSession(session);
 		}
 
+		[HttpPut, Route("EndSession")]
 		public async Task<bool> EndSession(Int32 sessionId0)
 		{
 			return await ContentService.EndSession();

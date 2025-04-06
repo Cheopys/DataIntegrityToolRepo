@@ -36,7 +36,6 @@ namespace DataIntegrityTool.Controllers
 		public async Task<byte[]> DownloadTool()
 		{
 			return await  S3Service.GetTool();
-			
 		}
 	}
 }

@@ -31,11 +31,13 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
+		[HttpPut, Route("AddCustomer")]
 		public async Task<string> AddCustomer(Customers customer)
 		{
 			return await CustomersService.AddCustomer(customer);
 		}
 
+		[HttpGet, Route("GetCustomers")]
 		public async Task<List<Customers>> GetCustomers()
 		{
 			return await CustomersService.GetCustomers();
