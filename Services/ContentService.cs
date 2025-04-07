@@ -1,7 +1,7 @@
 ﻿using DataIntegrityTool.Schema;
 using DataIntegrityTool.Db;
 using Microsoft.EntityFrameworkCore;
-using NLog;
+//using NLog;
 using System.Diagnostics.Metrics;
 using System.Threading.Channels;
 using Microsoft.CodeAnalysis;
@@ -11,6 +11,7 @@ namespace DataIntegrityTool.Services
 {
 	public static class ContentService
 	{
+	/*
 		static Logger logger;
 		static ContentService()
 		{
@@ -26,7 +27,7 @@ namespace DataIntegrityTool.Services
 			NLog.LogManager.Configuration = config;
 			logger = NLog.LogManager.GetCurrentClassLogger();
 		}
-
+*/
 		public static async Task<bool> BeginSession(Session session)
 		{
 			bool OK = false;

@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using NLog;
 
-namespace ProxChat.Services
+namespace DataIntegrityTool.Services
 {
 	public static class S3Service
 	{
@@ -24,6 +24,7 @@ namespace ProxChat.Services
 			NLog.LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
 		}
+		
 		static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.USWest1);
 
 		// chat messages

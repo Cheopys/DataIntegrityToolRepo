@@ -5,7 +5,7 @@ using DataIntegrityTool.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ProxChat.Services;
+using DataIntegrityTool.Services;
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.CompilerServices;

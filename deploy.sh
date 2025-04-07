@@ -1,5 +1,5 @@
 echo "Pulling the remote Git repo..."
-git pull 
+git pull origin master
 
 echo "Building the source..."
 dotnet publish -c Release -o bin/Release/net7.0/

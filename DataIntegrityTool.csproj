@@ -30,6 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="20250406171913_Initial.cs" />
+    <Compile Remove="20250406171913_Initial.Designer.cs" />
     <Compile Remove="Controllers\PrivateChatController.cs" />
     <Compile Remove="Controllers\TestController.cs" />
     <Compile Remove="Services\PrivateChatService.cs" />
@@ -38,11 +40,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="git_dit_token.txt" />
     <None Remove="test.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.7.416.3" />
+    <PackageReference Include="awssdk.Core" Version="3.7.402.35" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.416.5" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.400.127" />
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.3.0" />
