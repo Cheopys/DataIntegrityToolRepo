@@ -70,7 +70,7 @@ namespace ServerCryptography.Service
 
 			return key;
 		}
-
+/*
 		public static Aes GetAesKey(Int64 userId, bool registering = false)  
         {
 			Aes    aes  = Aes.Create();
@@ -231,6 +231,7 @@ namespace ServerCryptography.Service
 
 				return Convert.ToBase64String(encrypted); //JsonSerializer.Serialize(encrypted);
 			}
-		}
+
+		}*/
 	}
 }

@@ -48,7 +48,7 @@ namespace ToolCryptographyService
 			return passwordB64;
 		}
 
-		public static async Task<EncryptionWrapperDIT?> EncodeAndEncryptRequest<T>(Int322   session, 
+		public static async Task<EncryptionWrapperDIT?> EncodeAndEncryptRequest<T>(Int32   session, 
 																	 byte[]  aeskey, 
 																	 byte[]  aesiv, 
 																	 T		 request,
