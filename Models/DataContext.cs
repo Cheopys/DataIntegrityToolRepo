@@ -31,9 +31,11 @@ namespace DataIntegrityTool.Db
 		public DbSet<LicenseMetered> LicenseMetered     { get; set; }
 		public DbSet<LicenseInterval> LicenseInterval   { get; set; }
         public DbSet<Session>        Session            { get; set; }
-        public DbSet<Logins>         Logins             { get; set; }
+        public DbSet<Users>          Users              { get; set; }
+        public DbSet<ToolParameters> ToolParameters     { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 			modelBuilder.Entity<Customers>      ().ToTable("Customers");
 			modelBuilder.Entity<Content>        ().ToTable("Content");
@@ -41,7 +43,8 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<LicenseMetered> ().ToTable("LicenseMetered");
 			modelBuilder.Entity<LicenseInterval>().ToTable("LicenseInterval");
 			modelBuilder.Entity<Session>        ().ToTable("Session");
-			modelBuilder.Entity<Logins>         ().ToTable("Logins");
+			modelBuilder.Entity<Users>          ().ToTable("Users");
+            modelBuilder.Entity<ToolParameters> ().ToTable("ToolParameters");
 		}
 	}
 }

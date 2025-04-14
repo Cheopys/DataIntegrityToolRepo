@@ -18,7 +18,7 @@ using System.Globalization;
 namespace DataIntegrityTool.Services
 {
 	public static class CustomersService
-	{/*
+	{
 		static Logger logger;
 		static CustomersService()
 		{
@@ -34,7 +34,7 @@ namespace DataIntegrityTool.Services
 			NLog.LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
 		}
-*/
+
 		public async static Task<string> AddCustomer(Customers customer)
 		{
 			using (DataContext context = new())

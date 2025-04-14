@@ -14,8 +14,8 @@ namespace DataIntegrityTool.Controllers
 	[ApiController]
 	[Route("[controller]")]
 	public class CustomersController : ControllerBase
-	{/*
-		static Logger<CustomersController> logger;
+	{
+		static Logger logger;
 		public CustomersController()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
@@ -26,10 +26,10 @@ namespace DataIntegrityTool.Controllers
 			// Rules for mapping loggers to targets            
 			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
 
-			// Apply config           
-			NLog.LogManager.Configuration = config;
-			logger = 0.LogManager.GetCurrentClassLogger();
-		}*/
+            // Apply config           
+            LogManager.Configuration = config;
+			logger = LogManager.GetCurrentClassLogger();
+		}
 
 		[HttpPut, Route("AddCustomer")]
 		public async Task<string> AddCustomer(Customers customer)

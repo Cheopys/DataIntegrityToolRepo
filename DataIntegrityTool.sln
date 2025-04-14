@@ -5,6 +5,10 @@ VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataIntegrityTool", "DataIntegrityTool.csproj", "{9C68D0E4-A220-4A4F-ADCC-4E2162CE3EB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolServerAPI", "TooServerAPI\ToolServerAPI.csproj", "{9AB9DA28-9A6A-4D28-AF41-7E8183292676}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DITAPIWRapper", "DITAPIWRapper\DITAPIWRapper.pyproj", "{8224686A-73BF-4D82-B2E3-D924575ADD7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,12 @@ Global
 		{9C68D0E4-A220-4A4F-ADCC-4E2162CE3EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C68D0E4-A220-4A4F-ADCC-4E2162CE3EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C68D0E4-A220-4A4F-ADCC-4E2162CE3EB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AB9DA28-9A6A-4D28-AF41-7E8183292676}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AB9DA28-9A6A-4D28-AF41-7E8183292676}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AB9DA28-9A6A-4D28-AF41-7E8183292676}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AB9DA28-9A6A-4D28-AF41-7E8183292676}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8224686A-73BF-4D82-B2E3-D924575ADD7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8224686A-73BF-4D82-B2E3-D924575ADD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

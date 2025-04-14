@@ -36,6 +36,7 @@
     <Compile Remove="Controllers\TestController.cs" />
     <Compile Remove="Services\PrivateChatService.cs" />
     <Compile Remove="Services\PushNotificationService.cs" />
+    <Compile Remove="Services\ToolCryptographyService.cs" />
     <Compile Remove="SharedTypes\SharedTypes_original.cs" />
   </ItemGroup>
 
