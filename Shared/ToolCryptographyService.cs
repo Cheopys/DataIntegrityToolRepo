@@ -1,7 +1,8 @@
-﻿using DataIntegrityTool.SharedObjectTypes;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+
+using DataIntegrityTool.Shared;
 
 // TO BE RUN ON THE MOBILE CLIENT; MUST HAVE NO DEPENDENCIES OUTSIDE NUGET
 // SEQUENCE:
@@ -14,23 +15,6 @@ namespace DataIntegrityTool.Services
 {
 	public class ToolCryptographyService
 	{
-		public static string CreateClientKeys()
-		{
-			// create the client AES key
-
-			Aes aes = Aes.Create();
-			aes.KeySize = 256;
-			aes.GenerateKey();
-			aes.GenerateIV();
-
-			RegisterClientRequest request = new()
-			{
-				aeskey = aes.Key,
-				aesiv  = aes.IV
-			};
-
-			return JsonSerializer.Serialize(request);
-		}
 
 		public async Task<string> HashPassword(string passwordClear)
 		{
@@ -49,16 +33,16 @@ namespace DataIntegrityTool.Services
 			return passwordB64;
 		}
 
-		public static async Task<EncryptionWrapperProxChat?> EncodeAndEncryptRequest<T>(Int64   userId, 
+		public static async Task<EncryptionWrapperDIT?> EncodeAndEncryptRequest<T>(Int32   customerId, 
 																	 byte[]  aeskey, 
 																	 byte[]  aesiv, 
 																	 T		 request,
 																	 bool    bypass = false)
 		{
 			string json = JsonSerializer.Serialize(request);
-			EncryptionWrapperProxChat wrapper = new()
+			EncryptionWrapperDIT wrapper = new()
 			{
-				userId = userId
+				customerId = customerId
 			};
 
 			if (bypass)

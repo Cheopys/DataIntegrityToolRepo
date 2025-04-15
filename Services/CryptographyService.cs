@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using DataIntegrityService.Services;
+using DataIntegrityTool.Shared;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using NLog;
@@ -31,38 +32,24 @@ namespace DataIntegrityService.Services
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
-		public static Aes GetAesKey(Int64 userId, bool registering = false)  
+		public static Aes GetAesKey(Int64 userId)  
         {
 			Aes    aes  = Aes.Create();
 
 			using (DataContext dbcontext = new())
             {
-				if (registering)
-				{ 
-					UserRegistering? userRegistering = dbcontext.UserRegistering.Where(i => i.Id == userId).FirstOrDefault();
+				Customers? customer = dbcontext.Customers.Where(i => i.Id == userId).FirstOrDefault();
 
-					aes.Key = userRegistering.aesKey;
-					aes.IV  = userRegistering.aesIV;
-				}
-				else
+				if (customer != null)
 				{
-					Users? user = dbcontext.Users.Where(i => i.Id == userId).FirstOrDefault();
-
-					if (user != null)
-					{
-						aes.Key = user.aeskey;
-						aes.IV  = user.aesiv;
-					}
-
-					registering = false;
+					aes = customer.aeskey;
 				}
-
 				dbcontext.Dispose();
             }
 
             return aes;
         }
-		
+		/*
 		public static async Task<Int64> RegisterClient(string requestB64)
 		{
 			Random random = new();
@@ -96,11 +83,10 @@ namespace DataIntegrityService.Services
 
 			return aes;
 		}
-
+		*/
 		public static void DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
-												  out T?						request, 
-												      bool						registering = false,
-													  bool						bypass		= false)
+												  out T?				   request, 
+													  bool				   bypass 		= false)
 		{
 			if (bypass)
 			{
@@ -110,7 +96,7 @@ namespace DataIntegrityService.Services
 			{
 				request = default(T);
 
-				Aes aes = CryptographyService.GetAesKey(wrapper.userId, registering);
+				Aes aes = CryptographyService.GetAesKey(wrapper.customerId);
 
 				byte[]? encrypted = Convert.FromBase64String(wrapper.encryptedRequest);//JsonSerializer.Deserialize<byte[]>(wrapper.encryptedRequest);
 
@@ -142,7 +128,6 @@ namespace DataIntegrityService.Services
 
 		public static async Task<string> EncryptAndEncodeResponse<T>(Int64	userId, 
 																	 T		response, 
-																	 bool   registering = false,
 																	 bool   bypass      = false)
 		{
 			logger?.Info("registering = {registering)");
@@ -155,7 +140,7 @@ namespace DataIntegrityService.Services
 			{
 				byte[] encrypted = null;
 
-				Aes aes = CryptographyService.GetAesKey(userId, registering);
+				Aes aes = CryptographyService.GetAesKey(userId);
 
 				aes.Mode    = CipherMode.CBC;
 				aes.Padding = PaddingMode.PKCS7;

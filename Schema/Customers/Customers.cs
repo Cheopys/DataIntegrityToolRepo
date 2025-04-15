@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.Contracts;
+using System.Runtime.Intrinsics.Arm;
 using DataIntegrityTool.Db;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
@@ -14,5 +15,6 @@ namespace DataIntegrityTool.Schema
         public string EmailContact  { get; set; }
         public string Notes         { get; set; }
         public DateTime DateAdded   { get; set; }
+        public System.Security.Cryptography.Aes      aeskey      { get; set; }
     }
 }
