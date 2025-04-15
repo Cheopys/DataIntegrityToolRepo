@@ -26,7 +26,7 @@ namespace DataIntegrityTool.Controllers
 		{
 			byte[] buffer = System.IO.File.ReadAllBytes(filepath);
 
-			S3Service.StoreTool(buffer);
+			await S3Service.StoreTool(buffer);
 
 			return true;
 		}

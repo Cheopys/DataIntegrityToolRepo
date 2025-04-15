@@ -1,10 +1,9 @@
 ﻿using System;
-using System;
-using DataIntegrityService.SharedObjectTypes;
 using System.Security.Cryptography;
 using System.Text.Json;
-using DataIntegrityService.Db;
-using DataIntegrityService.Schema;
+using DataIntegrityService.Services;
+using DataIntegrityTool.Db;
+using DataIntegrityTool.Schema;
 using NLog;
 using Amazon.Runtime.Internal;
 using Amazon.Runtime.Internal.Util;
@@ -98,7 +97,7 @@ namespace DataIntegrityService.Services
 			return aes;
 		}
 
-		public static void DecodeAndDecryptRequest<T>(EncryptionWrapperProxChat wrapper, 
+		public static void DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
 												  out T?						request, 
 												      bool						registering = false,
 													  bool						bypass		= false)
