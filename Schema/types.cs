@@ -11,7 +11,7 @@ public enum LicenseTypes
 	licenseTypeInterval,
 }
 
-public enum ToolTypes 
+public enum ToolTypes
 { 
 	tooltypeVFX,
 	tooltypeDI,

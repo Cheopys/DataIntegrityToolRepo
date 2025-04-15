@@ -20,3 +20,13 @@ public class RegisterCustomerRequest
     public string Notes         { get; set; }
 }
 
+public class RegisterUserRequest
+{
+    public Int32 CompanyId          { get; set; }
+    public string Name              { get; set; }
+    public string Email             { get; set; }
+    public string PasswordHash      { get; set; }
+    public string? MFA              { get; set; }
+    public List<ToolTypes> Tools    { get; set; }
+    public byte[] aeskey            { get; set; }
+}
