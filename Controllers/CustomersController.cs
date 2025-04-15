@@ -4,6 +4,7 @@ using DataIntegrityTool.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataIntegrityTool.Services;
+using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using Amazon.Runtime.Internal;
@@ -31,10 +32,11 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
-		[HttpPut, Route("AddCustomer")]
-		public async Task<string> AddCustomer(Customers customer)
+		[HttpPut, Route("RegisterCustomer")]
+		[Consumes("application/json")]
+		public Int32 RegisterCustomer(string requestB64) // RegisterCustomerRequest
 		{
-			return await CustomersService.AddCustomer(customer);
+			return CustomersService.RegisterCustomer(requestB64);
 		}
 
 		[HttpGet, Route("GetCustomers")]
