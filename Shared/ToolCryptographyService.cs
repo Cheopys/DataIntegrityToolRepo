@@ -10,8 +10,17 @@ namespace DataIntegrityTool.Services
 {
 	public class ToolCryptographyService
 	{
+        public static Aes CreateAesKey()
+        {
+            Aes aes		= Aes.Create();
+            aes.KeySize = 256;
+			aes.Mode	= CipherMode.CBC;
+			aes.Padding = PaddingMode.PKCS7;
 
-		public async Task<string> HashPassword(string passwordClear)
+            return aes;
+        }
+
+        public async Task<string> HashPassword(string passwordClear)
 		{
 			string passwordB64 = null;
 
@@ -28,95 +37,76 @@ namespace DataIntegrityTool.Services
 			return passwordB64;
 		}
 
-		public static async Task<EncryptionWrapperDIT?> EncodeAndEncryptRequest<T>(Int32   customerId, 
-																	 byte[]  aeskey, 
-																	 byte[]  aesiv, 
-																	 T		 request,
-																	 bool    bypass = false)
+		public static async Task<EncryptionWrapperDIT?> EncodeAndEncryptRequest<T>(EncryptionWrapperDIT wrapperIn, 
+																				   T					request)
 		{
 			string json = JsonSerializer.Serialize(request);
+			Aes aes		= ServerCryptographyService.GetAesKey(wrapperIn);
+
 			EncryptionWrapperDIT wrapper = new()
 			{
-				customerId = customerId
+				primaryKey  = wrapperIn.primaryKey,
+				type		= wrapperIn.type,	
+				aesIV		= wrapperIn.aesIV
 			};
 
-			if (bypass)
+			ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+			// Create the streams used for encryption.
+
+			using (MemoryStream memorystream = new MemoryStream())
 			{
-				wrapper.encryptedRequest = JsonSerializer.Serialize(request);
-			}
-			else
-			{
-				using (Aes aes = Aes.Create())
+				using (CryptoStream cryptostream = new CryptoStream(memorystream, encryptor, CryptoStreamMode.Write))
 				{
-					ICryptoTransform encryptor = aes.CreateEncryptor(aeskey, aesiv);
-
-					// Create the streams used for encryption.
-
-					using (MemoryStream memorystream = new MemoryStream())
+					using (StreamWriter streamwriter = new StreamWriter(cryptostream))
 					{
-						using (CryptoStream cryptostream = new CryptoStream(memorystream, encryptor, CryptoStreamMode.Write))
-						{
-							using (StreamWriter streamwriter = new StreamWriter(cryptostream))
-							{
-								// Write data to the stream.
-								streamwriter.Write(json);
+						// Write data to the stream.
+						streamwriter.Write(json);
 
-								await streamwriter.DisposeAsync();
-							}
-
-							await cryptostream.DisposeAsync();
-						}
-
-						byte[] encrypted = memorystream.ToArray();
-
-						wrapper.encryptedRequest = Convert.ToBase64String(encrypted); //JsonSerializer.Serialize(encrypted); //Convert.ToHexString(encrypted);
-
-						await memorystream.DisposeAsync();
+						await streamwriter.DisposeAsync();
 					}
 
-					aes.Dispose();
+					await cryptostream.DisposeAsync();
 				}
+
+				byte[] encrypted = memorystream.ToArray();
+
+				wrapper.encryptedData = Convert.ToBase64String(encrypted); //JsonSerializer.Serialize(encrypted); //Convert.ToHexString(encrypted);
+
+				await memorystream.DisposeAsync();
 			}
+
 			return wrapper;
 		}
 
-		public static string DecodeAndDecryptResponse<T>(string encryptedB64,
-													     byte[] aesKey,
-													     byte[] aesIV,
-													     bool bypass = false)
+		public static string DecodeAndDecryptResponse<T>(EncryptionWrapperDIT wrapper,
+														 byte[]               aeskey)
 		{
 			string json = String.Empty;
 
-			if (bypass)
+			byte[]? encrypted = Convert.FromBase64String(wrapper.encryptedData);
+
+			ICryptoTransform decryptor = Aes.Create().CreateDecryptor(aeskey, wrapper.aesIV);
+
+			// Create the streams used for encryption.
+
+			using (MemoryStream memorystream = new MemoryStream(encrypted))
 			{
-				json = encryptedB64; ;/*response = JsonSerializer.Deserialize<T>(encryptedJSON);*/
-			}
-			else
-			{
-				byte[]? encrypted = Convert.FromBase64String(encryptedB64);// JsonSerializer.Deserialize<byte[]>(encryptedJSON);
-
-				ICryptoTransform decryptor = Aes.Create().CreateDecryptor(aesKey, aesIV);
-
-				// Create the streams used for encryption.
-
-				using (MemoryStream memorystream = new MemoryStream(encrypted))
+				using (CryptoStream cryptostream = new CryptoStream(memorystream, decryptor, CryptoStreamMode.Read))
 				{
-					using (CryptoStream cryptostream = new CryptoStream(memorystream, decryptor, CryptoStreamMode.Read))
+					using (StreamReader streamreader = new StreamReader(cryptostream))
 					{
-						using (StreamReader streamreader = new StreamReader(cryptostream))
-						{
-							// Write data to the stream.
-							json = streamreader.ReadToEnd();
+						// Write data to the stream.
+						json = streamreader.ReadToEnd();
 
-							streamreader.Dispose();
-						}
-
-						cryptostream.Dispose();
+						streamreader.Dispose();
 					}
 
-					memorystream.Dispose();
-				} // end using memory stream
-			}
+					cryptostream.Dispose();
+				}
+
+				memorystream.Dispose();
+			} // end using memory stream
 			
 			return json;
 		} // end function

@@ -9,5 +9,6 @@
 		public string PasswordHash		{ get; set; }
 		public string? MFA				{ get; set; }
 		public List<ToolTypes> Tools	{ get; set; }
-	}
+        public byte[] aeskey { get; set; }
+    }
 }

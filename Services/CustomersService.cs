@@ -35,22 +35,38 @@ namespace DataIntegrityTool.Services
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
-		public async static Task<string> AddCustomer(Customers customer)
-		{
-			using (DataContext context = new())
-			{
-				customer.Unique		= CustomersService.UniqueId();
-				customer.DateAdded	= DateTime.UtcNow;
+        public static Int32 RegisterCustomer(string requestEncryptedB64)
+        {
+            Int32 customerId = 0;
 
-				await context.AddAsync(customer);
-				await context.SaveChangesAsync();
-				await context.DisposeAsync();
+            byte[] requestDecrypted = ServerCryptographyService.DecryptRSA(requestEncryptedB64);
 
-				return customer.Unique;
-			}
-		}
+            RegisterCustomerRequest request = JsonSerializer.Deserialize<RegisterCustomerRequest>(requestDecrypted);
 
-		public static async Task<List<Customers>> GetCustomers()
+            using (DataContext context = new())
+            {
+                Customers customer = new Customers()
+                {
+                    Name		 = request.Name,
+                    Description  = request.Description,
+                    EmailContact = request.EmailContact,
+                    Notes		 = request.Notes,
+                    aeskey		 = request.aesKey,
+                    DateAdded	 = DateTime.UtcNow
+                };
+
+                context.Customers.Add(customer);
+
+                context.SaveChanges();
+                context.Dispose();
+
+                customerId = customer.Id;
+            }
+
+            return customerId;
+        }
+
+        public static async Task<List<Customers>> GetCustomers()
 		{
 			List<Customers> customers = null;
 

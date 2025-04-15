@@ -2,15 +2,17 @@
 using System.Text.Json;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
+using DataIntegrityTool.Shared;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
 
-namespace ServerCryptography.Service
+namespace DataIntegrityTool.Services
 { 
-	public class ServerCryptographyService
+	public static class ServerCryptographyService
 	{
 		static NLog.Logger logger;
-		public ServerCryptographyService()
+		static ServerCryptographyService()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 
@@ -75,168 +77,147 @@ namespace ServerCryptography.Service
 
 			return key;
 		}
-/*
-		public static Aes GetAesKey(Int64 userId, bool registering = false)  
+
+		private static byte[] GetServerRSAPrivateKey()
+		{
+			byte[]? key = null;	
+
+			using (DataContext context = new())
+			{ 
+				key = context.ToolParameters.Select(tp => tp.privateKey).FirstOrDefault();
+
+				context.Dispose();
+            }
+
+			return key;
+		}
+
+		public static Aes GetAesKey(EncryptionWrapperDIT wrapper)  
         {
-			Aes    aes  = Aes.Create();
+			Aes     aes = Aes.Create();
+			byte[]? key = null;
 
-			using (DataContext dbcontext = new())
+			using (DataContext context = new())
             {
-				if (registering)
-				{ 
-					UserRegistering? userRegistering = dbcontext.UserRegistering.Where(i => i.Id == userId).FirstOrDefault();
-
-					aes.Key = userRegistering.aesKey;
-					aes.IV  = userRegistering.aesIV;
+				if (wrapper.type == CustomerOrUser.typeCustomer)
+				{
+					key = context.Customers.Where (cu => cu.Id == wrapper.primaryKey)
+										   .Select(cu => cu.aeskey)
+										   .FirstOrDefault();
 				}
 				else
 				{
-					Users? user = dbcontext.Users.Where(i => i.Id == userId).FirstOrDefault();
+                    key = context.Users.Where(cu => cu.Id == wrapper.primaryKey)
+                                       .Select(cu => cu.aeskey)
+                                       .FirstOrDefault();
+                }
 
-					if (user != null)
-					{
-						aes.Key = user.aeskey;
-						aes.IV  = user.aesiv;
-					}
+                if (key != null)
+				{
+					aes.Key		= key;
+					aes.IV		= wrapper.aesIV;
+                    aes.Mode	= CipherMode.CBC; 
+			        aes.Padding = PaddingMode.PKCS7;
+                }
 
-					registering = false;
-				}
-
-				dbcontext.Dispose();
+                context.Dispose();
             }
 
             return aes;
         }
-		
-		public static async Task<Int64> RegisterTool(string requestB64)
+
+		public static byte[] DecryptRSA(string requestEncryptedB64)
 		{
-			Random random = new();
-			RegisterClientRequest? request = JsonSerializer.Deserialize<RegisterClientRequest>(requestB64);
+            byte[] privateKey = GetServerRSAPrivateKey();
 
-			UserRegistering user = new()
-			{
-				Id     = random.NextInt64(),
-				aesKey = request.aeskey,
-				aesIV  = request.aesiv
-			}; 
+            RSACryptoServiceProvider csp = new RSACryptoServiceProvider(4096);
 
-			using (DataContext dbcontext = new())
-			{
-				await dbcontext.UserRegistering.AddAsync(user);
-				await dbcontext.SaveChangesAsync();
-				await dbcontext.DisposeAsync();
-			}
+            int cbRead;
+            csp.ImportRSAPrivateKey(privateKey, out cbRead);
 
-			return user.Id;
-		}
+            byte[] requestEncrypted = Convert.FromBase64String(requestEncryptedB64);
 
-		public static Aes CreateAesKey()
-		{
-			Aes aes = Aes.Create();
-			aes.KeySize = 256;
-			aes.GenerateKey();
-			byte[] iv = new byte[16];
-			new Random().NextBytes(iv);
-			aes.IV = iv;
+            byte[] textEncoded = csp.Decrypt(requestEncrypted, false); //PKCS7 padding
 
-			return aes;
-		}
+            string requestDecryptedB64 = System.Text.Encoding.Unicode.GetString(textEncoded);
+
+            return Convert.FromBase64String(requestDecryptedB64);
+        }
 
 		public static void DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
-													  out T?					request, 
-												      bool					registering = false,
-													  bool					bypass		= false)
+													  out T?			   request)
 		{
-			if (bypass)
+			request = default(T);
+
+			Aes aes = ServerCryptographyService.GetAesKey(wrapper);
+
+			byte[]? encrypted = Convert.FromBase64String(wrapper.encryptedData);//JsonSerializer.Deserialize<byte[]>(wrapper.encryptedRequest);
+
+			ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+			// Create the streams used for encryption.
+
+			using (MemoryStream memorystream = new MemoryStream(encrypted))
 			{
-				request = JsonSerializer.Deserialize<T>(wrapper.encryptedRequest);
+				using (CryptoStream cryptostream = new CryptoStream(memorystream, decryptor, CryptoStreamMode.Read))
+				{
+					using (StreamReader streamreader = new StreamReader(cryptostream))
+					{
+						// read data from the stream.
+						string json = streamreader.ReadToEnd();
+
+						request = JsonSerializer.Deserialize<T>(json);
+
+						streamreader.Dispose();
+					}
+
+					cryptostream.Dispose();
+				}
+
+				memorystream.Dispose();
 			}
-			else
+		}
+
+		public static async Task<string> EncryptAndEncodeResponse<T>(EncryptionWrapperDIT wrapper,
+																	 T					  response)
+		{
+			string responseB64 = null;
+			byte[] encrypted   = null;
+
+			Aes aes = ServerCryptographyService.GetAesKey(wrapper);
+
+			if (aes != null)
 			{
-				request = default(T);
+				string json = JsonSerializer.Serialize(response);
 
-				Aes aes = ServerCryptographyService.GetAesKey(wrapper.userId, registering);
-
-				byte[]? encrypted = Convert.FromBase64String(wrapper.encryptedRequest);//JsonSerializer.Deserialize<byte[]>(wrapper.encryptedRequest);
-
-				ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+				ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
 				// Create the streams used for encryption.
 
-				using (MemoryStream memorystream = new MemoryStream(encrypted))
+				using (MemoryStream memorystream = new MemoryStream())
 				{
-					using (CryptoStream cryptostream = new CryptoStream(memorystream, decryptor, CryptoStreamMode.Read))
+					using (CryptoStream cryptostream = new CryptoStream(memorystream, encryptor, CryptoStreamMode.Write))
 					{
-						using (StreamReader streamreader = new StreamReader(cryptostream))
+						using (StreamWriter streamwriter = new StreamWriter(cryptostream))
 						{
-							// read data from the stream.
-							string json = streamreader.ReadToEnd();
+							// Write data to the stream.
+							streamwriter.Write(json);
 
-							request = JsonSerializer.Deserialize<T>(json);
-
-							streamreader.Dispose();
+							await streamwriter.DisposeAsync();
 						}
 
-						cryptostream.Dispose();
+						await cryptostream.DisposeAsync();
 					}
 
-					memorystream.Dispose();
-				}
-			}
-		}
+					encrypted = memorystream.ToArray();
 
-		public static async Task<string> EncryptAndEncodeResponse<T>(Int64	userId, 
-																	 T		response, 
-																	 bool   registering = false,
-																	 bool   bypass      = false)
-		{
-			logger?.Info("registering = {registering)");
-
-			if (bypass)
-			{
-				return JsonSerializer.Serialize(response);
-			}
-			else
-			{
-				byte[] encrypted = null;
-
-				Aes aes = ServerCryptographyService.GetAesKey(userId, registering);
-
-				aes.Mode    = CipherMode.CBC;
-				aes.Padding = PaddingMode.PKCS7;
-
-				if (aes != null)
-				{
-					string json = JsonSerializer.Serialize(response);
-
-					ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-					// Create the streams used for encryption.
-
-					using (MemoryStream memorystream = new MemoryStream())
-					{
-						using (CryptoStream cryptostream = new CryptoStream(memorystream, encryptor, CryptoStreamMode.Write))
-						{
-							using (StreamWriter streamwriter = new StreamWriter(cryptostream))
-							{
-								// Write data to the stream.
-								streamwriter.Write(json);
-
-								await streamwriter.DisposeAsync();
-							}
-
-							await cryptostream.DisposeAsync();
-						}
-
-						encrypted = memorystream.ToArray();
-
-						await memorystream.DisposeAsync();
-					}
+					await memorystream.DisposeAsync();
 				}
 
-				return Convert.ToBase64String(encrypted); //JsonSerializer.Serialize(encrypted);
-			}
+				responseB64 = Convert.ToBase64String(encrypted); //JsonSerializer.Serialize(encrypted);
+			} // aes != null
 
-		}*/
+			return responseB64;
+		}		
 	}
 }

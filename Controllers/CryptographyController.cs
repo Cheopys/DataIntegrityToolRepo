@@ -3,12 +3,12 @@ using System.Security.Cryptography;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
+using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NuGet.Packaging.Core;
-using ServerCryptography.Service;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -16,12 +16,25 @@ namespace DataIntegrityTool.Controllers
     [ApiController]
     public class CryptographyController : ControllerBase
     {
-        static ServerCryptographyService service = new();
-
         [HttpGet, Route("GetServerPublicKey")]
         public byte[] GetServerPublicKey()
         {
             return ServerCryptographyService.GetServerRSAPublicKey();
+        }
+
+        /*
+         * Example
+         * 
+         * wrapper.primaryKey = Cust/User
+         * wrapper.type       = CustomerOrUser.User
+         * wrapper.aesIV      = aesIV
+         * wrapper,encryo     = null
+         */
+
+        [HttpGet, Route("GetAesKey")]
+        public Aes GetAesKey(EncryptionWrapperDIT wrapper)
+        {
+            return ServerCryptographyService.GetAesKey(wrapper);
         }
     }
 }
