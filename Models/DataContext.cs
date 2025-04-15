@@ -44,7 +44,7 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<LicenseInterval>().ToTable("LicenseInterval");
 			modelBuilder.Entity<Session>        ().ToTable("Session");
 			modelBuilder.Entity<Users>          ().ToTable("Users");
-            modelBuilder.Entity<ToolParameters> ().ToTable("ToolParameters");
+            modelBuilder.Entity<ToolParameters> ().ToTable("ToolParameters").HasNoKey();
 		}
 	}
 }
