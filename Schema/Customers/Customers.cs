@@ -8,13 +8,13 @@ namespace DataIntegrityTool.Schema
 {
     public class Customers
     {
-        public int Id               { get; set; }
-        public string Unique        { get; set; }
-		public string Name          { get; set; }
-        public string Description   { get; set; }
-        public string EmailContact  { get; set; }
-        public string Notes         { get; set; }
-        public DateTime DateAdded   { get; set; }
-        public System.Security.Cryptography.Aes      aeskey      { get; set; }
+        public int     Id            { get; set; }
+        public string  Unique        { get; set; }
+		public string   Name         { get; set; }
+        public string   Description  { get; set; }
+        public string   EmailContact { get; set; }
+        public string   Notes        { get; set; }
+        public DateTime DateAdded    { get; set; }
+        public byte[]   aeskey       { get; set; }
     }
 }

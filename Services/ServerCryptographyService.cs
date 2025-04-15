@@ -28,6 +28,7 @@ namespace ServerCryptography.Service
             {
                 ToolParameters? toolparameters = context.ToolParameters.FirstOrDefault();
 
+
                 if (toolparameters == null)
                 {
                     RSA rsa = RSA.Create(4096);
@@ -64,8 +65,12 @@ namespace ServerCryptography.Service
 
 					context.SaveChanges();
 				}
+				else
+				{
+					key = toolparameters.publicKey;
+				}
 
-				context.Dispose();
+					context.Dispose();
 			}
 
 			return key;

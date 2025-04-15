@@ -4,12 +4,7 @@ using System.Text.Json;
 
 using DataIntegrityTool.Shared;
 
-// TO BE RUN ON THE MOBILE CLIENT; MUST HAVE NO DEPENDENCIES OUTSIDE NUGET
-// SEQUENCE:
-//  1) call CreateClientKeys 
-//	2) be sure to save the keys to the device keystore, binary or B64, your choice (see TODO below)
-//  3) send the returned RegisterClientRequest  to the server API RegisterClient
-//	4) return value is new user ID (Int64).  You probably want to cache this
+// TO BE RUN ON THE TOOL; MUST HAVE NO DEPENDENCIES OUTSIDE NUGET
 
 namespace DataIntegrityTool.Services
 {

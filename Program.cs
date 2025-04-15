@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using Microsoft.Extensions.Options;
 
-
-	WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 /*
 public static IHostBuilder CreateHostBuilder(string[] args) =>
 	Host.CreateDefaultBuilder(args)

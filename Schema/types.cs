@@ -2,8 +2,8 @@
 
 public enum LicenseTypes
 {
-	liceseTypeMetered,
-	liceseTypeInterval,
+	licenseTypeMetered,
+	licenseTypeInterval,
 };
 
 public enum ToolTypes 
