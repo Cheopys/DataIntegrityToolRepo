@@ -37,7 +37,12 @@ namespace DataIntegrityTool.Services
 
         public static Int32 RegisterUser(string requestEncryptedB64)
         {
-            Int32 customerId = 0;
+            Int32 mfa = new Random().Next();
+
+            while (mfa < 999999)
+            {
+                mfa = new Random().Next();
+            }
 
             byte[] requestDecrypted = ServerCryptographyService.DecryptRSA(requestEncryptedB64);
 
@@ -45,7 +50,7 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                Users user = new Users()
+                UsersAwaitingMFA user = new UsersAwaitingMFA()
                 {
 					CompanyId		= request.CompanyId,
 					Email			= request.Email,
@@ -53,18 +58,18 @@ namespace DataIntegrityTool.Services
                     Name			= request.Name,
                     aeskey			= request.aeskey,
 					Tools			= request.Tools,
-                    DateAdded		= DateTime.UtcNow
+                    DateAdded		= DateTime.UtcNow,
+					MFA             = mfa % 1000000
                 };
 
-                context.Users.Add(user);
+                context.UsersAwaitingMFA.Add(user);
 
                 context.SaveChanges();
                 context.Dispose();
+          }
 
-                customerId = user.Id;
-            }
-
-            return customerId;
+			// TBD: MFA
+            return mfa;
         }
 
         public static async Task<List<Customers>> GetCustomers()

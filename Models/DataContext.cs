@@ -33,6 +33,7 @@ namespace DataIntegrityTool.Db
         public DbSet<Session>        Session            { get; set; }
         public DbSet<Users>          Users              { get; set; }
         public DbSet<ToolParameters> ToolParameters     { get; set; }
+        public DbSet<UsersAwaitingMFA> UsersAwaitingMFA { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,6 +46,7 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<Session>        ().ToTable("Session");
 			modelBuilder.Entity<Users>          ().ToTable("Users");
             modelBuilder.Entity<ToolParameters> ().ToTable("ToolParameters");
-		}
-	}
+            modelBuilder.Entity<UsersAwaitingMFA>().ToTable("UsersAwaitingMFA");
+        }
+    }
 }

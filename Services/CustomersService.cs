@@ -45,14 +45,14 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                Customers customer = new Customers()
+				Customers customer = new Customers()
                 {
                     Name		 = request.Name,
                     Description  = request.Description,
                     EmailContact = request.EmailContact,
                     Notes		 = request.Notes,
                     aeskey		 = request.aesKey,
-                    DateAdded	 = DateTime.UtcNow
+                    DateAdded	 = DateTime.UtcNow,
                 };
 
                 context.Customers.Add(customer);
