@@ -88,17 +88,8 @@ namespace DataIntegrityTool.Services
 
 				await context.DisposeAsync();
 			}
+
 			return customers;
-		}
-
-
-		private static string UniqueId()
-		{
-			byte[] unique = new byte[8]; 
-			
-			new Random().NextBytes(unique);
-
-			return Convert.ToBase64String(unique);
 		}
 	}
 }
