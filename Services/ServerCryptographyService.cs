@@ -36,8 +36,9 @@ namespace DataIntegrityTool.Services
                     RSA rsa = RSA.Create(4096);
                     context.ToolParameters.Add(new ToolParameters
                     {
-                        publicKey  = rsa.ExportRSAPublicKey(),
-                        privateKey = rsa.ExportRSAPrivateKey(),
+                        publicKey		= rsa.ExportRSAPublicKey(),
+                        privateKey		= rsa.ExportRSAPrivateKey(),
+						minimumInterval = 3600
                     });
 
                     context.SaveChanges();

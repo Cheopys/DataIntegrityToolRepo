@@ -7,10 +7,10 @@ using NLog.LayoutRenderers.Wrappers;
 
 namespace DataIntegrityTool.Services
 {
-	public static class FriendsService
-	{
+	public static class LicensingService
+    {
 		static Logger logger;
-		static FriendsService()
+		static LicensingService()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 

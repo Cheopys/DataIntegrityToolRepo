@@ -50,19 +50,37 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                UsersAwaitingMFA user = new UsersAwaitingMFA()
+                Users user = new Users()
                 {
-					CompanyId		= request.CompanyId,
+					CustomerId		= request.CompanyId,
 					Email			= request.Email,
 					PasswordHash	= request.PasswordHash,
                     Name			= request.Name,
                     aeskey			= request.aeskey,
 					Tools			= request.Tools,
                     DateAdded		= DateTime.UtcNow,
-					MFA             = mfa % 1000000
                 };
 
-                context.UsersAwaitingMFA.Add(user);
+                context.Users.Add(user);
+
+                context.SaveChanges();
+
+                foreach (ToolTypes tooltype in request.Tools)
+                {
+                    context.AuthorizedToolsUser.Add(new AuthorizedToolsUser()
+                    {
+                        UserId   = user.Id,
+                        tooltype = tooltype
+                    });
+                }
+
+				context.SaveChanges();
+
+                context.UsersAwaitingMFA.Add(new UsersAwaitingMFA()
+				{
+					Id  = user.Id,
+					MFA = mfa
+				});
 
                 context.SaveChanges();
                 context.Dispose();

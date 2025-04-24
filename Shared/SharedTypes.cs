@@ -1,7 +1,21 @@
-﻿using DataIntegrityTool.Schema;
+﻿using Amazon.S3.Model;
+using DataIntegrityTool.Schema;
+using DataIntegrityTool.Shared;
+
 
 namespace DataIntegrityTool.Shared
 {
+    public enum Errors
+    {
+        ErrorNone           = 0,
+        licenseNotAvailable = 1,
+    }
+    public class Error
+    {
+        public Errors ErrorCode { get; set; } = 0;
+        public string Message   { get; set; } // TBD: locales en-us for now
+    }
+
     public class EncryptionWrapperDIT
     {
         public Int32            primaryKey      { get; set; }
@@ -17,6 +31,7 @@ public class RegisterCustomerRequest
     public string Name          { get; set; }
     public string Description   { get; set; }
     public string EmailContact  { get; set; }
+    public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
 }
 
@@ -29,4 +44,18 @@ public class RegisterUserRequest
     public string? MFA              { get; set; }
     public List<ToolTypes> Tools    { get; set; }
     public byte[] aeskey            { get; set; }
+}
+
+public class BeginSessionRequest
+{
+    public Int32        UserId      { get; set; }
+    public LicenseTypes Licensetype { get; set; }
+    public ToolTypes    tooltype    { get; set; }
+}
+
+public class  BeginSessionResponse
+{
+    public Int32 SessionId          { get; set; }
+    public Int32 ReaminingSeconds   { get; set; }
+    public Error Error              { get; set; }
 }

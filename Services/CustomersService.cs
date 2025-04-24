@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Drawing;
 using NuGet.Packaging;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace DataIntegrityTool.Services
 {
@@ -56,6 +57,17 @@ namespace DataIntegrityTool.Services
                 };
 
                 context.Customers.Add(customer);
+
+                context.SaveChanges();
+
+                foreach (ToolTypes tooltype in request.Tools)
+                {
+                    context.AuthorizedToolsCustomer.Add(new AuthorizedToolsCustomer()
+                    {
+                        CustomerId = customer.Id,
+						tooltype   = tooltype
+                    });
+                }
 
                 context.SaveChanges();
                 context.Dispose();

@@ -27,26 +27,29 @@ namespace DataIntegrityTool.Db
 
 		public DbSet<Customers>      Customers          { get; set; }
 		public DbSet<Content>        Content            { get; set; }
-		public DbSet<Licenses>       Licenses           { get; set; }
 		public DbSet<LicenseMetered> LicenseMetered     { get; set; }
 		public DbSet<LicenseInterval> LicenseInterval   { get; set; }
         public DbSet<Session>        Session            { get; set; }
         public DbSet<Users>          Users              { get; set; }
         public DbSet<ToolParameters> ToolParameters     { get; set; }
         public DbSet<UsersAwaitingMFA> UsersAwaitingMFA { get; set; }
+        public DbSet<AuthorizedToolsCustomer> AuthorizedToolsCustomer { get; set; }
+        public DbSet<AuthorizedToolsUser> AuthorizedToolsUser { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 			modelBuilder.Entity<Customers>      ().ToTable("Customers");
 			modelBuilder.Entity<Content>        ().ToTable("Content");
-            modelBuilder.Entity<Licenses>       ().ToTable("Licenses");
 			modelBuilder.Entity<LicenseMetered> ().ToTable("LicenseMetered");
 			modelBuilder.Entity<LicenseInterval>().ToTable("LicenseInterval");
 			modelBuilder.Entity<Session>        ().ToTable("Session");
 			modelBuilder.Entity<Users>          ().ToTable("Users");
             modelBuilder.Entity<ToolParameters> ().ToTable("ToolParameters");
             modelBuilder.Entity<UsersAwaitingMFA>().ToTable("UsersAwaitingMFA");
+
+            modelBuilder.Entity<AuthorizedToolsCustomer>().ToTable("AuthorizedToolsCustomer");
+            modelBuilder.Entity<AuthorizedToolsUser>    ().ToTable("AuthorizedToolsUser");
         }
     }
 }
