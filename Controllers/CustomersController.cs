@@ -48,7 +48,9 @@ namespace DataIntegrityTool.Controllers
 		[HttpGet, Route("GetCustomers")]
 		public async Task<List<Customers>> GetCustomers()
 		{
-			return await CustomersService.GetCustomers();
+			List<Customers> customers = await CustomersService.GetCustomers();
+
+			EncodeAndEncryptResponse
 		}
 	}
 }
