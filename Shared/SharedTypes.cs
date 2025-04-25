@@ -59,3 +59,24 @@ public class  BeginSessionResponse
     public Int32 ReaminingSeconds   { get; set; }
     public Error Error              { get; set; }
 }
+
+public class UserLicenseAllocation
+{
+    public Int32 UserId { get; set;
+    public Int32 UserMeteringCount { get; set; }
+    public Int32 UserIntervalSeconds { get; set; }
+}
+public class AllocateLicensesRequest
+{
+    public Int32 CustomerId         { get; set; }
+    public bool UserLicensingPool   { get; set; }
+    public Int32 MeteringCount      { get; set; }
+    public Int32 IntervalSeconds    { get; set; }
+    public List<UserLicenseAllocation>? userLicenseAllocations { get; set; }
+}
+public class AllocateLicensesResponse
+{
+    public Int32 CustomerId { get; set; }
+    public Int32 MeteringCount { get; set; }
+    public Int32 IntervalSeconds { get; set; }
+}

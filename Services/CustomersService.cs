@@ -91,5 +91,45 @@ namespace DataIntegrityTool.Services
 
 			return customers;
 		}
+
+        public static AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
+        {
+            AllocateLicensesResponse response = new()
+            {
+                CustomerId = request.CustomerId
+            };
+
+            using (DataContext context = new())
+            {
+                Customers? customer = context.Customers.Find(request.CustomerId);
+
+                customer.UserLicensingPool         = request.UserLicensingPool;
+                customer.LicensingIntervalSeconds += request.IntervalSeconds;
+                customer.LicensingMeteredCount    += request.MeteringCount;
+
+                response.MeteringCount   = customer.LicensingMeteredCount;
+                response.IntervalSeconds = customer.LicensingIntervalSeconds;
+
+                if (customer.UserLicensingPool)
+                {
+                    foreach (UserLicenseAllocation ula in request.userLicenseAllocations)
+                    {
+                        Users? user = context.Users.Where(us => us.Id.Equals(ula.UserId)).FirstOrDefault();
+
+                        if (user != null)
+                        {
+                            user.LicensingMeteredCount    += ula.UserMeteringCount;
+                            user.LicensingIntervalSeconds += ula.UserIntervalSeconds;
+                        }
+                    }
+                }
+
+                context.SaveChanges();
+                context.Dispose();
+            }
+
+            return response;
+
+        }
 	}
 }
