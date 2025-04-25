@@ -62,7 +62,7 @@ public class  BeginSessionResponse
 
 public class UserLicenseAllocation
 {
-    public Int32 UserId { get; set;
+    public Int32 UserId { get; set; }
     public Int32 UserMeteringCount { get; set; }
     public Int32 UserIntervalSeconds { get; set; }
 }

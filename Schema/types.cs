@@ -2,6 +2,7 @@
 
 public enum CustomerOrUser
 {
+	typeDIT       = 0,
 	typeCustomer  = 1,
 	typeUser      = 2
 }

@@ -10,6 +10,10 @@ using System.Collections.Generic;
 using Amazon.Runtime.Internal;
 using NLog;
 
+/*
+	This controller is for use of DIT 
+ */
+
 namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
@@ -33,10 +37,12 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("RegisterCustomer")]
-		[Consumes("application/json")]
-		public Int32 RegisterCustomer(string requestB64) // RegisterCustomerRequest
+		public async Task<Int32> RegisterCustomer(EncryptionWrapperDIT wrapper)
 		{
-			return CustomersService.RegisterCustomer(requestB64);
+			RegisterCustomerRequest request;
+
+			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
+			return CustomersService.RegisterCustomer(request);
 		}
 
 		[HttpGet, Route("GetCustomers")]

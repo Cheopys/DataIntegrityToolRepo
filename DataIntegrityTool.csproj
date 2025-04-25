@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Remove="20250406171913_Initial.cs" />
     <Compile Remove="20250406171913_Initial.Designer.cs" />
+    <Compile Remove="20250426182839_ditaes.cs" />
     <Compile Remove="Controllers\PrivateChatController.cs" />
     <Compile Remove="Controllers\TestController.cs" />
     <Compile Remove="Services\PrivateChatService.cs" />
@@ -81,6 +82,10 @@
   <ItemGroup>
     <Folder Include="Tests\Requests\" />
     <Folder Include="Tests\Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="20250426182839_ditaes.cs" />
   </ItemGroup>
 
 </Project>

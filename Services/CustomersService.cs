@@ -1,61 +1,56 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Drawing;
+using System.Globalization;
+using System.Net;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Amazon.Runtime.Internal;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
-using NuGet.Versioning;
-using Amazon.Runtime.Internal;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 using Humanizer;
-using System.Net;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.LayoutRenderers;
-using System.Text.Json;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Drawing;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 using NuGet.Packaging;
-using System.Globalization;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
+using NuGet.Versioning;
 
 namespace DataIntegrityTool.Services
 {
-	public static class CustomersService
-	{
-		static Logger logger;
-		static CustomersService()
-		{
-			var config = new NLog.Config.LoggingConfiguration();
-
-			// Targets where to log to: File and Console
-			var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
-
-			// Rules for mapping loggers to targets            
-			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
-
-			// Apply config           
-			NLog.LogManager.Configuration = config;
-			logger = LogManager.GetCurrentClassLogger();
-		}
-
-        public static Int32 RegisterCustomer(string requestEncryptedB64)
+    public static class CustomersService
+    {
+        static Logger logger;
+        static CustomersService()
         {
-            Int32 customerId = 0;
+            var config = new NLog.Config.LoggingConfiguration();
 
-            byte[] requestDecrypted = ServerCryptographyService.DecryptRSA(requestEncryptedB64);
+            // Targets where to log to: File and Console
+            var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
 
-            RegisterCustomerRequest request = JsonSerializer.Deserialize<RegisterCustomerRequest>(requestDecrypted);
+            // Rules for mapping loggers to targets            
+            config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
 
+            // Apply config           
+            NLog.LogManager.Configuration = config;
+            logger = LogManager.GetCurrentClassLogger();
+        }
+
+        public static Int32 RegisterCustomer(RegisterCustomerRequest request)
+        {
+            Customers customer = new Customers()
+            {
+                Name         = request.Name,
+                Description  = request.Description,
+                EmailContact = request.EmailContact,
+                Notes        = request.Notes,
+                aeskey       = request.aesKey,
+                DateAdded    = DateTime.UtcNow,
+            };
             using (DataContext context = new())
             {
-				Customers customer = new Customers()
-                {
-                    Name		 = request.Name,
-                    Description  = request.Description,
-                    EmailContact = request.EmailContact,
-                    Notes		 = request.Notes,
-                    aeskey		 = request.aesKey,
-                    DateAdded	 = DateTime.UtcNow,
-                };
-
                 context.Customers.Add(customer);
 
                 context.SaveChanges();
@@ -64,33 +59,31 @@ namespace DataIntegrityTool.Services
                 {
                     context.AuthorizedToolsCustomer.Add(new AuthorizedToolsCustomer()
                     {
-                        CustomerId = customer.Id,
-						tooltype   = tooltype
+                        CustomerId  = customer.Id,
+                        tooltype    = tooltype
                     });
                 }
 
                 context.SaveChanges();
                 context.Dispose();
-
-                customerId = customer.Id;
             }
 
-            return customerId;
+            return customer.Id;
         }
 
         public static async Task<List<Customers>> GetCustomers()
-		{
-			List<Customers> customers = null;
+        {
+            List<Customers> customers = null;
 
-			using (DataContext context = new())
-			{
-				customers = context.Customers.OrderBy(c => c.Name).ToList();
+            using (DataContext context = new())
+            {
+                customers = context.Customers.OrderBy(c => c.Name).ToList();
 
-				await context.DisposeAsync();
-			}
+                await context.DisposeAsync();
+            }
 
-			return customers;
-		}
+            return customers;
+        }
 
         public static AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
         {
@@ -103,11 +96,11 @@ namespace DataIntegrityTool.Services
             {
                 Customers? customer = context.Customers.Find(request.CustomerId);
 
-                customer.UserLicensingPool         = request.UserLicensingPool;
+                customer.UserLicensingPool = request.UserLicensingPool;
                 customer.LicensingIntervalSeconds += request.IntervalSeconds;
-                customer.LicensingMeteredCount    += request.MeteringCount;
+                customer.LicensingMeteredCount += request.MeteringCount;
 
-                response.MeteringCount   = customer.LicensingMeteredCount;
+                response.MeteringCount = customer.LicensingMeteredCount;
                 response.IntervalSeconds = customer.LicensingIntervalSeconds;
 
                 if (customer.UserLicensingPool)
@@ -118,7 +111,7 @@ namespace DataIntegrityTool.Services
 
                         if (user != null)
                         {
-                            user.LicensingMeteredCount    += ula.UserMeteringCount;
+                            user.LicensingMeteredCount += ula.UserMeteringCount;
                             user.LicensingIntervalSeconds += ula.UserIntervalSeconds;
                         }
                     }
@@ -129,7 +122,6 @@ namespace DataIntegrityTool.Services
             }
 
             return response;
-
         }
 	}
 }

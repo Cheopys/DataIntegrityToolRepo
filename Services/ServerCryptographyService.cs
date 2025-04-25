@@ -38,7 +38,8 @@ namespace DataIntegrityTool.Services
                     {
                         publicKey		= rsa.ExportRSAPublicKey(),
                         privateKey		= rsa.ExportRSAPrivateKey(),
-						minimumInterval = 3600
+						MinimumInterval = 3600,
+						AesKey          = CreateAes().Key
                     });
 
                     context.SaveChanges();
@@ -93,20 +94,62 @@ namespace DataIntegrityTool.Services
 			return key;
 		}
 
-		public static Aes GetAesKey(EncryptionWrapperDIT wrapper)  
+		public static Aes CreateAes()
+		{
+            Aes aes		= Aes.Create();
+            aes.KeySize = 256;
+            aes.Mode	= CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+
+			return aes;
+        }
+        public static Aes GetDITAesKey()
         {
-			Aes     aes = Aes.Create();
+            Aes aes = CreateAes();
+
+            using (DataContext context = new())
+            {
+                ToolParameters? toolParameters = context.ToolParameters.FirstOrDefault();
+
+				byte[]? key = toolParameters.AesKey;
+
+                if (key != null)
+				{
+					aes.Key = key;
+				}
+				else
+				{
+					toolParameters.AesKey = aes.Key;
+					context.SaveChanges();
+				}
+
+				aes.GenerateIV();
+
+				context.Dispose();
+            }
+
+			return aes;
+        }
+
+
+        public static Aes GetAesKey(EncryptionWrapperDIT wrapper)  
+        {
+			Aes     aes = CreateAes();
 			byte[]? key = null;
 
 			using (DataContext context = new())
             {
-				if (wrapper.type == CustomerOrUser.typeCustomer)
+				if (wrapper.type == CustomerOrUser.typeDIT)
+				{
+					key = context.ToolParameters.Select(tp => tp.AesKey).FirstOrDefault();
+				}
+				else if (wrapper.type == CustomerOrUser.typeCustomer)
 				{
 					key = context.Customers.Where (cu => cu.Id == wrapper.primaryKey)
 										   .Select(cu => cu.aeskey)
 										   .FirstOrDefault();
 				}
-				else
+				else 
 				{
                     key = context.Users.Where(cu => cu.Id == wrapper.primaryKey)
                                        .Select(cu => cu.aeskey)

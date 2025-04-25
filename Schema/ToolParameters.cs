@@ -6,5 +6,6 @@
         public byte[] publicKey     { get; set; } 
         public byte[] privateKey    { get; set; }
         public Int32 MinimumInterval { get; set; }
+        public byte[] AesKey { get; set; }
     }
 }
