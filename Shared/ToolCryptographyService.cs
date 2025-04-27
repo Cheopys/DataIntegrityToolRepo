@@ -10,6 +10,10 @@ namespace DataIntegrityTool.Services
 {
 	public class ToolCryptographyService
 	{
+        public byte[] GetServerPublicKey()
+        {
+            return ServerCryptographyService.GetServerRSAPublicKey();
+        }
         public static Aes CreateAesKey()
         {
             Aes aes		= Aes.Create();

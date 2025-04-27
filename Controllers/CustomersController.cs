@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using Amazon.Runtime.Internal;
 using NLog;
+using System.Runtime.Intrinsics.Arm;
 
 /*
 	This controller is for use of DIT 
@@ -46,11 +47,21 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("GetCustomers")]
-		public async Task<List<Customers>> GetCustomers()
+		[Produces("application/json")]
+		public async Task<string> GetCustomers()
 		{
 			List<Customers> customers = await CustomersService.GetCustomers();
 
-			EncodeAndEncryptResponse
+			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
+
+			EncryptionWrapperDIT wrapper = new()
+			{
+				aesIV		= aesDIT.IV,
+				primaryKey	= 0,
+				type		= CustomerOrUser.typeDIT,
+			};
+				
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
 		}
 	}
 }

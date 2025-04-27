@@ -1,7 +1,4 @@
-﻿
-using Amazon.SimpleNotificationService.Model;
-
-namespace DataIntegrityTool.Schema
+﻿namespace DataIntegrityTool.Schema
 {
 	public class Session
 	{

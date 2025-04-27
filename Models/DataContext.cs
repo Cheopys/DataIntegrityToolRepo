@@ -29,6 +29,7 @@ namespace DataIntegrityTool.Db
 		public DbSet<LicenseMetered> LicenseMetered     { get; set; }
 		public DbSet<LicenseInterval> LicenseInterval   { get; set; }
         public DbSet<Session>        Session            { get; set; }
+        public DbSet<SessionPing>    SessionPing        { get; set; }
         public DbSet<Users>          Users              { get; set; }
         public DbSet<ToolParameters> ToolParameters     { get; set; }
         public DbSet<UsersAwaitingMFA> UsersAwaitingMFA { get; set; }
@@ -42,7 +43,8 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<LicenseMetered> ().ToTable("LicenseMetered");
 			modelBuilder.Entity<LicenseInterval>().ToTable("LicenseInterval");
 			modelBuilder.Entity<Session>        ().ToTable("Session");
-			modelBuilder.Entity<Users>          ().ToTable("Users");
+            modelBuilder.Entity<SessionPing>    ().ToTable("SessionPing").HasNoKey();
+            modelBuilder.Entity<Users>          ().ToTable("Users");
             modelBuilder.Entity<ToolParameters> ().ToTable("ToolParameters");
             modelBuilder.Entity<UsersAwaitingMFA>().ToTable("UsersAwaitingMFA");
 
