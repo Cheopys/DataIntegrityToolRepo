@@ -50,13 +50,13 @@ public class BeginSessionRequest
 {
     public Int32        UserId      { get; set; }
     public LicenseTypes Licensetype { get; set; }
-    public ToolTypes    tooltype    { get; set; }
+    public ToolTypes    Tooltype    { get; set; }
 }
 
 public class  BeginSessionResponse
 {
     public Int32 SessionId          { get; set; }
-    public Int32 ReaminingSeconds   { get; set; }
+    public Int32 RemainingSeconds   { get; set; }
     public Error Error              { get; set; }
 }
 

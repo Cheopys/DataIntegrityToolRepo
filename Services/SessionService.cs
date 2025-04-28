@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DataIntegrityTool.Services
 {
-	public static class ContentService
+	public static class SessionService
 	{
 		public static NLog.Logger logger;
-		static ContentService()
+		static SessionService()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 
@@ -25,6 +25,32 @@ namespace DataIntegrityTool.Services
 			NLog.LogManager.Configuration = config;
 			logger = NLog.LogManager.GetCurrentClassLogger();
 		}
+
+		public static int Login(string Email,
+									   string PasswordHash)
+		{
+			ErrorCodes errorcode = ErrorCodes.errorNone;
+			using (DataContext context = new())
+			{
+				Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+
+				if (user != null)
+				{
+					if (user.PasswordHash.Equals(PasswordHash) == false)
+					{
+						errorcode = ErrorCodes.errorInvalidPassword;
+					}
+				}
+				else
+				{
+					errorcode = ErrorCodes.errorInvalidUser;
+				}
+
+				context.Dispose();
+			}
+
+			return (int)errorcode;
+		}
 		public static async Task<BeginSessionResponse> BeginSession(BeginSessionRequest request)
 		{
 			bool OK = false;
@@ -36,7 +62,7 @@ namespace DataIntegrityTool.Services
 				Int32 customerId = context.Users.Where(us => us.Id.Equals(request.UserId)).Select(us => us.CustomerId).FirstOrDefault();
 
 				AuthorizedToolsUser? authorizedtoolsuser = context.AuthorizedToolsUser.Where(atu => atu.UserId.Equals(request.UserId)
-																								 && atu.tooltype.Equals(request.tooltype))
+																								 && atu.tooltype.Equals(request.Tooltype))
 																						 .FirstOrDefault();
 
 				if (authorizedtoolsuser != null)
@@ -57,14 +83,14 @@ namespace DataIntegrityTool.Services
 					} // end metered
 					else
 					{
-						Int32 seconds = ContentService.IntervalRemaining(request.UserId);
+						Int32 seconds		   = SessionService.IntervalRemaining(request.UserId);
 						Int32 remainingSeconds = context.Customers.Where(cu => cu.Id.Equals(customerId)).Select(cu => cu.LicensingIntervalSeconds).FirstOrDefault();
-						Int32 minimumInterval = context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
+						Int32 minimumInterval  = context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
 
 						if (seconds > minimumInterval
-						&& seconds < remainingSeconds)
+						&&  seconds < remainingSeconds)
 						{
-							response.ReaminingSeconds = remainingSeconds;
+							response.RemainingSeconds = remainingSeconds;
 							OK = true;
 						}
 					} // end interval
@@ -73,10 +99,10 @@ namespace DataIntegrityTool.Services
 					{
 						Session session = new()
 						{
-							UserId = request.UserId,
+							UserId		= request.UserId,
 							Licensetype = request.Licensetype,
-							ToolType = request.tooltype,
-							TimeBegin = DateTime.UtcNow
+							ToolType	= request.Tooltype,
+							TimeBegin	= DateTime.UtcNow
 						};
 
 						context.Session.Add(session);
@@ -127,11 +153,11 @@ namespace DataIntegrityTool.Services
 			return Ok;
 		}
 
-		public static void SessionPing(Int32 sessionId)
+		public static void SessionTransition(Int32 sessionId)
 		{
 			using (DataContext context = new())
 			{
-				context.SessionPing.Add(new SessionPing()
+				context.SessionTransition.Add(new SessionTransition()
 				{
 					SessionId = sessionId,
 					DateTime  = DateTime.UtcNow

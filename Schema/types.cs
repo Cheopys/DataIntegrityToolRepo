@@ -19,3 +19,10 @@ public enum ToolTypes
 	tooltypeArchive,
 	tooltypeProduction
 }
+
+public enum ErrorCodes
+{
+	errorNone				= 0,
+	errorInvalidUser		= 1,
+	errorInvalidPassword	= 2,
+}
