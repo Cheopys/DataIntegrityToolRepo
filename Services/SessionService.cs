@@ -1,5 +1,7 @@
-﻿using DataIntegrityTool.Db;
+﻿using System.Runtime.InteropServices;
+using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
+using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.Operations;
@@ -30,6 +32,7 @@ namespace DataIntegrityTool.Services
 									   string PasswordHash)
 		{
 			ErrorCodes errorcode = ErrorCodes.errorNone;
+
 			using (DataContext context = new())
 			{
 				Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
@@ -110,6 +113,10 @@ namespace DataIntegrityTool.Services
 						await context.SaveChangesAsync();
 
 						response.SessionId = session.Id;
+
+						SessionTransition(session.Id,
+										  0,
+										  0);
 					}
 
 					await context.DisposeAsync();
@@ -152,15 +159,52 @@ namespace DataIntegrityTool.Services
 
 			return Ok;
 		}
-
-		public static void SessionTransition(Int32 sessionId)
+/*
+		private static string CSVPath(Int32 sessionId)
 		{
+			string path = String.Empty;
+
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				path = "%USERPROFILE%\\AppData\\Local";
+
+				if (Directory.Exists($"path\\DataIntegrityTool") == false)
+				{
+					Directory.CreateDirectory($"path\\DataIntegrityTool");
+				}
+
+				path = $"path\\DataIntegrityTool\\DIT{sessionId}.csv";
+
+            }
+			else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+				path = "~/.config";
+
+                if (Directory.Exists($"path/DataIntegrityTool") == false)
+                {
+                    Directory.CreateDirectory($"path/DataIntegrityTool");
+                }
+            
+				path = $"path/DataIntegrityTool/DIT{sessionId}.csv";
+            }
+
+            return path;
+        }
+*/
+		public static void SessionTransition(Int32 sessionId,
+											 Int16 Frame,
+											 Int16 Layer,
+											 ErrorCodes Error = ErrorCodes.errorNone)
+		{	
 			using (DataContext context = new())
 			{
 				context.SessionTransition.Add(new SessionTransition()
 				{
-					SessionId = sessionId,
-					DateTime  = DateTime.UtcNow
+					SessionId	 = sessionId,
+					DateTime     = DateTime.UtcNow,
+					FrameOrdinal = Frame,
+					LayerOrdinal = Layer,
+					ErrorCode	 = Error
 				});
 
 				context.SaveChanges();

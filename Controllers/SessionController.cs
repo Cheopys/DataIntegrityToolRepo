@@ -41,5 +41,6 @@ namespace DataIntegrityTool.Controllers
 		{
 			return await SessionService.EndSession(sessionId);
 		}
+	
 	}
 }

@@ -10,11 +10,6 @@ namespace DataIntegrityTool.Shared
         ErrorNone           = 0,
         licenseNotAvailable = 1,
     }
-    public class Error
-    {
-        public Errors ErrorCode { get; set; } = 0;
-        public string Message   { get; set; } // TBD: locales en-us for now
-    }
 
     public class EncryptionWrapperDIT
     {
@@ -57,7 +52,7 @@ public class  BeginSessionResponse
 {
     public Int32 SessionId          { get; set; }
     public Int32 RemainingSeconds   { get; set; }
-    public Error Error              { get; set; }
+    public ErrorCodes Error         { get; set; }
 }
 
 public class UserLicenseAllocation
