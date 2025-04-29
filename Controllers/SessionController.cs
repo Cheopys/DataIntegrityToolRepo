@@ -6,6 +6,7 @@ using DataIntegrityTool.Shared;
 using DataIntegrityTool.Services;
 using NuGet.Common;
 using System.Threading.Tasks;
+using Amazon.S3.Model.Internal.MarshallTransformations;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -37,10 +38,22 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("EndSession")]
-		public async Task<bool> EndSession(Int32 sessionId)
+		[Produces("application/json")]
+		public async Task<string> EndSession(Int32 sessionId)
 		{
-			return await SessionService.EndSession(sessionId);
+			List<SessionTransition> transitions = await SessionService.EndSession(sessionId);
+
+			return JsonSerializer.Serialize(transitions);
 		}
-	
-	}
+
+		[HttpPut, Route("SessionTransition")]
+		[Produces("application/json")]
+		public void SessionTransition(Int32		 SessionId,
+									  Int16		 Frame,
+									  Int16		 Layer,
+									  ErrorCodes Error = ErrorCodes.errorNone)
+		{
+			SessionService.SessionTransition(SessionId, Frame, Layer, Error);
+		}
+    }
 }

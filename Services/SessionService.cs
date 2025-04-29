@@ -126,15 +126,15 @@ namespace DataIntegrityTool.Services
 			return response;
 		}
 
-		public static async Task<bool> EndSession(Int32 sessionId)
+		public static async Task<List<SessionTransition>> EndSession(Int32 sessionId)
 		{
-			bool Ok = false;
+			List<SessionTransition> transitions = new();
 
 			using (DataContext context = new())
 			{
-				Session? session = context.Session.Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
-				Customers customer = context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
-				Users user = context.Users.Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
+				Session?	session		= context.Session  .Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
+				Customers?  customer	= context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
+				Users?		user		= context.Users    .Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
 
@@ -153,11 +153,13 @@ namespace DataIntegrityTool.Services
 				{
 				}
 
+				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.DateTime).ToList();
+
 				context.SaveChanges();
 				context.Dispose();
 			}
 
-			return Ok;
+			return transitions;
 		}
 /*
 		private static string CSVPath(Int32 sessionId)
