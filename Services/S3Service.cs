@@ -29,7 +29,7 @@ namespace DataIntegrityTool.Services
 
 		// chat messages
 
-		public static async Task StoreTool(byte[] tool)
+		public static async Task StoreTool(byte[] tool, string tooltype)
 		{
 			using (MemoryStream memstream = new())
 			{

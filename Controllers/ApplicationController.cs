@@ -14,6 +14,13 @@ using System.Text.Json;
 using System.Xml.Linq;
 using System.Xml.Schema;
 
+public class UploadToolRequest
+{
+	public string fileB64;
+	public string tooltype;
+}
+
+
 namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
@@ -22,11 +29,12 @@ namespace DataIntegrityTool.Controllers
 	public class ApplicationController : Controller
 	{
 		[HttpPut, Route("UploadTool")]
-		public async Task<bool> UploadTool(string filepath)
+		[Consumes("application/json")]
+		public async Task<bool> UploadTool([FromBody] UploadToolRequest request)
 		{
-			byte[] buffer = System.IO.File.ReadAllBytes(filepath);
+			byte[] buffer = Convert.FromBase64String(request.fileB64);
 
-			await S3Service.StoreTool(buffer);
+			await S3Service.StoreTool(buffer, request.tooltype);
 
 			return true;
 		}
