@@ -31,7 +31,8 @@ namespace DataIntegrityTool.Services
                 ToolParameters? toolparameters = context.ToolParameters.FirstOrDefault();
 
 
-                if (toolparameters == null)
+                if (toolparameters			 == null
+				||  toolparameters.publicKey == null)
                 {
                     RSA rsa = RSA.Create(4096);
                     context.ToolParameters.Add(new ToolParameters

@@ -2,7 +2,6 @@
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Shared;
 
-
 namespace DataIntegrityTool.Shared
 {
     public enum Errors
@@ -19,7 +18,6 @@ namespace DataIntegrityTool.Shared
         public string           encryptedData   { get; set; }
     }
 }
-
 public class RegisterCustomerRequest
 {
     public byte[] aesKey        { get; set; }
@@ -29,7 +27,7 @@ public class RegisterCustomerRequest
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
 }
-
+/*
 public class RegisterUserRequest
 {
     public Int32 CompanyId          { get; set; }
@@ -40,7 +38,7 @@ public class RegisterUserRequest
     public List<ToolTypes> Tools    { get; set; }
     public byte[] aeskey            { get; set; }
 }
-
+*/
 public class BeginSessionRequest
 {
     public Int32        UserId      { get; set; }
@@ -74,4 +72,31 @@ public class AllocateLicensesResponse
     public Int32 CustomerId { get; set; }
     public Int32 MeteringCount { get; set; }
     public Int32 IntervalSeconds { get; set; }
+}
+
+public class CustomerUsage
+{
+    public Int32 CustomerId         { get; set; }
+    public Int32 MeteringCount      { get; set; }
+    public Int32 IntervalSeconds    { get; set; }
+    public Int32 IntervalSessions   { get; set; }
+    public DateTime EarliestUse     { get; set; }
+}
+
+public class RegisterUserRequest
+{
+    Int32 Id                     { get; set; }
+    public Int32 CustomerId      { get; set; }
+    public string Token          { get; set; }
+    public string Name           { get; set; }
+    public string Email          { get; set; }
+    public string PasswordHash   { get; set; }
+    public byte[] aeskey         { get; set; }
+    public List<ToolTypes> Tools { get; set; }
+}
+
+public class RegisterUserResponse
+{
+    public Int32      UserId    { get; set; }
+    public ErrorCodes errorCode { get; set; }
 }

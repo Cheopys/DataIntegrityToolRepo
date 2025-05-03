@@ -48,6 +48,7 @@ namespace DataIntegrityTool.Services
                 Notes        = request.Notes,
                 aeskey       = request.aesKey,
                 DateAdded    = DateTime.UtcNow,
+                usageSince   = DateTime.MinValue
             };
             using (DataContext context = new())
             {
@@ -123,5 +124,72 @@ namespace DataIntegrityTool.Services
 
             return response;
         }
-	}
+
+        private static CustomerUsage UsageByCustomer(Int32 customerId, 
+                                              DataContext  context)
+        {
+            DateTime earliest = DateTime.MaxValue;
+
+            CustomerUsage usage = new()
+            {
+                CustomerId = customerId,
+            };
+
+            // last time customer was billed
+            DateTime? customerUsage = context.Customers.Where (cu => cu.Id.Equals(customerId))
+                                                       .Select(cu => cu.usageSince)
+                                                       .FirstOrDefault();
+            // metered licenses
+
+            List<LicenseMetered> metereds = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(customerId)
+                                                                            && lm.TimeBegun > customerUsage)
+                                                                  .ToList();
+            usage.MeteringCount = metereds.Count();
+
+            earliest = metereds.Min(lm => lm.TimeBegun);
+
+            // time interval licenses
+
+            List<LicenseInterval> intervals = context.LicenseInterval.Where(li => li.CustomerId.Equals(customerId)
+                                                                               && li.TimeBegin       > customerUsage)
+                                                                     .ToList();
+
+            usage.IntervalSessions = intervals.Count();
+            
+            foreach (LicenseInterval interval in intervals)
+            {
+                usage.IntervalSeconds += (Int32) (interval.TimeEnd.Subtract(interval.TimeBegin)).TotalSeconds;
+            }
+
+            return usage;
+        }
+
+        public static List<CustomerUsage> GetCustomerUsages(Int32? customerId)
+        {
+            List<CustomerUsage>usages = new ();
+
+            using (DataContext context = new())
+            {
+                DateTime lastUsage = context.ToolParameters.Select(tp => tp.usageSince).FirstOrDefault();
+
+                if (customerId != null)
+                {
+                    usages.Add(UsageByCustomer(customerId.Value, context));
+                }
+                else
+                {
+                    List<Int32> customerIds = context.Customers.Select(cu => cu.Id).ToList();
+
+                    foreach(Int32 id in  customerIds)
+                    {
+                        usages.Add(UsageByCustomer(id, context));
+                    }
+                }
+
+                context.Dispose();
+            }
+
+            return usages;
+        }
+    }
 }

@@ -19,10 +19,10 @@ namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public class CustomersController : ControllerBase
+	public class UsersController : ControllerBase
 	{
 		static Logger logger;
-		public CustomersController()
+		public UsersController()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 
@@ -37,20 +37,20 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
-		[HttpPut, Route("RegisterCustomer")]
-		public async Task<Int32> RegisterCustomer(EncryptionWrapperDIT wrapper)
+		[HttpPut, Route("RegisterUser")]
+		public async Task<RegisterUserResponse> RegisterUser(EncryptionWrapperDIT wrapper)
 		{
-			RegisterCustomerRequest request;
+			RegisterUserRequest? request;
 
 			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
-			return CustomersService.RegisterCustomer(request);
+			return UsersService.RegisterUser(request);
 		}
 
-		[HttpGet, Route("GetCustomers")]
+		[HttpGet, Route("GetUsers")]
 		[Produces("application/json")]
-		public async Task<string> GetCustomers()
+		public async Task<string> GetUsers(Int32 CustomerId)
 		{
-			List<Customers> customers = await CustomersService.GetCustomers();
+			List<Users> users = await UsersService.GetUsers(CustomerId);
 
 			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
 
@@ -61,7 +61,7 @@ namespace DataIntegrityTool.Controllers
 				type		= CustomerOrUser.typeDIT,
 			};
 				
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
 		}
 
 		[HttpGet, Route("GetCustomerUsage")]

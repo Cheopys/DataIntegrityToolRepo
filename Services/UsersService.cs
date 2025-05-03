@@ -34,7 +34,7 @@ namespace DataIntegrityTool.Services
 			NLog.LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
 		}
-
+        /*
         public static Int32 RegisterUser(string requestEncryptedB64)
         {
             Int32 mfa = new Random().Next();
@@ -89,28 +89,75 @@ namespace DataIntegrityTool.Services
 			// TBD: MFA
             return mfa;
         }
+		*/
 
-        public static async Task<List<Customers>> GetCustomers()
+        public static RegisterUserResponse RegisterUser(RegisterUserRequest request)
+        {
+            RegisterUserResponse response = new()
+            {
+                errorCode = ErrorCodes.errorNone
+            };
+
+            List<UserRegistration> registrations = null;
+
+            using (DataContext context = new())
+            {
+                registrations = context.UserRegistration.Where(ur => ur.CustomerId.Equals(request.CustomerId)).ToList();
+
+                if (registrations.Count > 0)
+                {
+                    UserRegistration? registration = registrations.Where(ru => ru.Token.Equals(request.Token)).FirstOrDefault();
+
+                    if (registration != null)
+                    {
+                        Users user = new Users()
+                        {
+                            CustomerId   = request.CustomerId,
+                            Email        = request.Email,
+                            PasswordHash = request.PasswordHash,
+                            Name         = request.Name,
+                            aeskey       = request.aeskey,
+                            Tools        = request.Tools,
+                            DateAdded    = DateTime.UtcNow
+                        };
+
+                        context.Users.Add(user);
+                        context.UserRegistration.Remove(registration);
+
+                        context.SaveChanges();
+
+                        response.UserId = user.Id;
+                    }
+                    else
+                    {
+                        response.errorCode = ErrorCodes.errorTokenNotFound;
+                    }
+                }
+                else
+                {
+                    response.errorCode = ErrorCodes.errorNoRegistrations;
+                }
+
+                context.Dispose();
+            }
+
+            return response;
+        }
+
+        public static async Task<List<Users>> GetUsers(Int32 CustomerId)
 		{
-			List<Customers> customers = null;
+			List<Users> Users;
 
 			using (DataContext context = new())
 			{
-				customers = context.Customers.OrderBy(c => c.Name).ToList();
+				Users = context.Users.Where(us => us.CustomerId.Equals(CustomerId))
+                                     .OrderBy(c => c.Name)
+                                     .ToList();
 
 				await context.DisposeAsync();
 			}
-			return customers;
-		}
 
-
-		private static string UniqueId()
-		{
-			byte[] unique = new byte[8]; 
-			
-			new Random().NextBytes(unique);
-
-			return Convert.ToBase64String(unique);
+			return Users;
 		}
 	}
 }

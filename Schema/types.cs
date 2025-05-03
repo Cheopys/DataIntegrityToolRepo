@@ -25,4 +25,6 @@ public enum ErrorCodes
 	errorNone				= 0,
 	errorInvalidUser		= 1,
 	errorInvalidPassword	= 2,
+	errorNoRegistrations    = 3, 
+	errorTokenNotFound      = 4,	
 }
