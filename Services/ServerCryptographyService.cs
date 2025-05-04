@@ -147,13 +147,13 @@ namespace DataIntegrityTool.Services
 				else if (wrapper.type == CustomerOrUser.typeCustomer)
 				{
 					key = context.Customers.Where (cu => cu.Id == wrapper.primaryKey)
-										   .Select(cu => cu.aeskey)
+										   .Select(cu => cu.AesKey)
 										   .FirstOrDefault();
 				}
 				else 
 				{
                     key = context.Users.Where(cu => cu.Id == wrapper.primaryKey)
-                                       .Select(cu => cu.aeskey)
+                                       .Select(cu => cu.AesKey)
                                        .FirstOrDefault();
                 }
 

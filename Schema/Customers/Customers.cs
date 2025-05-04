@@ -12,12 +12,13 @@ namespace DataIntegrityTool.Schema
 		public string   Name                    { get; set; }
         public string   Description             { get; set; }
         public string   EmailContact            { get; set; }
+        public string   PasswordHash            { get; set; }
         public DateTime DateAdded               { get; set; }
         public string   Notes                   { get; set; }
-        public Int32 LicensingMeteredCount      { get; set; }
-        public Int32 LicensingIntervalSeconds   { get; set; }
+        public Int32    LicensingMeteredCount   { get; set; }
+        public Int32    LicensingIntervalSeconds{ get; set; }
         public bool     UserLicensingPool       { get; set; }
-        public byte[]   aeskey                  { get; set; }
-        public DateTime usageSince             { get; set; } = DateTime.MinValue;
+        public byte[]   AesKey                  { get; set; }
+        public DateTime UsageSince              { get; set; } = DateTime.MinValue;
     }
 }

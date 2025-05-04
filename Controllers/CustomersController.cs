@@ -70,5 +70,22 @@ namespace DataIntegrityTool.Controllers
 		{
 			return CustomersService.GetCustomerUsages(customerId);
 		}
+
+		[HttpPut, Route("AddNewUserTokens")]
+		public ErrorCodes AddNewUserTokens(List<UserRegistration> registrations)
+		{
+			return CustomersService.AddNewUserTokens(registrations);
+		}
+
+		[HttpPut, Route("RegisterUser")]
+		public RegisterUserResponse RegisterUser([FromBody] EncryptionWrapperDIT wrapper)
+		{
+			ErrorCodes errorcode = ErrorCodes.errorNone;
+			RegisterUserRequest request;
+
+			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
+
+			return CustomersService.RegisterUser(request);
+		}
 	}
 }

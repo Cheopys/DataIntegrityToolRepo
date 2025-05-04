@@ -116,7 +116,7 @@ namespace DataIntegrityTool.Services
                             Email        = request.Email,
                             PasswordHash = request.PasswordHash,
                             Name         = request.Name,
-                            aeskey       = request.aeskey,
+                            AesKey       = request.AesKey,
                             Tools        = request.Tools,
                             DateAdded    = DateTime.UtcNow
                         };

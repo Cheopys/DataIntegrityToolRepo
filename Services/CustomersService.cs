@@ -45,14 +45,36 @@ namespace DataIntegrityTool.Services
                 Name         = request.Name,
                 Description  = request.Description,
                 EmailContact = request.EmailContact,
+                PasswordHash = request.PasswordHash,
                 Notes        = request.Notes,
-                aeskey       = request.aesKey,
+                AesKey       = request.AesKey,
                 DateAdded    = DateTime.UtcNow,
-                usageSince   = DateTime.MinValue
+                UsageSince   = DateTime.MinValue,
+                UserLicensingPool        = false,
+                LicensingIntervalSeconds = 0,
+                LicensingMeteredCount    = 0,
             };
+
+            Users user = new Users()
+            {
+                AesKey                   = request.AesKey,
+                Email                    = request.EmailContact,
+                Name                     = request.Name,
+                PasswordHash             = request.PasswordHash,
+                DateAdded                = DateTime.UtcNow,
+                LicensingIntervalSeconds = 0,
+                LicensingMeteredCount    = 0,
+            };
+
             using (DataContext context = new())
             {
                 context.Customers.Add(customer);
+
+                context.SaveChanges();
+
+                user.CustomerId = customer.Id;
+
+                context.Users.Add(user);
 
                 context.SaveChanges();
 
@@ -62,6 +84,12 @@ namespace DataIntegrityTool.Services
                     {
                         CustomerId  = customer.Id,
                         tooltype    = tooltype
+                    });
+
+                    context.AuthorizedToolsUser.Add(new AuthorizedToolsUser()
+                    {
+                        UserId   = user.Id,
+                        tooltype = tooltype
                     });
                 }
 
@@ -137,7 +165,7 @@ namespace DataIntegrityTool.Services
 
             // last time customer was billed
             DateTime? customerUsage = context.Customers.Where (cu => cu.Id.Equals(customerId))
-                                                       .Select(cu => cu.usageSince)
+                                                       .Select(cu => cu.UsageSince)
                                                        .FirstOrDefault();
             // metered licenses
 
@@ -190,6 +218,49 @@ namespace DataIntegrityTool.Services
             }
 
             return usages;
+        }
+
+        public static RegisterUserResponse RegisterUser(RegisterUserRequest request)
+        {
+            RegisterUserResponse response = new RegisterUserResponse();
+            
+            using (DataContext context = new())
+            {
+                Users user = new Users
+                {
+                    CustomerId               = request.CustomerId,
+                    Name                     = request.Name,
+                    Email                    = request.Email,
+                    PasswordHash             = request.PasswordHash,
+                    LicensingIntervalSeconds = request.LicensingIntervalSeconds,
+                    LicensingMeteredCount    = request.LicensingMeteredCount,
+                    AesKey                   = request.AesKey,
+                    Tools                    = request.Tools,
+                    DateAdded                = DateTime.UtcNow
+                };
+
+                context.Users.Add(user);
+
+                context.SaveChanges();
+                context.Dispose();
+
+                response.UserId    = user.Id;
+                response.errorCode = ErrorCodes.errorNone;
+            }
+
+            return response;
+        }
+
+        public static ErrorCodes AddNewUserTokens(List<UserRegistration> registrations)
+        {
+            ErrorCodes errorcode = ErrorCodes.errorNone;
+
+            using (DataContext context = new())
+            {
+                context.UserRegistration.AddRange(registrations);
+            }
+
+            return errorcode;
         }
     }
 }

@@ -20,10 +20,11 @@ namespace DataIntegrityTool.Shared
 }
 public class RegisterCustomerRequest
 {
-    public byte[] aesKey        { get; set; }
+    public byte[] AesKey        { get; set; }
     public string Name          { get; set; }
     public string Description   { get; set; }
     public string EmailContact  { get; set; }
+    public string PasswordHash  { get; set; }
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
 }
@@ -91,8 +92,10 @@ public class RegisterUserRequest
     public string Name           { get; set; }
     public string Email          { get; set; }
     public string PasswordHash   { get; set; }
-    public byte[] aeskey         { get; set; }
+    public byte[] AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
+    public Int32 LicensingMeteredCount      { get; set; }
+    public Int32 LicensingIntervalSeconds   { get; set; }
 }
 
 public class RegisterUserResponse
