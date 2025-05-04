@@ -176,7 +176,7 @@ namespace DataIntegrityTool.Services
                 && interval.TimeEnd != null)
                 {
                     DateTime timeBegin = interval.TimeBegin.Value;
-                    DateTime timeEnd   = interval.TimeEnd  .Value;
+                    DateTime timeEnd   = interval.TimeEnd;
                     usage.IntervalSeconds += (Int32)(timeEnd.Subtract(timeBegin)).TotalSeconds;
                 }
             }
