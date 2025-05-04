@@ -37,15 +37,17 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
-		[HttpPut, Route("RegisterUser")]
-		public async Task<RegisterUserResponse> RegisterUser(EncryptionWrapperDIT wrapper)
-		{
-			RegisterUserRequest? request;
+        [HttpPut, Route("RegisterUser")]
+        public RegisterUserResponse RegisterUser([FromBody] EncryptionWrapperDIT wrapper)
+        {
+            ErrorCodes errorcode = ErrorCodes.errorNone;
+            RegisterUserRequest request;
 
-			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
-			return UsersService.RegisterUser(request);
-		}
+            ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
 
+            return UsersService.RegisterUser(request);
+        }
+        
 		[HttpGet, Route("GetUsers")]
 		[Produces("application/json")]
 		public async Task<string> GetUsers(Int32 CustomerId)

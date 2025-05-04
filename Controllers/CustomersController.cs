@@ -38,12 +38,17 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("RegisterCustomer")]
-		public async Task<Int32> RegisterCustomer(EncryptionWrapperDIT wrapper)
-		{
+		public async Task<Int32> RegisterCustomer(string registerUserB64 )
+		{/*
 			RegisterCustomerRequest request;
 
-			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
+            byte[] decrpted =ServerCryptographyService.DecryptRSA(registerUserB64);
+
+//            ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
 			return CustomersService.RegisterCustomer(request);
+			*/
+
+			return 0;
 		}
 
 		[HttpGet, Route("GetCustomers")]
@@ -75,17 +80,6 @@ namespace DataIntegrityTool.Controllers
 		public ErrorCodes AddNewUserTokens(List<UserRegistration> registrations)
 		{
 			return CustomersService.AddNewUserTokens(registrations);
-		}
-
-		[HttpPut, Route("RegisterUser")]
-		public RegisterUserResponse RegisterUser([FromBody] EncryptionWrapperDIT wrapper)
-		{
-			ErrorCodes errorcode = ErrorCodes.errorNone;
-			RegisterUserRequest request;
-
-			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
-
-			return CustomersService.RegisterUser(request);
 		}
 	}
 }

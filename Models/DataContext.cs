@@ -34,9 +34,7 @@ namespace DataIntegrityTool.Db
         public DbSet<UserRegistration> UserRegistration     { get; set; }
         public DbSet<ToolParameters> ToolParameters         { get; set; }
         public DbSet<UsersAwaitingMFA> UsersAwaitingMFA     { get; set; }
-        public DbSet<AuthorizedToolsCustomer> AuthorizedToolsCustomer   { get; set; }
-        public DbSet<AuthorizedToolsUser>     AuthorizedToolsUser       { get; set; }
-
+ 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,9 +47,6 @@ namespace DataIntegrityTool.Db
             modelBuilder.Entity<UserRegistration> ().ToTable("UserRegistration").HasNoKey();
             modelBuilder.Entity<ToolParameters>   ().ToTable("ToolParameters");
             modelBuilder.Entity<UsersAwaitingMFA> ().ToTable("UsersAwaitingMFA");
-
-            modelBuilder.Entity<AuthorizedToolsCustomer>().ToTable("AuthorizedToolsCustomer");
-            modelBuilder.Entity<AuthorizedToolsUser>    ().ToTable("AuthorizedToolsUser");
         }
     }
 }

@@ -64,6 +64,7 @@ namespace DataIntegrityTool.Services
                 DateAdded                = DateTime.UtcNow,
                 LicensingIntervalSeconds = 0,
                 LicensingMeteredCount    = 0,
+                Tools                    = request.Tools,
             };
 
             using (DataContext context = new())
@@ -77,21 +78,6 @@ namespace DataIntegrityTool.Services
                 context.Users.Add(user);
 
                 context.SaveChanges();
-
-                foreach (ToolTypes tooltype in request.Tools)
-                {
-                    context.AuthorizedToolsCustomer.Add(new AuthorizedToolsCustomer()
-                    {
-                        CustomerId  = customer.Id,
-                        tooltype    = tooltype
-                    });
-
-                    context.AuthorizedToolsUser.Add(new AuthorizedToolsUser()
-                    {
-                        UserId   = user.Id,
-                        tooltype = tooltype
-                    });
-                }
 
                 context.SaveChanges();
                 context.Dispose();
@@ -125,9 +111,9 @@ namespace DataIntegrityTool.Services
             {
                 Customers? customer = context.Customers.Find(request.CustomerId);
 
-                customer.UserLicensingPool = request.UserLicensingPool;
+                customer.UserLicensingPool         = request.UserLicensingPool;
                 customer.LicensingIntervalSeconds += request.IntervalSeconds;
-                customer.LicensingMeteredCount += request.MeteringCount;
+                customer.LicensingMeteredCount    += request.MeteringCount;
 
                 response.MeteringCount = customer.LicensingMeteredCount;
                 response.IntervalSeconds = customer.LicensingIntervalSeconds;
@@ -174,7 +160,7 @@ namespace DataIntegrityTool.Services
                                                                   .ToList();
             usage.MeteringCount = metereds.Count();
 
-            earliest = metereds.Min(lm => lm.TimeBegun);
+            earliest = metereds.Min(lm => lm.TimeBegun.Value);
 
             // time interval licenses
 
@@ -186,7 +172,13 @@ namespace DataIntegrityTool.Services
             
             foreach (LicenseInterval interval in intervals)
             {
-                usage.IntervalSeconds += (Int32) (interval.TimeEnd.Subtract(interval.TimeBegin)).TotalSeconds;
+                if (interval.TimeBegin != null
+                && interval.TimeEnd != null)
+                {
+                    DateTime timeBegin = interval.TimeBegin.Value;
+                    DateTime timeEnd   = interval.TimeEnd  .Value;
+                    usage.IntervalSeconds += (Int32)(timeEnd.Subtract(timeBegin)).TotalSeconds;
+                }
             }
 
             return usage;
@@ -220,36 +212,6 @@ namespace DataIntegrityTool.Services
             return usages;
         }
 
-        public static RegisterUserResponse RegisterUser(RegisterUserRequest request)
-        {
-            RegisterUserResponse response = new RegisterUserResponse();
-            
-            using (DataContext context = new())
-            {
-                Users user = new Users
-                {
-                    CustomerId               = request.CustomerId,
-                    Name                     = request.Name,
-                    Email                    = request.Email,
-                    PasswordHash             = request.PasswordHash,
-                    LicensingIntervalSeconds = request.LicensingIntervalSeconds,
-                    LicensingMeteredCount    = request.LicensingMeteredCount,
-                    AesKey                   = request.AesKey,
-                    Tools                    = request.Tools,
-                    DateAdded                = DateTime.UtcNow
-                };
-
-                context.Users.Add(user);
-
-                context.SaveChanges();
-                context.Dispose();
-
-                response.UserId    = user.Id;
-                response.errorCode = ErrorCodes.errorNone;
-            }
-
-            return response;
-        }
 
         public static ErrorCodes AddNewUserTokens(List<UserRegistration> registrations)
         {

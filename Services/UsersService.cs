@@ -34,62 +34,6 @@ namespace DataIntegrityTool.Services
 			NLog.LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
 		}
-        /*
-        public static Int32 RegisterUser(string requestEncryptedB64)
-        {
-            Int32 mfa = new Random().Next();
-
-            while (mfa < 999999)
-            {
-                mfa = new Random().Next();
-            }
-
-            byte[] requestDecrypted = ServerCryptographyService.DecryptRSA(requestEncryptedB64);
-
-            RegisterUserRequest request = JsonSerializer.Deserialize<RegisterUserRequest>(requestDecrypted);
-
-            using (DataContext context = new())
-            {
-                Users user = new Users()
-                {
-					CustomerId		= request.CompanyId,
-					Email			= request.Email,
-					PasswordHash	= request.PasswordHash,
-                    Name			= request.Name,
-                    aeskey			= request.aeskey,
-					Tools			= request.Tools,
-                    DateAdded		= DateTime.UtcNow,
-                };
-
-                context.Users.Add(user);
-
-                context.SaveChanges();
-
-                foreach (ToolTypes tooltype in request.Tools)
-                {
-                    context.AuthorizedToolsUser.Add(new AuthorizedToolsUser()
-                    {
-                        UserId   = user.Id,
-                        tooltype = tooltype
-                    });
-                }
-
-				context.SaveChanges();
-
-                context.UsersAwaitingMFA.Add(new UsersAwaitingMFA()
-				{
-					Id  = user.Id,
-					MFA = mfa
-				});
-
-                context.SaveChanges();
-                context.Dispose();
-          }
-
-			// TBD: MFA
-            return mfa;
-        }
-		*/
 
         public static RegisterUserResponse RegisterUser(RegisterUserRequest request)
         {
@@ -112,13 +56,15 @@ namespace DataIntegrityTool.Services
                     {
                         Users user = new Users()
                         {
-                            CustomerId   = request.CustomerId,
-                            Email        = request.Email,
-                            PasswordHash = request.PasswordHash,
-                            Name         = request.Name,
-                            AesKey       = request.AesKey,
-                            Tools        = request.Tools,
-                            DateAdded    = DateTime.UtcNow
+                            CustomerId               = request.CustomerId,
+                            Name                     = request.Name,
+                            Email                    = request.Email,
+                            PasswordHash             = request.PasswordHash,
+                            LicensingIntervalSeconds = request.LicensingIntervalSeconds,
+                            LicensingMeteredCount    = request.LicensingMeteredCount,
+                            AesKey                   = request.AesKey,
+                            Tools                    = request.Tools,
+                            DateAdded                = DateTime.UtcNow
                         };
 
                         context.Users.Add(user);

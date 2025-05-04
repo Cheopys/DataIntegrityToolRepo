@@ -6,6 +6,6 @@
 		public Int32 CustomerId	 { get; set; }
         public Int32 UserId		 { get; set; }
 		public Int32 Count		 { get; set; }
-		public DateTime TimeBegun{ get; set; } = DateTime.MinValue;
+		public DateTime? TimeBegun{ get; set; } = DateTime.MinValue;
     }
 }
