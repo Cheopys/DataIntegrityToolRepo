@@ -15,7 +15,7 @@ namespace DataIntegrityTool.Schema
         public string   PasswordHash            { get; set; }
         public DateTime DateAdded               { get; set; }
         public string   Notes                   { get; set; }
-        public List<ToolTypes> Tools            { get; set; }
+        public List<ToolTypes>? Tools            { get; set; }
         public Int32    LicensingMeteredCount   { get; set; }
         public Int32    LicensingIntervalSeconds{ get; set; }
         public bool     UserLicensingPool       { get; set; }
