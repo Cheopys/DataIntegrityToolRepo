@@ -6,7 +6,7 @@ namespace DataIntegrityTool.Schema
 {
     public class SessionTransition
     {   
-        public Int32 Id                 { get; set; }  
+        public Int32        Id            { get; set; }  
         public Int32       SessionId     { get; set; }
         public DateTime    DateTime      { get; set; }
         public Int32       FrameOrdinal  { get; set; }
