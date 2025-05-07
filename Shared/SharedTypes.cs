@@ -62,16 +62,15 @@ public class UserLicenseAllocation
 }
 public class AllocateLicensesRequest
 {
-    public Int32 CustomerId         { get; set; }
-    public bool UserLicensingPool   { get; set; }
+    public Int32 UserId             { get; set; }
+    public bool  UserLicensingPool   { get; set; }
     public Int32 MeteringCount      { get; set; }
     public Int32 IntervalSeconds    { get; set; }
-    public List<UserLicenseAllocation>? userLicenseAllocations { get; set; }
 }
 public class AllocateLicensesResponse
 {
-    public Int32 CustomerId { get; set; }
-    public Int32 MeteringCount { get; set; }
+    public Int32 UserId          { get; set; }
+    public Int32 MeteringCount   { get; set; }
     public Int32 IntervalSeconds { get; set; }
 }
 

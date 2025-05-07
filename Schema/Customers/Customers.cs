@@ -18,7 +18,6 @@ namespace DataIntegrityTool.Schema
         public List<ToolTypes>? Tools            { get; set; }
         public Int32    LicensingMeteredCount   { get; set; }
         public Int32    LicensingIntervalSeconds{ get; set; }
-        public bool     UserLicensingPool       { get; set; }
         public byte[]   AesKey                  { get; set; }
         public DateTime UsageSince              { get; set; } = DateTime.MinValue;
     }

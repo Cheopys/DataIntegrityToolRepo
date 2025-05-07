@@ -39,16 +39,12 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("RegisterCustomer")]
 		public async Task<Int32> RegisterCustomer(string registerUserB64 )
-		{/*
-			RegisterCustomerRequest request;
+		{
+			byte[] decrypted =ServerCryptographyService.DecryptRSA(registerUserB64);
 
-            byte[] decrpted =ServerCryptographyService.DecryptRSA(registerUserB64);
-
-//            ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
+            RegisterCustomerRequest? request = JsonSerializer.Deserialize<RegisterCustomerRequest>(decrypted);
+            
 			return CustomersService.RegisterCustomer(request);
-			*/
-
-			return 0;
 		}
 
 		[HttpGet, Route("GetCustomers")]

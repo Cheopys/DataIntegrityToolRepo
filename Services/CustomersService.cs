@@ -50,9 +50,6 @@ namespace DataIntegrityTool.Services
                 AesKey       = request.AesKey,
                 DateAdded    = DateTime.UtcNow,
                 UsageSince   = DateTime.MinValue,
-                UserLicensingPool        = false,
-                LicensingIntervalSeconds = 0,
-                LicensingMeteredCount    = 0,
             };
 
             Users user = new Users()
@@ -104,33 +101,18 @@ namespace DataIntegrityTool.Services
         {
             AllocateLicensesResponse response = new()
             {
-                CustomerId = request.CustomerId
+                UserId = request.UserId
             };
 
             using (DataContext context = new())
             {
-                Customers? customer = context.Customers.Find(request.CustomerId);
+                Users? user = context.Users.Find(request.UserId);
 
-                customer.UserLicensingPool         = request.UserLicensingPool;
-                customer.LicensingIntervalSeconds += request.IntervalSeconds;
-                customer.LicensingMeteredCount    += request.MeteringCount;
+                user.LicensingIntervalSeconds += request.IntervalSeconds;
+                user.LicensingMeteredCount    += request.MeteringCount;
 
-                response.MeteringCount = customer.LicensingMeteredCount;
-                response.IntervalSeconds = customer.LicensingIntervalSeconds;
-
-                if (customer.UserLicensingPool)
-                {
-                    foreach (UserLicenseAllocation ula in request.userLicenseAllocations)
-                    {
-                        Users? user = context.Users.Where(us => us.Id.Equals(ula.UserId)).FirstOrDefault();
-
-                        if (user != null)
-                        {
-                            user.LicensingMeteredCount += ula.UserMeteringCount;
-                            user.LicensingIntervalSeconds += ula.UserIntervalSeconds;
-                        }
-                    }
-                }
+                response.MeteringCount   = user.LicensingMeteredCount;
+                response.IntervalSeconds = user.LicensingIntervalSeconds;
 
                 context.SaveChanges();
                 context.Dispose();

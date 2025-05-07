@@ -28,8 +28,8 @@ namespace DataIntegrityTool.Services
 			logger = NLog.LogManager.GetCurrentClassLogger();
 		}
 
-		public static int Login(string Email,
-									   string PasswordHash)
+		public static  Int32 Login(string Email,
+								   string PasswordHash)
 		{
 			ErrorCodes errorcode = ErrorCodes.errorNone;
 
@@ -150,11 +150,6 @@ namespace DataIntegrityTool.Services
 					TimeSpan duration = session.TimeEnd.Subtract(session.TimeBegin);
 
 					customer.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
-
-					if (customer.UserLicensingPool)
-					{
-						user.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
-					}
 				}
 				else
 				{
@@ -227,20 +222,12 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				Users?     user		= context.Users    .Where(us => us.Id.Equals(userId))		  .FirstOrDefault();
-				Customers? customer = context.Customers.Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
+				any = context.Users.Where(us => us.Id.Equals(userId)).Select(us => us.LicensingMeteredCount).FirstOrDefault() > 0;
 
-				if (customer.UserLicensingPool)
-				{
-					any = user.LicensingMeteredCount > 0;
-				}
-				else
-				{
-					any = customer.LicensingMeteredCount > 0;
-				}
+				context.Dispose();
 			}
 
-				return any;
+			return any;
 		}
 
         public static Int32 IntervalRemaining(Int32 userId)
@@ -249,17 +236,7 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                Users?     user     = context.Users    .Where(us => us.Id.Equals(userId))         .FirstOrDefault();
-                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
-
-                if (customer.UserLicensingPool)
-                {
-					seconds = user.LicensingIntervalSeconds;
-                }
-                else
-                {
-                    seconds = customer.LicensingIntervalSeconds;
-                }
+                seconds = context.Users.Where(us => us.Id.Equals(userId)) .Select(us => us.LicensingIntervalSeconds).FirstOrDefault();
 
 				context.Dispose();
             }
