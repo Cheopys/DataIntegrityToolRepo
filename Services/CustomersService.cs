@@ -173,7 +173,7 @@ namespace DataIntegrityTool.Services
             foreach (LicenseInterval interval in intervals)
             {
                 if (interval.TimeBegin != null
-                && interval.TimeEnd != null)
+                && interval .TimeEnd   != null)
                 {
                     DateTime timeBegin = interval.TimeBegin.Value;
                     DateTime timeEnd   = interval.TimeEnd;
