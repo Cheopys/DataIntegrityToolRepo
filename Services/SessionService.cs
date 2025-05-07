@@ -114,23 +114,31 @@ namespace DataIntegrityTool.Services
 
 								OK = true;
 							}
+							else
+							{
+								response.Error = ErrorCodes.errorNoLicense;
+							}
 
 							await context.SaveChangesAsync();
 						} // end metered
 						else
 						{
-							Int32 seconds = SessionService.IntervalRemaining(request.UserId);
+							Int32 seconds		   = SessionService.IntervalRemaining(request.UserId);
 							Int32 remainingSeconds = context.Users.Where(cu => cu.Id.Equals(request.UserId)).Select(cu => cu.LicensingIntervalSeconds).FirstOrDefault();
 							Int32 minimumInterval  = context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
 
 							if (seconds > minimumInterval
-							&& seconds < remainingSeconds)
+							&&  seconds < remainingSeconds)
 							{
 								response.RemainingSeconds = remainingSeconds;
 								OK = true;
 							}
-						} // end interval
-					}
+                            else
+                            {
+                                response.Error = ErrorCodes.errorNoLicense;
+                            }
+                        } // end interval
+                    }
 					else
 					{
 						response.Error = ErrorCodes.errorToolNotAuthorized;
@@ -140,10 +148,10 @@ namespace DataIntegrityTool.Services
 					{
 						Session session = new()
 						{
-							UserId = request.UserId,
+							UserId		= request.UserId,
 							Licensetype = request.Licensetype,
-							ToolType = request.Tooltype,
-							TimeBegin = DateTime.UtcNow
+							ToolType	= request.Tooltype,
+							TimeBegin	= DateTime.UtcNow
 						};
 
 						context.Session.Add(session);

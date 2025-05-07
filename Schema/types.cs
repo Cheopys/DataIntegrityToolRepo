@@ -28,4 +28,5 @@ public enum ErrorCodes
 	errorNoRegistrations    = 3, 
 	errorTokenNotFound      = 4,	
 	errorToolNotAuthorized  = 5,
+	errorNoLicense			= 6,                                                                             
 }
