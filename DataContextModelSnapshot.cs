@@ -41,15 +41,9 @@ namespace DataIntegrityTool.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("EmailContact")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("LicensingIntervalSeconds")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LicensingMeteredCount")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -68,9 +62,6 @@ namespace DataIntegrityTool.Migrations
 
                     b.Property<DateTime>("UsageSince")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("UserLicensingPool")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

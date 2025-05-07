@@ -28,31 +28,66 @@ namespace DataIntegrityTool.Services
 			logger = NLog.LogManager.GetCurrentClassLogger();
 		}
 
-		public static  Int32 Login(string Email,
-								   string PasswordHash)
+		public static LoginResponse Login(string Email,
+								          string PasswordHash,
+										  bool   IsAdministrator)
 		{
-			ErrorCodes errorcode = ErrorCodes.errorNone;
+			LoginResponse response = new()
+			{
+				errorcode = ErrorCodes.errorNone
+			};
 
 			using (DataContext context = new())
 			{
-				Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+				// From web site
 
-				if (user != null)
+				if (IsAdministrator)
 				{
-					if (user.PasswordHash.Equals(PasswordHash) == false)
+                    Customers? customer = context.Customers.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+
+                    if (customer != null)
+                    {
+                        if (customer.PasswordHash.Equals(PasswordHash))
+						{
+							response.PrimaryKey = customer.Id;
+						}
+						else
+						{
+							response.errorcode = ErrorCodes.errorInvalidPassword;
+						}
+                    }
+                    else
+                    {
+                        response.errorcode = ErrorCodes.errorInvalidUser;
+                    }
+                }
+
+                // from DIT Tool
+
+                else
+				{
+					Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+
+					if (user != null)
 					{
-						errorcode = ErrorCodes.errorInvalidPassword;
+						if (user.PasswordHash.Equals(PasswordHash))
+						{
+							response.PrimaryKey = user.Id;
+						}
+						else
+						{
+							response.errorcode = ErrorCodes.errorInvalidPassword;
+						}
+					}
+					else
+					{
+						response.errorcode = ErrorCodes.errorInvalidUser;
 					}
 				}
-				else
-				{
-					errorcode = ErrorCodes.errorInvalidUser;
-				}
-
 				context.Dispose();
 			}
 
-			return (int)errorcode;
+			return response;
 		}
 		public static async Task<BeginSessionResponse> BeginSession(BeginSessionRequest request)
 		{
@@ -149,7 +184,7 @@ namespace DataIntegrityTool.Services
 				{
 					TimeSpan duration = session.TimeEnd.Subtract(session.TimeBegin);
 
-					customer.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
+					user.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
 				}
 				else
 				{

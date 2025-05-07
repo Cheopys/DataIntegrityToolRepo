@@ -16,10 +16,11 @@ namespace DataIntegrityTool.Controllers
 	public class SessionController : ControllerBase
 	{
 		[HttpGet, Route("Login")]
-		public Int32 Login(string Email,
-						   string PasswordHash)
+		public LoginResponse Login(string Email,
+								   string PasswordHash,
+								   bool   IsAdministrator)
 		{
-			return SessionService.Login(Email, PasswordHash);
+			return SessionService.Login(Email, PasswordHash, IsAdministrator);
 		}
 
 		[HttpPut, Route("BeginSession")]

@@ -44,7 +44,7 @@ namespace DataIntegrityTool.Services
             {
                 Name         = request.Name,
                 Description  = request.Description,
-                EmailContact = request.EmailContact,
+                Email        = request.Email,
                 PasswordHash = request.PasswordHash,
                 Notes        = request.Notes,
                 AesKey       = request.AesKey,
@@ -55,7 +55,7 @@ namespace DataIntegrityTool.Services
             Users user = new Users()
             {
                 AesKey                   = request.AesKey,
-                Email                    = request.EmailContact,
+                Email                    = request.Email,
                 Name                     = request.Name,
                 PasswordHash             = request.PasswordHash,
                 DateAdded                = DateTime.UtcNow,

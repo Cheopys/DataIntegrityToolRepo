@@ -23,23 +23,17 @@ public class RegisterCustomerRequest
     public byte[] AesKey        { get; set; }
     public string Name          { get; set; }
     public string Description   { get; set; }
-    public string EmailContact  { get; set; }
+    public string Email         { get; set; }
     public string PasswordHash  { get; set; }
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
 }
-/*
-public class RegisterUserRequest
-{
-    public Int32 CompanyId          { get; set; }
-    public string Name              { get; set; }
-    public string Email             { get; set; }
-    public string PasswordHash      { get; set; }
-    public string? MFA              { get; set; }
-    public List<ToolTypes> Tools    { get; set; }
-    public byte[] aeskey            { get; set; }
+
+public class LoginResponse
+{ 
+    public Int32      PrimaryKey { get; set; }
+    public ErrorCodes errorcode  { get; set; }
 }
-*/
 public class BeginSessionRequest
 {
     public Int32        UserId      { get; set; }
