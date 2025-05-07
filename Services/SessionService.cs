@@ -111,12 +111,12 @@ namespace DataIntegrityTool.Services
 
                             LicenseMetered? metered = context.LicenseMetered.Where(lm => lm.UserId.Equals(request.UserId)).FirstOrDefault();
 
-							logger.Info($"user has {metered.Count} of license type 0");
-
 							if (metered != null
 							&&  metered.Count > 0)
 							{
-								metered.Count--;
+                                logger.Info($"user has {metered.Count} of license type 0");
+
+                                metered.Count--;
 
 								OK = true;
 							}
