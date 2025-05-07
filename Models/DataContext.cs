@@ -42,7 +42,7 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<LicenseMetered>   ().ToTable("LicenseMetered");
 			modelBuilder.Entity<LicenseInterval>  ().ToTable("LicenseInterval");
 			modelBuilder.Entity<Session>          ().ToTable("Session");
-            modelBuilder.Entity<SessionTransition>().ToTable("SessionTransition").HasNoKey();
+            modelBuilder.Entity<SessionTransition>().ToTable("SessionTransition");
             modelBuilder.Entity<Users>            ().ToTable("Users");
             modelBuilder.Entity<UserRegistration> ().ToTable("UserRegistration").HasNoKey();
             modelBuilder.Entity<ToolParameters>   ().ToTable("ToolParameters");
