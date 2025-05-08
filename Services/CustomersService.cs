@@ -83,6 +83,27 @@ namespace DataIntegrityTool.Services
             return customer.Id;
         }
 
+        public static void DeleteCustomer(Int32 CustomerId)
+        {
+            using (DataContext context = new())
+            {
+                Customers?   customer  = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
+                List<Users>   users    = context.Users    .Where(us => us.CustomerId.Equals(CustomerId)).ToList();
+                List<Session> sessions = context.Session  .Where(s  => s .CustomerId.Equals(CustomerId)).ToList();
+                List<LicenseInterval> licensesInterval = context.LicenseInterval.Where(li => li.CustomerId.Equals(CustomerId)).ToList();
+                List<LicenseMetered>  licensesetered   = context.LicenseMetered .Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
+
+                context.Remove     (customer);
+                context.RemoveRange(users);
+                context.RemoveRange(sessions);
+                context.RemoveRange(licensesetered);
+                context.RemoveRange(licensesInterval);
+
+                context.SaveChanges();
+                context.Dispose();
+            }
+        }
+
         public static async Task<List<Customers>> GetCustomers()
         {
             List<Customers> customers = null;

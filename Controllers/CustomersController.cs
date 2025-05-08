@@ -47,6 +47,12 @@ namespace DataIntegrityTool.Controllers
 			return CustomersService.RegisterCustomer(request);
 		}
 
+		[HttpDelete, Route("DeleteCustomer")]
+		public void DeleteCustomer(Int32 customerId)
+		{
+			CustomersService.DeleteCustomer(customerId);
+        }
+
 		[HttpGet, Route("GetCustomers")]
 		[Produces("application/json")]
 		public async Task<string> GetCustomers()
@@ -77,5 +83,11 @@ namespace DataIntegrityTool.Controllers
 		{
 			return CustomersService.AddNewUserTokens(registrations);
 		}
-	}
+
+		[HttpPut, Route("AllocateLicenses")]
+        public static AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
+		{
+			return CustomersService.AllocateLicenses(request);
+		}
+    }
 }

@@ -90,6 +90,26 @@ namespace DataIntegrityTool.Services
             return response;
         }
 
+
+        public static void DeleteUser(Int32 UserId)
+        {
+            using (DataContext context = new())
+            {
+                Users?        user     = context.Users.Where(us => us.Id.Equals(UserId)).FirstOrDefault();
+                List<Session> sessions = context.Session.Where(s => s.UserId.Equals(UserId)).ToList();
+                List<LicenseInterval> licensesInterval = context.LicenseInterval.Where(li => li.UserId.Equals(UserId)).ToList();
+                List<LicenseMetered>  licensesetered   = context.LicenseMetered .Where(lm => lm.CustomerId.Equals(UserId)).ToList();
+
+                context.Remove      (user);
+                context.RemoveRange(sessions);
+                context.RemoveRange(licensesetered);
+                context.RemoveRange(licensesInterval);
+
+                context.SaveChanges();
+                context.Dispose();
+            }
+        }
+
         public static async Task<List<Users>> GetUsers(Int32 CustomerId)
 		{
 			List<Users> Users;

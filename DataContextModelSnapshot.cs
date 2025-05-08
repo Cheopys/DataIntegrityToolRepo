@@ -151,6 +151,12 @@ namespace DataIntegrityTool.Migrations
 
             modelBuilder.Entity("DataIntegrityTool.Schema.SessionTransition", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -165,6 +171,8 @@ namespace DataIntegrityTool.Migrations
 
                     b.Property<int>("SessionId")
                         .HasColumnType("integer");
+
+                    b.HasKey("Id");
 
                     b.ToTable("SessionTransition", (string)null);
                 });
