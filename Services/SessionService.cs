@@ -157,10 +157,10 @@ namespace DataIntegrityTool.Services
 						{
 							Session session = new()
 							{
-								UserId = request.UserId,
+								UserId		= request.UserId,
 								Licensetype = request.Licensetype,
-								ToolType = request.Tooltype,
-								TimeBegin = DateTime.UtcNow
+								ToolType	= request.Tooltype,
+								TimeBegin	= DateTime.UtcNow
 							};
 
 							context.Session.Add(session);
@@ -170,8 +170,13 @@ namespace DataIntegrityTool.Services
 							response.SessionId = session.Id;
 
 							SessionTransition(session.Id,
-											  0,
+											  user.Id,
+											  user.CustomerId,
+											  request.Licensetype,
+											  request.Tooltype,
+											  0, 
 											  0);
+
 						}
 					}
 					else
@@ -192,9 +197,9 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				Session?	session		= context.Session  .Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
+				Session?	session		= context.Session  .Where(se => se.Id.Equals(sessionId))		 .FirstOrDefault();
 				Customers?  customer	= context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
-				Users?		user		= context.Users    .Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
+				Users?		user		= context.Users    .Where(us => us.Id.Equals(session.UserId))	 .FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
 
@@ -203,9 +208,6 @@ namespace DataIntegrityTool.Services
 					TimeSpan duration = session.TimeEnd.Subtract(session.TimeBegin);
 
 					user.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
-				}
-				else
-				{
 				}
 
 				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.DateTime).ToList();
@@ -249,6 +251,10 @@ namespace DataIntegrityTool.Services
         }
 */
 		public static void SessionTransition(Int32 sessionId,
+											 Int32 UserId,
+											 Int32 CustomerId,
+											 LicenseTypes	Licensetype,
+											 ToolTypes		ToolType,
 											 Int16 Frame,
 											 Int16 Layer,
 											 ErrorCodes Error = ErrorCodes.errorNone)
@@ -258,6 +264,10 @@ namespace DataIntegrityTool.Services
 				context.SessionTransition.Add(new SessionTransition()
 				{
 					SessionId	 = sessionId,
+					UserId		 = UserId,
+					CustomerId   = CustomerId,
+					Licensetype  = Licensetype,
+					ToolType	 = ToolType,
 					DateTime     = DateTime.UtcNow,
 					FrameOrdinal = Frame,
 					LayerOrdinal = Layer,

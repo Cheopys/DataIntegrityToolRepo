@@ -50,12 +50,16 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("SessionTransition")]
 		[Produces("application/json")]
-		public void SessionTransition(Int32		 SessionId,
-									  Int16		 Frame,
-									  Int16		 Layer,
+		public void SessionTransition(Int32			SessionId,
+									  Int32			UserId,
+									  Int32			CustomerId,
+									  LicenseTypes	Licensetype,
+									  ToolTypes		ToolType,
+									  Int16			Frame,
+									  Int16			Layer,
 									  ErrorCodes Error = ErrorCodes.errorNone)
 		{
-			SessionService.SessionTransition(SessionId, Frame, Layer, Error);
+			SessionService.SessionTransition(SessionId,  UserId, CustomerId, Licensetype,ToolType, Frame, Layer, Error);
 		}
     }
 }
