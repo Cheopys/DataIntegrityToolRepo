@@ -170,10 +170,6 @@ namespace DataIntegrityTool.Services
 							response.SessionId = session.Id;
 
 							SessionTransition(session.Id,
-											  user.Id,
-											  user.CustomerId,
-											  request.Licensetype,
-											  request.Tooltype,
 											  0, 
 											  0);
 
@@ -251,10 +247,6 @@ namespace DataIntegrityTool.Services
         }
 */
 		public static void SessionTransition(Int32 sessionId,
-											 Int32 UserId,
-											 Int32 CustomerId,
-											 LicenseTypes	Licensetype,
-											 ToolTypes		ToolType,
 											 Int16 Frame,
 											 Int16 Layer,
 											 ErrorCodes Error = ErrorCodes.errorNone)
@@ -264,10 +256,6 @@ namespace DataIntegrityTool.Services
 				context.SessionTransition.Add(new SessionTransition()
 				{
 					SessionId	 = sessionId,
-					UserId		 = UserId,
-					CustomerId   = CustomerId,
-					Licensetype  = Licensetype,
-					ToolType	 = ToolType,
 					DateTime     = DateTime.UtcNow,
 					FrameOrdinal = Frame,
 					LayerOrdinal = Layer,
