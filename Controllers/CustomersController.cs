@@ -85,7 +85,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("AllocateLicenses")]
-        public static AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
+        public AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
 		{
 			return CustomersService.AllocateLicenses(request);
 		}

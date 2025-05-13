@@ -20,6 +20,7 @@ namespace DataIntegrityTool.Controllers
 								   string PasswordHash,
 								   bool   IsAdministrator)
 		{
+			Program.IsAdmin = IsAdministrator;
 			return SessionService.Login(Email, PasswordHash, IsAdministrator);
 		}
 

@@ -31,8 +31,9 @@ public class RegisterCustomerRequest
 
 public class LoginResponse
 { 
-    public Int32      PrimaryKey { get; set; }
-    public ErrorCodes errorcode  { get; set; }
+    public Int32      Identifier    { get; set; }
+    public ErrorCodes errorcode     { get; set; }
+    public Int32      CustOrUserID  { get; set; }
 }
 public class BeginSessionRequest
 {
