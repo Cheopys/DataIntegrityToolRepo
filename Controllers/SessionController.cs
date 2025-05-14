@@ -43,7 +43,7 @@ namespace DataIntegrityTool.Controllers
 		[Produces("application/json")]
 		public async Task<string> EndSession(Int32 sessionId)
 		{
-			List<SessionTransition> transitions = await SessionService.EndSession(sessionId);
+			List<EndSessionResponse> transitions = await SessionService.EndSession(sessionId);
 
 			return JsonSerializer.Serialize(transitions);
 		}

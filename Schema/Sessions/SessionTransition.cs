@@ -8,7 +8,7 @@ namespace DataIntegrityTool.Schema
     {   
         public Int32        Id          { get; set; }  
         public Int32       SessionId    { get; set; }
-		public DateTime    DateTime      { get; set; }
+		public DateTime    TimeBegin      { get; set; }
         public Int32       FrameOrdinal  { get; set; }
         public Int32       LayerOrdinal  { get; set; }
         public ErrorCodes  ErrorCode     { get; set; } = ErrorCodes.errorNone;

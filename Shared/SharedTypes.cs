@@ -50,6 +50,15 @@ public class  BeginSessionResponse
 	public ErrorCodes Error       { get; set; }
 }
 
+public class EndSessionResponse
+{
+	public Int32      SessionId     { get; set; }
+	public DateTime   TimeBegin     { get; set; }
+	public Int32      FrameOrdinal  { get; set; }
+	public Int32      LayerOrdinal  { get; set; }
+	public ErrorCodes ErrorCode     { get; set; } = ErrorCodes.errorNone;
+}
+
 public class UserLicenseAllocation
 {
     public Int32 UserId { get; set; }

@@ -182,15 +182,15 @@ namespace DataIntegrityTool.Services
 			return response;
 		}
 
-		public static async Task<List<SessionTransition>> EndSession(Int32 sessionId)
+		public static async Task<List<EndSessionResponse>> EndSession(Int32 sessionId)
 		{
 			List<SessionTransition> transitions = new();
 
 			using (DataContext context = new())
 			{
-				Session?	session		= context.Session  .Where(se => se.Id.Equals(sessionId))		 .FirstOrDefault();
-				Customers?  customer	= context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
-				Users?		user		= context.Users    .Where(us => us.Id.Equals(session.UserId))	 .FirstOrDefault();
+				Session? session = context.Session.Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
+				Customers? customer = context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
+				Users? user = context.Users.Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
 
@@ -205,13 +205,27 @@ namespace DataIntegrityTool.Services
 					user.LicensingMeteredCount--;
 				}
 
-					transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.DateTime).ToList();
+				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.TimeBegin).ToList();
 
 				context.SaveChanges();
 				context.Dispose();
 			}
 
-			return transitions;
+			List<EndSessionResponse> response = new();
+
+			foreach (SessionTransition transition in transitions)
+			{
+				response.Add(new EndSessionResponse()
+				{
+					SessionId		= transition.SessionId,
+					TimeBegin		= transition.TimeBegin,
+					FrameOrdinal	= transition.FrameOrdinal,
+					LayerOrdinal	= transition.LayerOrdinal,
+					ErrorCode		= transition.ErrorCode
+				});
+			};
+
+			return response;
 		}
 /*
 		private static string CSVPath(Int32 sessionId)
@@ -255,7 +269,7 @@ namespace DataIntegrityTool.Services
 				context.SessionTransition.Add(new SessionTransition()
 				{
 					SessionId	 = sessionId,
-					DateTime     = DateTime.UtcNow,
+					TimeBegin     = DateTime.UtcNow,
 					FrameOrdinal = Frame,
 					LayerOrdinal = Layer,
 					ErrorCode	 = Error
