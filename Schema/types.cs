@@ -2,9 +2,10 @@
 
 public enum CustomerOrUser
 {
-	typeDIT       = 0,
-	typeCustomer  = 1,
-	typeUser      = 2
+	typeUndefined = 0,
+	typeDIT       = 1,
+	typeCustomer  = 2,
+	typeUser      = 3
 }
 public enum LicenseTypes
 {

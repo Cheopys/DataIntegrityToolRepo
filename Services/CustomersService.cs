@@ -227,5 +227,37 @@ namespace DataIntegrityTool.Services
 
             return errorcode;
         }
+
+        public static CustomerOrUser CheckEmail(string Email)
+        {
+			CustomerOrUser type = CustomerOrUser.typeUser;
+			
+            using (DataContext context = new())
+            {
+                Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+
+                if (customer != null)
+                {
+                    type = customer.Id == 4 ? CustomerOrUser.typeDIT : CustomerOrUser.typeCustomer;
+                }
+                else
+                {
+                    Users? user = context.Users.Where(cu => cu.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        type = CustomerOrUser.typeCustomer;
+                    }
+                    else
+                    {
+                        type = CustomerOrUser.typeUndefined;
+                    }
+                }
+
+                context.Dispose();
+            }
+
+            return type;
+        }
     }
 }

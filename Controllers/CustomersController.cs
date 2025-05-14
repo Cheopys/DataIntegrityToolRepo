@@ -89,5 +89,11 @@ namespace DataIntegrityTool.Controllers
 		{
 			return CustomersService.AllocateLicenses(request);
 		}
+
+		[HttpGet, Route("CheckEmail")]
+		public CustomerOrUser CheckEmail(string Email)
+		{
+			return CustomersService.CheckEmail(Email);
+		}
     }
 }
