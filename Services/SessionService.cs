@@ -98,92 +98,87 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
+				Users? user = context.Users.Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
+
+				response.RemainingSeconds = user.LicensingIntervalSeconds;
+				response.RemainingMetered = user.LicensingMeteredCount;
+
+				if (user != null)
 				{
-					Users? user = context.Users.Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
-					
-					if (user != null)
+					logger.Info($"userId = {user.Id}");
+
+					if (user.Tools.Contains(request.Tooltype))
 					{
-						logger.Info($"userId = {user.Id}");
-
-						if (user.Tools.Contains(request.Tooltype))
+						if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
 						{
-							if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
+							logger.Info("LicenseType.Metered");
+
+
+							if (user.LicensingMeteredCount > 0)
 							{
-								logger.Info("LicenseType.Metered");
+								logger.Info($"user has {user.LicensingMeteredCount} of license type 0");
 
-								response.RemainingSeconds = null;
-
-								if (user.LicensingMeteredCount > 0)
-								{
-									logger.Info($"user has {user.LicensingMeteredCount} of license type 0");
-
-									user.LicensingMeteredCount--;
-
-									OK = true;
-								}
-								else
-								{
-									response.Error = ErrorCodes.errorNoLicense;
-								}
-
-								await context.SaveChangesAsync();
-							} // end metered
+								OK = true;
+							}
 							else
 							{
-								logger.Info("LicenseType.Interval");
-
-								response.RemainingMetered = null;
-
-								Int32 remainingSeconds	= context.Users.Where(cu => cu.Id.Equals(request.UserId)).Select(cu => cu.LicensingIntervalSeconds).FirstOrDefault();
-								Int32 minimumInterval	= context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
-
-								logger.Info($"Remaining Seconds = {remainingSeconds}");
-
-								if (minimumInterval < remainingSeconds)
-								{
-									response.RemainingSeconds = remainingSeconds;
-									OK = true;
-								}
-								else
-								{
-									response.Error = ErrorCodes.errorNoLicense;
-								}
-							} // end interval
-						}
-						else
-						{
-							response.Error = ErrorCodes.errorToolNotAuthorized;
-						}
-
-						if (OK)
-						{
-							Session session = new()
-							{
-								UserId		= request.UserId,
-								Licensetype = request.Licensetype,
-								ToolType	= request.Tooltype,
-								TimeBegin	= DateTime.UtcNow
-							};
-
-							context.Session.Add(session);
+								response.Error = ErrorCodes.errorNoLicense;
+							}
 
 							await context.SaveChangesAsync();
+						} // end metered
+						else
+						{
+							logger.Info("LicenseType.Interval");
 
-							response.SessionId = session.Id;
+							response.RemainingMetered = null;
 
-							SessionTransition(session.Id,
-											  0, 
-											  0);
+							Int32 minimumInterval	= context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
 
-						}
+							logger.Info($"Remaining Seconds = {response.RemainingSeconds}");
+
+							if (minimumInterval < response.RemainingSeconds)
+							{
+								OK = true;
+							}
+							else
+							{
+								response.Error = ErrorCodes.errorNoLicense;
+							}
+						} // end interval
 					}
 					else
 					{
-						response.Error = ErrorCodes.errorInvalidUser;
+						response.Error = ErrorCodes.errorToolNotAuthorized;
 					}
 
-					await context.DisposeAsync();
+					if (OK)
+					{
+						Session session = new()
+						{
+							UserId		= request.UserId,
+							Licensetype = request.Licensetype,
+							ToolType	= request.Tooltype,
+							TimeBegin	= DateTime.UtcNow
+						};
+
+						context.Session.Add(session);
+
+						await context.SaveChangesAsync();
+
+						response.SessionId = session.Id;
+
+						SessionTransition(session.Id,
+											0, 
+											0);
+					}
 				}
+				else
+				{
+					response.Error = ErrorCodes.errorInvalidUser;
+				}
+
+				await context.DisposeAsync();
 			}
 
 			return response;
@@ -207,8 +202,12 @@ namespace DataIntegrityTool.Services
 
 					user.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
 				}
+				else
+				{
+					user.LicensingMeteredCount--;
+				}
 
-				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.DateTime).ToList();
+					transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.DateTime).ToList();
 
 				context.SaveChanges();
 				context.Dispose();
@@ -268,33 +267,5 @@ namespace DataIntegrityTool.Services
 				context.Dispose();
 			}
 		}
-
-		public static bool MeteredRemaining(Int32 userId)
-		{
-			bool any = true;
-
-			using (DataContext context = new())
-			{
-				any = context.Users.Where(us => us.Id.Equals(userId)).Select(us => us.LicensingMeteredCount).FirstOrDefault() > 0;
-
-				context.Dispose();
-			}
-
-			return any;
-		}
-
-        public static Int32 IntervalRemaining(Int32 userId)
-        {
-			Int32 seconds = 0;
-
-            using (DataContext context = new())
-            {
-                seconds = context.Users.Where(us => us.Id.Equals(userId)) .Select(us => us.LicensingIntervalSeconds).FirstOrDefault();
-
-				context.Dispose();
-            }
-
-            return seconds;
-        }
     } // end class
 } // end namespace
