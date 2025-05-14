@@ -189,7 +189,13 @@ namespace DataIntegrityTool.Services
 			using (DataContext context = new())
 			{
 				Session?	session		= context.Session  .Where(se => se.Id.Equals(sessionId))		 .FirstOrDefault();
+
+				logger.Info($"sessionId = {sessionId}, session = {session}");
+
 				Customers?  customer	= context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
+
+				logger.Info($"customer = {customer}");
+
 				Users?		user		= context.Users    .Where(us => us.Id.Equals(session.UserId))	 .FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
