@@ -111,6 +111,8 @@ namespace DataIntegrityTool.Services
 							{
 								logger.Info("LicenseType.Metered");
 
+								response.RemainingSeconds = null;
+
 								if (user.LicensingMeteredCount > 0)
 								{
 									logger.Info($"user has {user.LicensingMeteredCount} of license type 0");
@@ -130,14 +132,14 @@ namespace DataIntegrityTool.Services
 							{
 								logger.Info("LicenseType.Interval");
 
-								Int32 seconds			= SessionService.IntervalRemaining(request.UserId);
+								response.RemainingMetered = null;
+
 								Int32 remainingSeconds	= context.Users.Where(cu => cu.Id.Equals(request.UserId)).Select(cu => cu.LicensingIntervalSeconds).FirstOrDefault();
 								Int32 minimumInterval	= context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
 
 								logger.Info($"Remaining Seconds = {remainingSeconds}");
 
-								if (seconds > minimumInterval
-								&&  seconds < remainingSeconds)
+								if (minimumInterval < remainingSeconds)
 								{
 									response.RemainingSeconds = remainingSeconds;
 									OK = true;

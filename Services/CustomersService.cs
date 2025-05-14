@@ -238,7 +238,7 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 {
-                    type = customer.Id == 4 ? CustomerOrUser.typeDIT : CustomerOrUser.typeCustomer;
+                    type = (customer.Id == 4) ? CustomerOrUser.typeDIT : CustomerOrUser.typeCustomer;
                 }
                 else
                 {
