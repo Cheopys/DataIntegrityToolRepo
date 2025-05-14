@@ -131,8 +131,6 @@ namespace DataIntegrityTool.Services
 						{
 							logger.Info("LicenseType.Interval");
 
-							response.RemainingMetered = null;
-
 							Int32 minimumInterval	= context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
 
 							logger.Info($"Remaining Seconds = {response.RemainingSeconds}");
