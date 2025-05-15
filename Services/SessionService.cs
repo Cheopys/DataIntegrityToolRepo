@@ -113,7 +113,6 @@ namespace DataIntegrityTool.Services
 						{
 							logger.Info("LicenseType.Metered");
 
-
 							if (user.LicensingMeteredCount > 0)
 							{
 								logger.Info($"user has {user.LicensingMeteredCount} of license type 0");
@@ -165,10 +164,6 @@ namespace DataIntegrityTool.Services
 						await context.SaveChangesAsync();
 
 						response.SessionId = session.Id;
-
-						SessionTransition(session.Id,
-											0, 
-											0);
 					}
 				}
 				else
