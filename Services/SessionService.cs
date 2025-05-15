@@ -266,13 +266,26 @@ namespace DataIntegrityTool.Services
 		{	
 			using (DataContext context = new())
 			{
+				Session? session = context.Session.Where(se => se.Id == sessionId).FirstOrDefault();
+				Users?   users   = context.Users  .Where(us => us.Id == session.UserId).FirstOrDefault();
+
+				if (session.Licensetype == LicenseTypes.licenseTypeMetered)
+				{
+					users.LicensingMeteredCount--;					
+				}
+				else
+				{
+					//TBD
+					// TimeSpan span = DateTime.Now = 
+				}
+
 				context.SessionTransition.Add(new SessionTransition()
 				{
-					SessionId	 = sessionId,
-					TimeBegin     = DateTime.UtcNow,
+					SessionId = sessionId,
+					TimeBegin = DateTime.UtcNow,
 					FrameOrdinal = Frame,
 					LayerOrdinal = Layer,
-					ErrorCode	 = Error
+					ErrorCode = Error
 				});
 
 				context.SaveChanges();
