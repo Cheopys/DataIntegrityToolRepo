@@ -197,7 +197,6 @@ namespace DataIntegrityTool.Services
 				}
 				else
 				{
-					user.LicensingMeteredCount--;
 				}
 
 				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.TimeBegin).ToList();
