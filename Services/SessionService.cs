@@ -156,7 +156,8 @@ namespace DataIntegrityTool.Services
 							UserId		= request.UserId,
 							Licensetype = request.Licensetype,
 							ToolType	= request.Tooltype,
-							TimeBegin	= DateTime.UtcNow
+							TimeBegin	= DateTime.UtcNow,
+							TimeEnd		= DateTime.UtcNow
 						};
 
 						context.Session.Add(session);
@@ -269,17 +270,28 @@ namespace DataIntegrityTool.Services
 				}
 				else
 				{
-					//TBD
-					// TimeSpan span = DateTime.Now = 
+					SessionTransition? transition = context.SessionTransition.Where(st => st.Id.Equals(sessionId)).LastOrDefault();
+					TimeSpan		   timespan;
+
+					if (transition != null)
+					{
+						timespan = DateTime.Now - transition.TimeBegin;
+					}
+					else
+					{
+						timespan = DateTime.Now - session.TimeBegin;
+					}
+
+					users.LicensingIntervalSeconds -= (int) timespan.TotalSeconds;
 				}
 
 				context.SessionTransition.Add(new SessionTransition()
 				{
-					SessionId = sessionId,
-					TimeBegin = DateTime.UtcNow,
-					FrameOrdinal = Frame,
-					LayerOrdinal = Layer,
-					ErrorCode = Error
+					SessionId		= sessionId,
+					TimeBegin		= DateTime.UtcNow,
+					FrameOrdinal	= Frame,
+					LayerOrdinal	= Layer,
+					ErrorCode		= Error
 				});
 
 				context.SaveChanges();
