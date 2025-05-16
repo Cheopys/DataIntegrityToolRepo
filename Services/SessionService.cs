@@ -270,7 +270,7 @@ namespace DataIntegrityTool.Services
 				}
 				else
 				{
-					SessionTransition? transition = context.SessionTransition.Where(st => st.Id.Equals(sessionId)).LastOrDefault();
+					SessionTransition? transition = context.SessionTransition.Where(st => st.Id.Equals(sessionId)).OrderBy(st => st.Id).LastOrDefault();
 					TimeSpan		   timespan;
 
 					if (transition != null)
