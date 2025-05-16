@@ -15,8 +15,9 @@ namespace DataIntegrityTool.Schema
         public string   PasswordHash            { get; set; }
         public DateTime DateAdded               { get; set; }
         public string   Notes                   { get; set; }
-        public List<ToolTypes>? Tools            { get; set; }
+        public List<ToolTypes>? Tools           { get; set; }
         public byte[]   AesKey                  { get; set; }
         public DateTime UsageSince              { get; set; } = DateTime.MinValue;
+        public DateTime SubscriptionEnd         { get; set; }
     }
 }

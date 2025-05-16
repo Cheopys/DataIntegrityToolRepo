@@ -1,22 +1,24 @@
-﻿using System.Drawing;
-using System.Globalization;
-using System.Net;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text.Json;
-using Amazon.Runtime.Internal;
+﻿using Amazon.Runtime.Internal;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using Humanizer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NLog;
 using NLog.LayoutRenderers;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 using NuGet.Packaging;
 using NuGet.Versioning;
+using System.Drawing;
+using System.Globalization;
+using System.Net;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace DataIntegrityTool.Services
 {
@@ -38,52 +40,82 @@ namespace DataIntegrityTool.Services
             logger = LogManager.GetCurrentClassLogger();
         }
 
-        public static Int32 RegisterCustomer(RegisterCustomerRequest request)
+		public static Int32 RegisterCustomer(RegisterCustomerRequest request)
+		{
+			Customers customer = new Customers()
+			{
+				Name        = request.Name,
+				Description = request.Description,
+				Email       = request.Email,
+				PasswordHash = request.PasswordHash,
+				Notes        = request.Notes,
+				AesKey       = request.AesKey,
+				DateAdded    = DateTime.UtcNow,
+				UsageSince   = DateTime.MinValue,
+			};
+
+			Users user = new Users()
+			{
+				AesKey                  = request.AesKey,
+				Email                   = request.Email,
+				Name                     = request.Name,
+				PasswordHash             = request.PasswordHash,
+				DateAdded                = DateTime.UtcNow,
+				LicensingIntervalSeconds = 0,
+				LicensingMeteredCount    = 0,
+				Tools                    = request.Tools,
+			};
+
+			using (DataContext context = new())
+			{
+				context.Customers.Add(customer);
+
+				context.SaveChanges();
+
+				user.CustomerId = customer.Id;
+
+				context.Users.Add(user);
+
+				context.SaveChanges();
+				context.Dispose();
+			}
+
+			return customer.Id;
+		}
+
+        public static Customers GetCustomer (Int32 CustomerId)
         {
-            Customers customer = new Customers()
+			Customers? customer = null;
+
+			using (DataContext context = new())
             {
-                Name         = request.Name,
-                Description  = request.Description,
-                Email        = request.Email,
-                PasswordHash = request.PasswordHash,
-                Notes        = request.Notes,
-                AesKey       = request.AesKey,
-                DateAdded    = DateTime.UtcNow,
-                UsageSince   = DateTime.MinValue,
-            };
+                customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
 
-            Users user = new Users()
-            {
-                AesKey                   = request.AesKey,
-                Email                    = request.Email,
-                Name                     = request.Name,
-                PasswordHash             = request.PasswordHash,
-                DateAdded                = DateTime.UtcNow,
-                LicensingIntervalSeconds = 0,
-                LicensingMeteredCount    = 0,
-                Tools                    = request.Tools,
-            };
-
-            using (DataContext context = new())
-            {
-                context.Customers.Add(customer);
-
-                context.SaveChanges();
-
-                user.CustomerId = customer.Id;
-
-                context.Users.Add(user);
-
-                context.SaveChanges();
-
-                context.SaveChanges();
                 context.Dispose();
             }
 
-            return customer.Id;
+            return customer;
         }
 
-        public static void DeleteCustomer(Int32 CustomerId)
+		public static void UpdateCustomer(UpdateCustomerRequest request)
+		{
+			using (DataContext context = new())
+			{
+                Customers customer = context.Customers.Where(cu => cu.Id.Equals(request.Id)).FirstOrDefault();
+
+                customer.Name         = request.Name;
+                customer.Description  = request.Description;
+                customer.Email        = request.Email;
+                customer.PasswordHash = request.PasswordHash;
+                customer.Notes        = request.Notes;
+
+				context.SaveChanges();
+
+				context.Dispose();
+			}
+		}
+
+		public static void DeleteCustomer(Int32 CustomerId)
         {
             using (DataContext context = new())
             {

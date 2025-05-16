@@ -126,17 +126,15 @@ namespace DataIntegrityTool.Services
 
 							await context.SaveChangesAsync();
 						} // end metered
-						else
+						else if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
 						{
-							logger.Info("LicenseType.Interval");
+							logger.Info("LicenseType.Subscription");
 
-							Int32 minimumInterval	= context.ToolParameters.Select(tp => tp.MinimumInterval).FirstOrDefault();
+							DateTime expiration = context.Customers.Where(cs => cs.Id.Equals(user.CustomerId)).Select(cs => cs.SubscriptionEnd).FirstOrDefault();
 
-							logger.Info($"Remaining Seconds = {response.RemainingSeconds}");
-
-							if (minimumInterval < response.RemainingSeconds)
+							if (expiration < DateTime.Now)
 							{
-								OK = true;
+								OK = true; 
 							}
 							else
 							{
@@ -195,9 +193,6 @@ namespace DataIntegrityTool.Services
 					TimeSpan duration = session.TimeEnd.Subtract(session.TimeBegin);
 
 					user.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
-				}
-				else
-				{
 				}
 
 				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.TimeBegin).ToList();

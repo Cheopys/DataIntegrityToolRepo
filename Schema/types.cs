@@ -11,6 +11,7 @@ public enum LicenseTypes
 {
 	licenseTypeMetered,
 	licenseTypeInterval,
+	licenseTypeSubscription
 }
 
 public enum ToolTypes
