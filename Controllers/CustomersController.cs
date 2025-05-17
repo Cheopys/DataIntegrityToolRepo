@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Amazon.Runtime.Internal;
 using NLog;
 using System.Runtime.Intrinsics.Arm;
+using DataIntegrityTool.Db;
 
 /*
 	This controller is for use of DIT 
@@ -45,6 +46,27 @@ namespace DataIntegrityTool.Controllers
             RegisterCustomerRequest? request = JsonSerializer.Deserialize<RegisterCustomerRequest>(decrypted);
             
 			return CustomersService.RegisterCustomer(request);
+		}
+
+		[HttpGet, Route("GetCustomer")]
+		[Produces("application/json")]
+		public async Task<string> GetCustomer(Int32  CustomerId, Int32 UserId)
+		{
+			Customers? customer = CustomersService.GetCustomer(CustomerId);
+
+			string customerJSON = JsonSerializer.Serialize(customer);
+
+			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
+
+			EncryptionWrapperDIT wrapper = new()
+			{
+				type			= CustomerOrUser.typeUser,
+				primaryKey		= UserId,
+				aesIV			= aesDIT.IV,
+				encryptedData	= customerJSON
+			};
+
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customer);
 		}
 
 		[HttpDelete, Route("DeleteCustomer")]
