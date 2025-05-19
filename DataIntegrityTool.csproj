@@ -11,22 +11,18 @@
     <Compile Remove="Localizations\**" />
     <Compile Remove="LocalizeStrings\**" />
     <Compile Remove="Migrations - Copy\**" />
-    <Compile Remove="Migrations\**" />
     <Content Remove="FromUnity\**" />
     <Content Remove="Localizations\**" />
     <Content Remove="LocalizeStrings\**" />
     <Content Remove="Migrations - Copy\**" />
-    <Content Remove="Migrations\**" />
     <EmbeddedResource Remove="FromUnity\**" />
     <EmbeddedResource Remove="Localizations\**" />
     <EmbeddedResource Remove="LocalizeStrings\**" />
     <EmbeddedResource Remove="Migrations - Copy\**" />
-    <EmbeddedResource Remove="Migrations\**" />
     <None Remove="FromUnity\**" />
     <None Remove="Localizations\**" />
     <None Remove="LocalizeStrings\**" />
     <None Remove="Migrations - Copy\**" />
-    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +30,6 @@
     <Compile Remove="20250406171913_Initial.Designer.cs" />
     <Compile Remove="20250426182839_ditaes.cs" />
     <Compile Remove="Controllers\PrivateChatController.cs" />
-    <Compile Remove="Controllers\TestController.cs" />
     <Compile Remove="Services\PrivateChatService.cs" />
     <Compile Remove="Services\PushNotificationService.cs" />
     <Compile Remove="Services\ToolCryptographyService.cs" />
@@ -80,6 +75,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="Tests\Requests\" />
     <Folder Include="Tests\Services\" />
   </ItemGroup>
