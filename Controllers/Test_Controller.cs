@@ -18,12 +18,30 @@ namespace DataIntegrityTool.Controllers
 
 	public class Test_Controller : ControllerBase
 	{
+		static Logger logger;
+		public Test_Controller()
+		{
+			var config = new NLog.Config.LoggingConfiguration();
+
+			// Targets where to log to: File and Console
+			var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
+
+			// Rules for mapping loggers to targets            
+			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
+
+			// Apply config           
+			LogManager.Configuration = config;
+			logger = LogManager.GetCurrentClassLogger();
+		}
+
 		[HttpPut, Route("RegisterCustomer_Raw")]
 		public async Task<RegisterCustomerResponse> RegisterCustomer_Raw()
 		{
 			RegisterCustomerResponse response;
 
 			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
+
+			logger.Info($"AES key size is {aeskey.Key.Length}");
 
 			RegisterCustomerRequest request = new()
 			{
