@@ -19,8 +19,6 @@ namespace DataIntegrityTool.Controllers
 
 	public class TestController : ControllerBase
 	{
-		
-
 		[HttpPut, Route("RegisterCustomer_Raw")]
 		public async Task<Int32> RegisterCustomer_Raw(RegisterCustomerRequest request)
 		{

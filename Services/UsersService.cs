@@ -110,7 +110,21 @@ namespace DataIntegrityTool.Services
             }
         }
 
-        public static async Task<List<Users>> GetUsers(Int32 CustomerId)
+		public static Users GetUser(Int32 UserId)
+		{
+			Users? user = null;
+
+			using (DataContext context = new())
+			{
+				user = context.Users.Where(cu => cu.Id.Equals(UserId)).FirstOrDefault();
+
+				context.Dispose();
+			}
+
+			return user;
+		}
+
+		public static async Task<List<Users>> GetUsers(Int32 CustomerId)
 		{
 			List<Users> Users;
 

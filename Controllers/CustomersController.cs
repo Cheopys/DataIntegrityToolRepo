@@ -49,7 +49,6 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("GetCustomer")]
-		[Produces("application/json")]
 		public async Task<string> GetCustomer(Int32  CustomerId, Int32 UserId)
 		{
 			Customers? customer = CustomersService.GetCustomer(CustomerId);
@@ -60,7 +59,7 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				type			= CustomerOrUser.typeUser,
+				type			= CustomerOrUser.typeUser, // query comes from the tools, therefore user
 				primaryKey		= UserId,
 				aesIV			= aesDIT.IV,
 				encryptedData	= customerJSON

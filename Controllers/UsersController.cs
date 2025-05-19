@@ -47,7 +47,27 @@ namespace DataIntegrityTool.Controllers
 
             return UsersService.RegisterUser(request);
         }
-        
+
+		[HttpGet, Route("GetUser")]
+		public async Task<string> GetUser(Int32 UserId)
+		{
+			Users? user = UsersService.GetUser(UserId);
+
+			string userJSON = JsonSerializer.Serialize(user);
+
+			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
+
+			EncryptionWrapperDIT wrapper = new()
+			{
+				type = CustomerOrUser.typeUser,
+				primaryKey = UserId,
+				aesIV = aesDIT.IV,
+				encryptedData = userJSON
+			};
+
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
+		}
+
 		[HttpGet, Route("GetUsers")]
 		[Produces("application/json")]
 		public async Task<string> GetUsers(Int32 CustomerId)
