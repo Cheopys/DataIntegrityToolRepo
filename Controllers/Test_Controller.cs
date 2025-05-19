@@ -77,12 +77,24 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(users);
 		}
 
+		class TestReq
+		{
+			public Int32  CustomerId { get; set; }
+			public byte[] Key		 { get; set; }
+		};
+
 		[HttpPut, Route("GetAESKeySize")]
 		public string GetAESKeySize()
 		{
 			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
 
-			return $"AES key size is {aeskey.Key.Length}";
+			TestReq tr = new()
+			{
+				CustomerId = 12,
+				Key = aeskey.Key
+			};
+
+			return $"AES key size is {aeskey.Key.Length}; request key size is { tr.Key.Length }";
 		}
 	}
 }
