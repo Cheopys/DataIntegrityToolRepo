@@ -27,7 +27,7 @@ namespace DataIntegrityTool.Controllers
 			var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
 
 			// Rules for mapping loggers to targets            
-			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
+			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Info, logconsole);
 
 			// Apply config           
 			LogManager.Configuration = config;
@@ -41,7 +41,7 @@ namespace DataIntegrityTool.Controllers
 
 			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
 
-			logger.Info($"AES key size is {aeskey.Key.Length}");
+			logger.Info($"AES key size is {aeskey.Key.Length	}");
 
 			RegisterCustomerRequest request = new()
 			{
