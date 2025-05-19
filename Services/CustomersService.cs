@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using CloudinaryDotNet.Actions;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
@@ -40,61 +41,75 @@ namespace DataIntegrityTool.Services
             logger = LogManager.GetCurrentClassLogger();
         }
 
-		public static Int32 RegisterCustomer(RegisterCustomerRequest request)
+		public static RegisterCustomerResponse RegisterCustomer(RegisterCustomerRequest request)
 		{
-			Customers customer = new Customers()
-			{
-				Name        = request.Name,
-				Description = request.Description,
-				Email       = request.Email,
-				PasswordHash = request.PasswordHash,
-				Notes        = request.Notes,
-				AesKey       = request.AesKey,
-				DateAdded    = DateTime.UtcNow,
-				UsageSince   = DateTime.MinValue,
-			};
-
-			Users user = new Users()
-			{
-				AesKey                  = request.AesKey,
-				Email                   = request.Email,
-				Name                     = request.Name,
-				PasswordHash             = request.PasswordHash,
-				DateAdded                = DateTime.UtcNow,
-				LicensingIntervalSeconds = 0,
-				LicensingMeteredCount    = 0,
-				Tools                    = request.Tools,
-			};
-
-			using (DataContext context = new())
-			{
-				context.Customers.Add(customer);
-
-				context.SaveChanges();
-
-				user.CustomerId = customer.Id;
-
-				context.Users.Add(user);
-
-				context.SaveChanges();
-				context.Dispose();
-			}
-
-			return customer.Id;
-		}
-
-        public static Customers GetCustomer (Int32 CustomerId)
-        {
-			Customers? customer = null;
-
-			using (DataContext context = new())
+            RegisterCustomerResponse response = new()
             {
-                customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
+                ErrorCode = ErrorCodes.errorNone
+            };
 
-                context.Dispose();
+            if (request.AesKey.Length != 32)
+			{
+			    Customers customer = new Customers()
+			    {
+				    Name        = request.Name,
+				    Description = request.Description,
+				    Email       = request.Email,
+				    PasswordHash = request.PasswordHash,
+				    Notes        = request.Notes,
+				    AesKey       = request.AesKey,
+				    DateAdded    = DateTime.UtcNow,
+				    UsageSince   = DateTime.MinValue,
+			    };
+
+			    Users user = new Users()
+			    {
+				    AesKey                   = request.AesKey,
+				    Email                    = request.Email,
+				    Name                     = request.Name,
+				    PasswordHash             = request.PasswordHash,
+				    DateAdded                = DateTime.UtcNow,
+				    LicensingIntervalSeconds = 0,
+				    LicensingMeteredCount    = 0,
+				    Tools                    = request.Tools,
+			    };
+
+			    using (DataContext context = new())
+			    {
+				    context.Customers.Add(customer);
+
+				    context.SaveChanges();
+
+				    user.CustomerId = customer.Id;
+
+                    response.CustomerId = (Int64) customer.Id;
+
+					context.Users.Add(user);
+
+				    context.SaveChanges();
+				    context.Dispose();
+			    }
+			}
+            else
+            {
+                response.ErrorCode = ErrorCodes.errorBadKeySize;
             }
 
-            return customer;
+            return response;
+		}
+
+            public static Customers GetCustomer (Int32 CustomerId)
+            {
+			    Customers? customer = null;
+
+			    using (DataContext context = new())
+                {
+                    customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
+
+                    context.Dispose();
+                }
+
+    			return customer;
         }
 
 		public static void UpdateCustomer(UpdateCustomerRequest request)

@@ -42,52 +42,60 @@ namespace DataIntegrityTool.Services
                 errorCode = ErrorCodes.errorNone
             };
 
-            List<UserRegistration> registrations = null;
+            if (request.AesKey.Length != 32)
+            { 
+                List<UserRegistration> registrations = null;
 
-            using (DataContext context = new())
-            {
-                registrations = context.UserRegistration.Where(ur => ur.CustomerId.Equals(request.CustomerId)).ToList();
-
-                if (registrations.Count > 0)
+                using (DataContext context = new())
                 {
-                    UserRegistration? registration = registrations.Where(ru => ru.Token.Equals(request.Token)).FirstOrDefault();
+                    registrations = context.UserRegistration.Where(ur => ur.CustomerId.Equals(request.CustomerId)).ToList();
 
-                    if (registration != null)
+                    if (registrations.Count > 0)
                     {
-                        Users user = new Users()
+                        UserRegistration? registration = registrations.Where(ru => ru.Token.Equals(request.Token)).FirstOrDefault();
+
+                        if (registration != null)
                         {
-                            CustomerId               = request.CustomerId,
-                            Name                     = request.Name,
-                            Email                    = request.Email,
-                            PasswordHash             = request.PasswordHash,
-                            LicensingIntervalSeconds = request.LicensingIntervalSeconds,
-                            LicensingMeteredCount    = request.LicensingMeteredCount,
-                            AesKey                   = request.AesKey,
-                            Tools                    = request.Tools,
-                            DateAdded                = DateTime.UtcNow
-                        };
+                            Users user = new Users()
+                            {
+                                CustomerId               = request.CustomerId,
+                                Name                     = request.Name,
+                                Email                    = request.Email,
+                                PasswordHash             = request.PasswordHash,
+                                LicensingIntervalSeconds = request.LicensingIntervalSeconds,
+                                LicensingMeteredCount    = request.LicensingMeteredCount,
+                                AesKey                   = request.AesKey,
+                                Tools                    = request.Tools,
+                                DateAdded                = DateTime.UtcNow
+                            };
 
-                        context.Users.Add(user);
-                        context.UserRegistration.Remove(registration);
+                            context.Users.Add(user);
+                            context.UserRegistration.Remove(registration);
 
-                        context.SaveChanges();
+                            context.SaveChanges();
 
-                        response.UserId = user.Id;
+                            response.UserId = user.Id;
+                        }
+                        else
+                        {
+                            response.errorCode = ErrorCodes.errorTokenNotFound;
+                        }
                     }
                     else
                     {
-                        response.errorCode = ErrorCodes.errorTokenNotFound;
+                        response.errorCode = ErrorCodes.errorNoRegistrations;
                     }
-                }
-                else
-                {
-                    response.errorCode = ErrorCodes.errorNoRegistrations;
-                }
 
-                context.Dispose();
-            }
+                    context.Dispose();
+                }
+			}
+            else
+			{
+                response.errorCode = ErrorCodes.errorBadKeySize;
+                    ;
+			}
 
-            return response;
+			return response;
         }
 
 

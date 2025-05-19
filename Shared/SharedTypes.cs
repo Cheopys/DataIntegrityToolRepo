@@ -29,6 +29,12 @@ public class RegisterCustomerRequest
     public string Notes         { get; set; }
 }
 
+public class RegisterCustomerResponse 
+{
+    public Int64      CustomerId { get; set; }
+	public ErrorCodes ErrorCode  { get; set; }
+}
+
 public class UpdateCustomerRequest
 {
     public Int32  Id            { get; set; }
@@ -100,7 +106,7 @@ public class CustomerUsage
 
 public class RegisterUserRequest
 {
-    Int32 Id                     { get; set; }
+    Int32        Id              { get; set; }
     public Int32 CustomerId      { get; set; }
     public string Token          { get; set; }
     public string Name           { get; set; }
