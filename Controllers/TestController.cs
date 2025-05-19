@@ -1,16 +1,15 @@
-﻿using System;
-using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using System.Net;
 using DataIntegrityTool.Schema;
-using DataIntegrityTool.Shared;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using DataIntegrityTool.Services;
-using NuGet.Common;
-using System.Threading.Tasks;
-using Amazon.S3.Model.Internal.MarshallTransformations;
-
-/*
-	This controller is for use of DIT 
- */
+using DataIntegrityTool.Shared;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using NLog;
+using System.Runtime.Intrinsics.Arm;
+using DataIntegrityTool.Db;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -20,9 +19,26 @@ namespace DataIntegrityTool.Controllers
 	public class TestController : ControllerBase
 	{
 		[HttpPut, Route("RegisterCustomer_Raw")]
-		public async Task<Int32> RegisterCustomer_Raw(RegisterCustomerRequest request)
+		public async Task<RegisterCustomerResponse> RegisterCustomer_Raw()
 		{
-			return CustomersService.RegisterCustomer(request);
+			RegisterCustomerResponse response;
+
+			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
+
+			RegisterCustomerRequest request = new()
+			{
+				AesKey		 = aeskey.Key,
+				Description  = "Test Customer",
+				Email		 = "testcust@example.com",
+				Name		 = "Test Customer",
+				Notes		 = "each time this is run it will increment the primary key",
+				PasswordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+				Tools		 = new List<ToolTypes> { ToolTypes.tooltypeVFX, ToolTypes.tooltypeDI, ToolTypes.tooltypeArchive, ToolTypes.tooltypeProduction }
+			};
+
+			response = CustomersService.RegisterCustomer(request);
+
+			return response;
 		}
 
 		[HttpGet, Route("GetCustomers_Raw")]
@@ -31,7 +47,7 @@ namespace DataIntegrityTool.Controllers
 		{
 			List<Customers> customers = await CustomersService.GetCustomers();
 
-			return JsonSeriaizer.Serialize(customers);
+			return JsonSerializer.Serialize(customers);
 		}
 
 		[HttpGet, Route("GetUsers_Raw")]
