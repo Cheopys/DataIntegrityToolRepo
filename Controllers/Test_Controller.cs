@@ -1,15 +1,17 @@
-﻿using System.Text.Json;
-using System.Net;
-using DataIntegrityTool.Schema;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NLog;
+using System.Collections.Generic;
+using System.Net;
 using System.Runtime.Intrinsics.Arm;
-using DataIntegrityTool.Db;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -18,22 +20,6 @@ namespace DataIntegrityTool.Controllers
 
 	public class Test_Controller : ControllerBase
 	{
-		static Logger logger;
-		public Test_Controller()
-		{
-			var config = new NLog.Config.LoggingConfiguration();
-
-			// Targets where to log to: File and Console
-			var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
-
-			// Rules for mapping loggers to targets            
-			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Info, logconsole);
-
-			// Apply config           
-			LogManager.Configuration = config;
-			logger = LogManager.GetCurrentClassLogger();
-		}
-
 		[HttpPut, Route("RegisterCustomer_Raw")]
 		public async Task<RegisterCustomerResponse> RegisterCustomer_Raw()
 		{
@@ -41,22 +27,20 @@ namespace DataIntegrityTool.Controllers
 
 			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
 
-			logger.Info($"AES key size is {aeskey.Key.Length}");
-
 			RegisterCustomerRequest request = new()
 			{
-				AesKey		 = Convert.ToHexString(aeskey.Key),
-				Description  = "Test Customer",
-				Email		 = "testcust@example.com",
-				Name		 = "Test Customer",
-				Notes		 = "each time this is run it will increment the primary key",
+				AesKey = Convert.ToHexString(aeskey.Key),
+				Description = "Test Customer",
+				Email = "testcust@example.com",
+				Name = "Test Customer",
+				Notes = "each time this is run it will increment the primary key",
 				PasswordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
-				Tools		 = new List<ToolTypes> 
-				{ 
-					ToolTypes.tooltypeVFX, 
-					ToolTypes.tooltypeDI, 
-					ToolTypes.tooltypeArchive, 
-					ToolTypes.tooltypeProduction 
+				Tools = new List<ToolTypes>
+				{
+					ToolTypes.tooltypeVFX,
+					ToolTypes.tooltypeDI,
+					ToolTypes.tooltypeArchive,
+					ToolTypes.tooltypeProduction
 				}
 			};
 
@@ -83,24 +67,25 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(users);
 		}
 
-		class TestReq
+		[HttpPut, Route("Login_Raw")]
+		public static async Task<LoginResponse> Login_Raw(string Email,
+														  string Password,
+														  bool isAdministrator)
 		{
-			public Int32  CustomerId { get; set; }
-			public byte[] Key		 { get; set; }
-		};
-
-		[HttpPut, Route("GetAESKeySize")]
-		public string GetAESKeySize()
-		{
-			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
-
-			TestReq tr = new()
+			string PasswordHash;
+			byte[] data;
+			using (var sha256 = new SHA256Managed())
 			{
-				CustomerId = 12,
-				Key = aeskey.Key
-			};
+				data  = sha256.ComputeHash(Encoding.UTF8.GetBytes(Password));
+				PasswordHash = Convert.ToBase64String(data);
+			}
 
-			return $"AES key size is {aeskey.Key.Length}; request key size is { tr.Key.Length }";
+			LoginResponse response = SessionService.Login(Email, PasswordHash, isAdministrator);
+
+			response.PasswordHash = PasswordHash;
+			response.data = data;
+
+			return response;
 		}
 	}
 }
