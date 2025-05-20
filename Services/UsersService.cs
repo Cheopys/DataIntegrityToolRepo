@@ -42,9 +42,23 @@ namespace DataIntegrityTool.Services
                 errorCode = ErrorCodes.errorNone
             };
 
-            if (request.AesKey.Length != 32)
-            { 
-                using (DataContext context = new())
+            using (DataContext context = new())
+            {
+                Customers customer = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault();
+                bool      CanAdd   = true;
+
+                if (customer.LicenseType.Equals(LicenseTypes.licenseTypeSubscription))
+                {
+                    Int32 seatsMax  = context.Subscriptions.Where(cu => cu.Equals(customer.Id)).Select(cu => cu.SeatCount).FirstOrDefault();
+                    Int32 seatsUsed = context.Users        .Where(us => us.Equals(customer.Id)).Count();
+
+                    if (seatsUsed >= seatsMax)
+                    {
+                        CanAdd = false;
+                    }
+                }
+
+                if (CanAdd)
                 {
                     Users user = new Users()
                     {
@@ -52,7 +66,7 @@ namespace DataIntegrityTool.Services
                         Name                     = request.Name,
                         Email                    = request.Email,
                         PasswordHash             = request.PasswordHash,
-//                      LicensingIntervalSeconds = request.LicensingIntervalSeconds,
+    //                  LicensingIntervalSeconds = request.LicensingIntervalSeconds,
                         LicensingMeteredCount    = request.LicensingMeteredCount,
                         AesKey                   = Convert.FromHexString(request.AesKey),
                         Tools                    = request.Tools,
@@ -64,15 +78,10 @@ namespace DataIntegrityTool.Services
                     context.SaveChanges();
 
                     response.UserId = user.Id;
+				}
 
-                    context.Dispose();
-                }
-			}
-            else
-			{
-                response.errorCode = ErrorCodes.errorBadKeySize;
-                    ;
-			}
+				context.Dispose();
+            }
 
 			return response;
         }
