@@ -51,8 +51,6 @@ public class LoginResponse
     public Int32      Identifier    { get; set; }
     public ErrorCodes errorcode     { get; set; }
     public Int32      CustOrUserID  { get; set; }
-    public string     PasswordHash  { get; set; }
-    public byte[]     data          { get; set; }
 }
 public class BeginSessionRequest
 {

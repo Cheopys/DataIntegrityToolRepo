@@ -73,17 +73,13 @@ namespace DataIntegrityTool.Controllers
 										bool isAdministrator)
 		{
 			string PasswordHash;
-			byte[] data;
 			using (var sha256 = new SHA256Managed())
 			{
-				data = sha256.ComputeHash(Encoding.UTF8.GetBytes(Password));
+				byte[] data = sha256.ComputeHash(Encoding.UTF8.GetBytes(Password));
 				PasswordHash = Convert.ToHexString(data).ToLower();
 			}
 
 			LoginResponse response = SessionService.Login(Email, PasswordHash, isAdministrator); 
-
-			response.data = data;
-			response.PasswordHash = PasswordHash;
 
 			return response;
 		}
