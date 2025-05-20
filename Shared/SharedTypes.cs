@@ -86,21 +86,17 @@ public class AllocateLicensesRequest
 {
     public Int32 UserId             { get; set; }
     public Int32 MeteringCount      { get; set; }
-    public Int32 IntervalSeconds    { get; set; }
 }
 public class AllocateLicensesResponse
 {
     public Int32 UserId          { get; set; }
     public Int32 MeteringCount   { get; set; }
-    public Int32 IntervalSeconds { get; set; }
 }
 
 public class CustomerUsage
 {
     public Int32 CustomerId         { get; set; }
     public Int32 MeteringCount      { get; set; }
-    public Int32 IntervalSeconds    { get; set; }
-    public Int32 IntervalSessions   { get; set; }
     public DateTime EarliestUse     { get; set; }
 }
 
@@ -115,7 +111,6 @@ public class RegisterUserRequest
     public string AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
     public Int32 LicensingMeteredCount      { get; set; }
-    public Int32 LicensingIntervalSeconds   { get; set; }
 }
 
 public class RegisterUserResponse

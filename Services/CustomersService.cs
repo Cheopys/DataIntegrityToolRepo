@@ -176,11 +176,9 @@ namespace DataIntegrityTool.Services
             {
                 Users? user = context.Users.Find(request.UserId);
 
-                user.LicensingIntervalSeconds += request.IntervalSeconds;
                 user.LicensingMeteredCount    += request.MeteringCount;
 
                 response.MeteringCount   = user.LicensingMeteredCount;
-                response.IntervalSeconds = user.LicensingIntervalSeconds;
 
                 context.SaveChanges();
                 context.Dispose();
@@ -218,7 +216,7 @@ namespace DataIntegrityTool.Services
                                                                                && li.TimeBegin       > customerUsage)
                                                                      .ToList();
 
-            usage.IntervalSessions = intervals.Count();
+//          usage.IntervalSessions = intervals.Count();
             
             foreach (LicenseInterval interval in intervals)
             {
@@ -227,7 +225,7 @@ namespace DataIntegrityTool.Services
                 {
                     DateTime timeBegin = interval.TimeBegin.Value;
                     DateTime timeEnd   = interval.TimeEnd;
-                    usage.IntervalSeconds += (Int32)(timeEnd.Subtract(timeBegin)).TotalSeconds;
+//                  usage.IntervalSeconds += (Int32)(timeEnd.Subtract(timeBegin)).TotalSeconds;
                 }
             }
 
