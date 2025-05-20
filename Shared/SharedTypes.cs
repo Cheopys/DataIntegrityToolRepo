@@ -104,7 +104,6 @@ public class RegisterUserRequest
 {
     Int32        Id              { get; set; }
     public Int32 CustomerId      { get; set; }
-    public string Token          { get; set; }
     public string Name           { get; set; }
     public string Email          { get; set; }
     public string PasswordHash   { get; set; }

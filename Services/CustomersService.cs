@@ -260,19 +260,6 @@ namespace DataIntegrityTool.Services
             return usages;
         }
 
-
-        public static ErrorCodes AddNewUserTokens(List<UserRegistration> registrations)
-        {
-            ErrorCodes errorcode = ErrorCodes.errorNone;
-
-            using (DataContext context = new())
-            {
-                context.UserRegistration.AddRange(registrations);
-            }
-
-            return errorcode;
-        }
-
         public static CustomerOrUser CheckEmail(string Email)
         {
 			CustomerOrUser type = CustomerOrUser.typeUser;

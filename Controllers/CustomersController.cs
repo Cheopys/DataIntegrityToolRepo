@@ -101,12 +101,6 @@ namespace DataIntegrityTool.Controllers
 			return CustomersService.GetCustomerUsages(customerId);
 		}
 
-		[HttpPut, Route("AddNewUserTokens")]
-		public ErrorCodes AddNewUserTokens(List<UserRegistration> registrations)
-		{
-			return CustomersService.AddNewUserTokens(registrations);
-		}
-
 		[HttpPut, Route("AllocateLicenses")]
         public AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
 		{

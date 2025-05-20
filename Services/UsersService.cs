@@ -44,47 +44,26 @@ namespace DataIntegrityTool.Services
 
             if (request.AesKey.Length != 32)
             { 
-                List<UserRegistration> registrations = null;
-
                 using (DataContext context = new())
                 {
-                    registrations = context.UserRegistration.Where(ur => ur.CustomerId.Equals(request.CustomerId)).ToList();
-
-                    if (registrations.Count > 0)
+                    Users user = new Users()
                     {
-                        UserRegistration? registration = registrations.Where(ru => ru.Token.Equals(request.Token)).FirstOrDefault();
+                        CustomerId               = request.CustomerId,
+                        Name                     = request.Name,
+                        Email                    = request.Email,
+                        PasswordHash             = request.PasswordHash,
+//                      LicensingIntervalSeconds = request.LicensingIntervalSeconds,
+                        LicensingMeteredCount    = request.LicensingMeteredCount,
+                        AesKey                   = Convert.FromHexString(request.AesKey),
+                        Tools                    = request.Tools,
+                        DateAdded                = DateTime.UtcNow
+                    };
 
-                        if (registration != null)
-                        {
-                            Users user = new Users()
-                            {
-                                CustomerId               = request.CustomerId,
-                                Name                     = request.Name,
-                                Email                    = request.Email,
-                                PasswordHash             = request.PasswordHash,
-//                              LicensingIntervalSeconds = request.LicensingIntervalSeconds,
-                                LicensingMeteredCount    = request.LicensingMeteredCount,
-                                AesKey                   = Convert.FromHexString(request.AesKey),
-                                Tools                    = request.Tools,
-                                DateAdded                = DateTime.UtcNow
-                            };
+                    context.Users.Add(user);
 
-                            context.Users.Add(user);
-                            context.UserRegistration.Remove(registration);
+                    context.SaveChanges();
 
-                            context.SaveChanges();
-
-                            response.UserId = user.Id;
-                        }
-                        else
-                        {
-                            response.errorCode = ErrorCodes.errorTokenNotFound;
-                        }
-                    }
-                    else
-                    {
-                        response.errorCode = ErrorCodes.errorNoRegistrations;
-                    }
+                    response.UserId = user.Id;
 
                     context.Dispose();
                 }
