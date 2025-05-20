@@ -20,7 +20,7 @@ namespace DataIntegrityTool.Shared
 }
 public class RegisterCustomerRequest
 {
-    public byte[] AesKey        { get; set; }
+    public string AesKey        { get; set; }
     public string Name          { get; set; }
     public string Description   { get; set; }
     public string Email         { get; set; }
@@ -112,7 +112,7 @@ public class RegisterUserRequest
     public string Name           { get; set; }
     public string Email          { get; set; }
     public string PasswordHash   { get; set; }
-    public byte[] AesKey         { get; set; }
+    public string AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
     public Int32 LicensingMeteredCount      { get; set; }
     public Int32 LicensingIntervalSeconds   { get; set; }

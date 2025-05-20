@@ -45,13 +45,19 @@ namespace DataIntegrityTool.Controllers
 
 			RegisterCustomerRequest request = new()
 			{
-				AesKey = aeskey.Key,
-				Description = "Test Customer",
-				Email = "testcust@example.com",
-				Name = "Test Customer",
-				Notes = "each time this is run it will increment the primary key",
+				AesKey		 = Convert.ToHexString(aeskey.Key),
+				Description  = "Test Customer",
+				Email		 = "testcust@example.com",
+				Name		 = "Test Customer",
+				Notes		 = "each time this is run it will increment the primary key",
 				PasswordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
-				Tools = new List<ToolTypes> { ToolTypes.tooltypeVFX, ToolTypes.tooltypeDI, ToolTypes.tooltypeArchive, ToolTypes.tooltypeProduction }
+				Tools		 = new List<ToolTypes> 
+				{ 
+					ToolTypes.tooltypeVFX, 
+					ToolTypes.tooltypeDI, 
+					ToolTypes.tooltypeArchive, 
+					ToolTypes.tooltypeProduction 
+				}
 			};
 
 			response = CustomersService.RegisterCustomer(request);

@@ -57,14 +57,14 @@ namespace DataIntegrityTool.Services
 				    Email       = request.Email,
 				    PasswordHash = request.PasswordHash,
 				    Notes        = request.Notes,
-				    AesKey       = request.AesKey,
+				    AesKey       = Convert.FromHexString(request.AesKey),
 				    DateAdded    = DateTime.UtcNow,
 				    UsageSince   = DateTime.MinValue,
 			    };
 
 			    Users user = new Users()
 			    {
-				    AesKey                   = request.AesKey,
+				    AesKey                   = Convert.FromHexString(request.AesKey),
 				    Email                    = request.Email,
 				    Name                     = request.Name,
 				    PasswordHash             = request.PasswordHash,

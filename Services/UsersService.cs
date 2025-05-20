@@ -64,7 +64,7 @@ namespace DataIntegrityTool.Services
                                 PasswordHash             = request.PasswordHash,
                                 LicensingIntervalSeconds = request.LicensingIntervalSeconds,
                                 LicensingMeteredCount    = request.LicensingMeteredCount,
-                                AesKey                   = request.AesKey,
+                                AesKey                   = Convert.FromHexString(request.AesKey),
                                 Tools                    = request.Tools,
                                 DateAdded                = DateTime.UtcNow
                             };
