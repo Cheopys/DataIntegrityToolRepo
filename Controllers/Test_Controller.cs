@@ -68,9 +68,9 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("Login_Raw")]
-		public static async Task<LoginResponse> Login_Raw(string Email,
-														  string Password,
-														  bool isAdministrator)
+		public LoginResponse Login_Raw(string Email,
+										string Password,
+										bool isAdministrator)
 		{
 			string PasswordHash;
 			byte[] data;
