@@ -102,11 +102,10 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("ChangePasswordAnswer")]
 		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDIT wrapper)
 		{
-			ChangePasswordRequest request;
+			ChangePasswordRequest? request;
 			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapper, out request);
 
 			return UsersService.ChangePasswordAnswer(request);
 		}
-
 	}
 }
