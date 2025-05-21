@@ -20,8 +20,8 @@ namespace DataIntegrityTool.Controllers
 
 	public class Test_Controller : ControllerBase
 	{
-		[HttpPut, Route("RegisterCustomer_Raw")]
-		public async Task<RegisterCustomerResponse> RegisterCustomer_Raw()
+		[HttpPut, Route("RegisterCustomer_Example")]
+		public async Task<RegisterCustomerResponse> RegisterCustomer_Example()
 		{
 			RegisterCustomerResponse response;
 
@@ -48,6 +48,13 @@ namespace DataIntegrityTool.Controllers
 
 			return response;
 		}
+
+		[HttpPut, Route("RegisterCustomer_Raw")]
+		public async Task<RegisterCustomerResponse> RegisterCustomer_Raw(RegisterCustomerRequest request)
+		{
+			return CustomersService.RegisterCustomer(request);
+		}
+
 
 		[HttpGet, Route("GetCustomers_Raw")]
 		[Produces("application/json")]
