@@ -35,6 +35,8 @@ namespace DataIntegrityTool.Services
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
+        // C
+
         public static RegisterUserResponse RegisterUser(RegisterUserRequest request)
         {
             RegisterUserResponse response = new()
@@ -44,6 +46,8 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
+                // check if any available seats
+
                 Customers customer = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault();
                 bool      CanAdd   = true;
 
@@ -65,7 +69,7 @@ namespace DataIntegrityTool.Services
                         CustomerId               = request.CustomerId,
                         Name                     = request.Name,
                         Email                    = request.Email,
-                        PasswordHash             = request.PasswordHash,
+                        PasswordHash             = ServerCryptographyService.SHA256(request.Password),
     //                  LicensingIntervalSeconds = request.LicensingIntervalSeconds,
                         LicensingMeteredCount    = request.LicensingMeteredCount,
                         AesKey                   = Convert.FromHexString(request.AesKey),
@@ -86,25 +90,7 @@ namespace DataIntegrityTool.Services
 			return response;
         }
 
-
-        public static void DeleteUser(Int32 UserId)
-        {
-            using (DataContext context = new())
-            {
-                Users?        user     = context.Users.Where(us => us.Id.Equals(UserId)).FirstOrDefault();
-                List<Session> sessions = context.Session.Where(s => s.UserId.Equals(UserId)).ToList();
-                List<LicenseInterval> licensesInterval = context.LicenseInterval.Where(li => li.UserId.Equals(UserId)).ToList();
-                List<LicenseMetered>  licensesetered   = context.LicenseMetered .Where(lm => lm.CustomerId.Equals(UserId)).ToList();
-
-                context.Remove      (user);
-                context.RemoveRange(sessions);
-                context.RemoveRange(licensesetered);
-                context.RemoveRange(licensesInterval);
-
-                context.SaveChanges();
-                context.Dispose();
-            }
-        }
+        // R
 
 		public static Users GetUser(Int32 UserId)
 		{
@@ -118,6 +104,61 @@ namespace DataIntegrityTool.Services
 			}
 
 			return user;
+		}
+
+		// U
+
+		public static void UpdateUser(UpdateUserRequest request)
+		{
+			using (DataContext context = new())
+			{
+				Users? user = context.Users.Where(cu => cu.Id.Equals(request.UserId)).FirstOrDefault();
+
+                if (request.Tools != null)
+                {
+                    user.Tools = request.Tools;
+                }
+
+                if (request.Name != null)
+                {
+                    user.Name = request.Name;
+                }
+
+                if (request.Email != null)
+                {
+                    user.Email = request.Email;
+                }
+
+                if (request.Password != null)
+                {
+                    user.PasswordHash = ServerCryptographyService.SHA256(request.Password);
+                }
+
+				context.SaveChanges();
+
+				context.Dispose();
+			}
+		}
+
+        // D
+
+		public static void DeleteUser(Int32 UserId)
+		{
+			using (DataContext context = new())
+			{
+				Users?        user     = context.Users  .Where(us => us.Id.Equals(UserId)).FirstOrDefault();
+				List<Session> sessions = context.Session.Where(s => s.UserId.Equals(UserId)).ToList();
+				List<LicenseInterval> licensesInterval = context.LicenseInterval.Where(li => li.UserId.Equals(UserId)).ToList();
+				List<LicenseMetered> licensesetered = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(UserId)).ToList();
+
+				context.Remove(user);
+				context.RemoveRange(sessions);
+				context.RemoveRange(licensesetered);
+				context.RemoveRange(licensesInterval);
+
+				context.SaveChanges();
+				context.Dispose();
+			}
 		}
 
 		public static async Task<List<Users>> GetUsers(Int32 CustomerId)

@@ -55,7 +55,7 @@ namespace DataIntegrityTool.Services
 				    Name        = request.Name,
 				    Description = request.Description,
 				    Email       = request.Email,
-				    PasswordHash = request.PasswordHash,
+				    PasswordHash = ServerCryptographyService.SHA256(request.Password),
 				    Notes        = request.Notes,
 				    AesKey       = Convert.FromHexString(request.AesKey),
 				    DateAdded    = DateTime.UtcNow,
@@ -67,7 +67,7 @@ namespace DataIntegrityTool.Services
 				    AesKey                   = Convert.FromHexString(request.AesKey),
 				    Email                    = request.Email,
 				    Name                     = request.Name,
-				    PasswordHash             = request.PasswordHash,
+				    PasswordHash             = ServerCryptographyService.SHA256(request.Password),
 				    DateAdded                = DateTime.UtcNow,
 				    LicensingIntervalSeconds = 0,
 				    LicensingMeteredCount    = 0,
@@ -116,16 +116,34 @@ namespace DataIntegrityTool.Services
 		{
 			using (DataContext context = new())
 			{
-                Customers customer = context.Customers.Where(cu => cu.Id.Equals(request.Id)).FirstOrDefault();
+                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(request.Id)).FirstOrDefault();
 
-                customer.Name         = request.Name;
-                customer.Description  = request.Description;
-                customer.Email        = request.Email;
-                customer.PasswordHash = request.PasswordHash;
-                customer.Notes        = request.Notes;
+                if (request.Name != null)
+                {
+					customer.Name = request.Name;
+				}
 
-				context.SaveChanges();
+                if (request.Description != null)
+                {
+                    customer.Description = request.Description;
+                }
 
+                if (request.Email != null)
+                {
+                    customer.Email = request.Email;
+                }
+
+                if (request.Password != null)
+                {
+                    customer.PasswordHash = ServerCryptographyService.SHA256(request.Password);
+                }
+
+                if (request.Notes != null)
+                {
+                    customer.Notes = request.Notes;
+                }
+
+                context.SaveChanges();
 				context.Dispose();
 			}
 		}

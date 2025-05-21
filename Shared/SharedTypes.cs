@@ -24,7 +24,7 @@ public class RegisterCustomerRequest
     public string Name          { get; set; }
     public string Description   { get; set; }
     public string Email         { get; set; }
-    public string PasswordHash  { get; set; }
+    public string Password      { get; set; }
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
 }
@@ -41,7 +41,7 @@ public class UpdateCustomerRequest
 	public string Name          { get; set; }
 	public string Description   { get; set; }
 	public string Email         { get; set; }
-	public string PasswordHash  { get; set; }
+	public string Password      { get; set; }
 	public List<ToolTypes> Tools{ get; set; }
 	public string Notes         { get; set; }
 }
@@ -106,7 +106,7 @@ public class RegisterUserRequest
     public Int32 CustomerId      { get; set; }
     public string Name           { get; set; }
     public string Email          { get; set; }
-    public string PasswordHash   { get; set; }
+    public string Password       { get; set; }
     public string AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
     public Int32 LicensingMeteredCount      { get; set; }
@@ -116,6 +116,15 @@ public class RegisterUserResponse
 {
     public Int32      UserId    { get; set; }
     public ErrorCodes errorCode { get; set; }
+}
+
+public class UpdateUserRequest
+{
+    public Int32   UserId            { get; set; }
+	public string? Name              { get; set; }
+	public string? Email             { get; set; }
+	public string? Password          { get; set; }
+	public List<ToolTypes>? Tools    { get; set; }
 }
 
 public class ChangePasswordRequest

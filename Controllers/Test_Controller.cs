@@ -34,7 +34,7 @@ namespace DataIntegrityTool.Controllers
 				Email		 = "testcust@example.com",
 				Name		 = "Test Customer",
 				Notes		 = "each time this is run it will increment the primary key",
-				PasswordHash = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+				Password	 = "DIT",
 				Tools		 = new List<ToolTypes>
 				{
 					ToolTypes.tooltypeVFX,

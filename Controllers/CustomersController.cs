@@ -38,6 +38,8 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
+		//  C
+
 		[HttpPut, Route("RegisterCustomer")]
 		public async Task<RegisterCustomerResponse> RegisterCustomer(string registerUserB64 )
 		{
@@ -49,6 +51,8 @@ namespace DataIntegrityTool.Controllers
 
 			return response;
 		}
+
+		//  R
 
 		[HttpGet, Route("GetCustomer")]
 		public async Task<string> GetCustomer(Int32  CustomerId, Int32 UserId)
@@ -69,6 +73,20 @@ namespace DataIntegrityTool.Controllers
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customer);
 		}
+
+		//  U
+
+		[HttpPost, Route("UpdateCustomer")]
+		public void UpdateCustomer(EncryptionWrapperDIT wrapper)
+		{
+			UpdateCustomerRequest request;
+
+			ServerCryptographyService.DecodeAndDecryptRequest<UpdateCustomerRequest>(wrapper, out request);
+
+			CustomersService.UpdateCustomer(request);
+		}
+
+		//  D
 
 		[HttpDelete, Route("DeleteCustomer")]
 		public void DeleteCustomer(Int32 customerId)

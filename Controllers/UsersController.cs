@@ -69,6 +69,16 @@ namespace DataIntegrityTool.Controllers
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
 		}
 
+		[HttpPost, Route("UpdateUser")]
+		public void UpdateUser([FromBody] EncryptionWrapperDIT wrapper)
+		{
+			UpdateUserRequest request;
+
+			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
+
+			UsersService.UpdateUser(request);
+		 }
+
 		[HttpGet, Route("GetUsers")]
 		public async Task<string> GetUsers(Int32 CustomerId)
 		{
