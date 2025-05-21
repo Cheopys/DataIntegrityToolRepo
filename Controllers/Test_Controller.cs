@@ -54,7 +54,7 @@ namespace DataIntegrityTool.Controllers
 		{
 			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
 
-			request.AesKey = Convert.ToBase64String(aes.Key);
+			request.AesKey = Convert.ToHexString(aes.Key);
 
 			return CustomersService.RegisterCustomer(request);
 		}
