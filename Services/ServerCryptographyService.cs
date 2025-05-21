@@ -1,11 +1,12 @@
-﻿using System.Security.Cryptography;
-using System.Text.Json;
-using DataIntegrityTool.Db;
+﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 namespace DataIntegrityTool.Services
 { 
@@ -264,5 +265,17 @@ namespace DataIntegrityTool.Services
 
 			return responseB64;
 		}		
+
+		public static string SHA256(string input)
+		{
+			string output;
+			using (SHA256Managed sha256 = new SHA256Managed())
+			{
+				byte[] data = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+				output = Convert.ToHexString(data).ToLower();
+			}
+
+			return output;
+		}
 	}
 }

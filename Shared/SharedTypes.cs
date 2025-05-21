@@ -117,3 +117,10 @@ public class RegisterUserResponse
     public Int32      UserId    { get; set; }
     public ErrorCodes errorCode { get; set; }
 }
+
+public class ChangePasswordRequest
+{
+	public Int32  UserId      { get; set; }
+	public Int32  Token       { get; set; }
+	public string PasswordNew { get; set; }
+}

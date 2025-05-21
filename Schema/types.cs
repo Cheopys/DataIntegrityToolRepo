@@ -28,7 +28,7 @@ public enum ErrorCodes
 	errorInvalidUser		= 1,
 	errorInvalidPassword	= 2,
 	errorNoRegistrations    = 3, 
-	errorTokenNotFound      = 4,	
+	errorWErongToken      = 4,	
 	errorToolNotAuthorized  = 5,
 	errorNoLicense			= 6,
 	errorBadKeySize         = 7,

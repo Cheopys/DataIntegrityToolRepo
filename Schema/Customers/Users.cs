@@ -10,8 +10,9 @@
 		public string PasswordHash		{ get; set; }
 		public List<ToolTypes> Tools	{ get; set; }
         public byte[] AesKey			{ get; set; }
-        public Int32 LicensingMeteredCount { get; set; }
-        public Int32 LicensingIntervalSeconds { get; set; }
-        public DateTime DateAdded		{ get; set; }
+		public DateTime DateAdded		{ get; set; }
+		public Int32? ChangePasswordToken		{ get; set; }
+		public Int32  LicensingMeteredCount		{ get; set; }
+        public Int32  LicensingIntervalSeconds	{ get; set; }
     }
 }

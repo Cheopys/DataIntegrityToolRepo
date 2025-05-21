@@ -135,5 +135,64 @@ namespace DataIntegrityTool.Services
 
 			return Users;
 		}
+
+        // change password
+
+        public static ErrorCodes ChangePasswordAsk(Int32 UserId)
+        {
+            ErrorCodes errorCode = ErrorCodes.errorNone;
+
+            using (DataContext context = new())
+            {
+                Users? user = context.Users.Where(us => us.Id.Equals(UserId)).FirstOrDefault();
+
+                if (user != null)
+                {
+                    user.ChangePasswordToken = (new Random()).Next() % 1000000;
+
+                    context.SaveChanges();  
+                }
+                else
+                {
+                    errorCode = ErrorCodes.errorInvalidUser;
+                }
+
+                context.Dispose();
+            }
+
+            return errorCode;
+		}
+
+        public static ErrorCodes ChangePasswordAnswer(ChangePasswordRequest request)
+        {
+			ErrorCodes errorCode = ErrorCodes.errorNone;
+
+			using (DataContext context = new())
+			{
+				Users? user = context.Users.Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
+
+				if (user != null)
+				{
+                    if (user.ChangePasswordToken.Equals(request.Token))
+                    {
+                        user.PasswordHash        = ServerCryptographyService.SHA256(request.PasswordNew);
+                        user.ChangePasswordToken = 0;
+                    }
+                    else
+                    {
+                        errorCode = ErrorCodes.errorWErongToken;
+                    }
+				}
+				else
+				{
+					errorCode = ErrorCodes.errorInvalidUser;
+				}
+
+				context.Dispose();
+			}
+
+			return errorCode;
+		}
 	}
 }
+

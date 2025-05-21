@@ -69,17 +69,12 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("Login_Raw")]
 		public LoginResponse Login_Raw(string Email,
-										string Password,
-										bool isAdministrator)
+									   string Password,
+									   bool   isAdministrator)
 		{
-			string PasswordHash;
-			using (var sha256 = new SHA256Managed())
-			{
-				byte[] data = sha256.ComputeHash(Encoding.UTF8.GetBytes(Password));
-				PasswordHash = Convert.ToHexString(data).ToLower();
-			}
-
-			LoginResponse response = SessionService.Login(Email, PasswordHash, isAdministrator); 
+			LoginResponse response = SessionService.Login(Email, 
+														  ServerCryptographyService.SHA256(Password), 
+														  isAdministrator); 
 
 			return response;
 		}

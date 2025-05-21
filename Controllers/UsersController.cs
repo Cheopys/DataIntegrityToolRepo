@@ -1,15 +1,16 @@
-﻿using System.Text.Json;
-using System.Net;
+﻿using Amazon.Runtime.Internal;
+using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NLog;
+using System.Collections.Generic;
+using System.Net;
 using System.Runtime.Intrinsics.Arm;
+using System.Text.Json;
 
 /*
 	This controller is for use of DIT 
@@ -91,5 +92,21 @@ namespace DataIntegrityTool.Controllers
 		{
 			return CustomersService.GetCustomerUsages(customerId);
 		}
+
+		[HttpPost, Route("ChangePasswordAsk")]
+		public ErrorCodes ChangePasswordAsk(Int32 UserId)
+		{
+			return UsersService.ChangePasswordAsk(UserId);
+		}
+
+		[HttpPost, Route("ChangePasswordAnswer")]
+		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDIT wrapper)
+		{
+			ChangePasswordRequest request;
+			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapper, out request);
+
+			return UsersService.ChangePasswordAnswer(request);
+		}
+
 	}
 }
