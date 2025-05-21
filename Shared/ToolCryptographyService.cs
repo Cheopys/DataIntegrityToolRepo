@@ -26,19 +26,19 @@ namespace DataIntegrityTool.Services
 
         public async Task<string> HashPassword(string passwordClear)
 		{
-			string passwordB64 = null;
+			string passwordHex = null;
 
 			using (MemoryStream memstream = new())
 			{
-				byte[] passwordAsBytes = Encoding.ASCII.GetBytes(passwordClear);
+				byte[] passwordAsBytes = Encoding.UTF8.GetBytes(passwordClear);
 				memstream.Write(passwordAsBytes, 0, passwordAsBytes.Length);
 				memstream.Position = 0;
 				byte[] hashValue = await SHA256.Create().ComputeHashAsync(memstream);
 
-				passwordB64 = Convert.ToBase64String(hashValue);
+				passwordHex = Convert.ToHexString(hashValue);
 			}
 
-			return passwordB64;
+			return passwordHex;
 		}
 
 		public static async Task<EncryptionWrapperDIT?> EncodeAndEncryptRequest<T>(EncryptionWrapperDIT wrapperIn, 
