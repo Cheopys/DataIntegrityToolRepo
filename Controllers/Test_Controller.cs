@@ -52,6 +52,10 @@ namespace DataIntegrityTool.Controllers
 		[HttpPut, Route("RegisterCustomer_Raw")]
 		public async Task<RegisterCustomerResponse> RegisterCustomer_Raw(RegisterCustomerRequest request)
 		{
+			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
+
+			request.AesKey = Convert.ToBase64String(aes.Key);
+
 			return CustomersService.RegisterCustomer(request);
 		}
 
