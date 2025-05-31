@@ -51,7 +51,7 @@ namespace DataIntegrityTool.Services
             }
         }
 
-        public static byte[] GetServerRSAPublicKey()
+        public static string GetServerRSAPublicKey()
 		{
 			byte[] key = null;
 			using (DataContext context = new())
@@ -79,7 +79,7 @@ namespace DataIntegrityTool.Services
 					context.Dispose();
 			}
 
-			return key;
+			return Convert.ToBase64String(key);
 		}
 
 		private static byte[] GetServerRSAPrivateKey()

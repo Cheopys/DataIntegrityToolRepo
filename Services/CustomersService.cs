@@ -20,6 +20,7 @@ using System.Net;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text.Json;
+using static AllocateLicensesRequest;
 
 namespace DataIntegrityTool.Services
 {
@@ -187,16 +188,15 @@ namespace DataIntegrityTool.Services
         {
             AllocateLicensesResponse response = new()
             {
-                UserId = request.UserId
+                CustomerId = request.CustomerId
             };
 
             using (DataContext context = new())
             {
-                Users? user = context.Users.Find(request.UserId);
+                Customers? customer = context.Customers.Find(request.CustomerId);
 
-                user.LicensingMeteredCount    += request.MeteringCount;
-
-                response.MeteringCount   = user.LicensingMeteredCount;
+                customer.MeteringCount += request.MeteringCount;
+                response.MeteringCount  = request.MeteringCount;
 
                 context.SaveChanges();
                 context.Dispose();

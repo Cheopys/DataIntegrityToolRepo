@@ -10,7 +10,7 @@ namespace DataIntegrityTool.Services
 {
 	public class ToolCryptographyService
 	{
-        public byte[] GetServerPublicKey()
+        public string GetServerPublicKey()
         {
             return ServerCryptographyService.GetServerRSAPublicKey();
         }

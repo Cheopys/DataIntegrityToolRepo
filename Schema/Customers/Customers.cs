@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Composition.Convention;
 using System.Diagnostics.Contracts;
 using System.Runtime.Intrinsics.Arm;
 using DataIntegrityTool.Db;
@@ -8,17 +9,23 @@ namespace DataIntegrityTool.Schema
 {
     public class Customers
     {
-        public int     Id                       { get; set; }
-		public string   Name                    { get; set; }
-        public string   Description             { get; set; }
-        public string   Email                   { get; set; }
-        public string   PasswordHash            { get; set; }
-        public DateTime DateAdded               { get; set; }
-        public string   Notes                   { get; set; }
-        public List<ToolTypes>? Tools           { get; set; }
-        public byte[]   AesKey                  { get; set; }
-        public DateTime UsageSince              { get; set; } = DateTime.MinValue;
-        public LicenseTypes LicenseType         { get; set; }
-        public DateTime SubscriptionEnd         { get; set; }
+        public int     Id             { get; set; }
+		public string   Name          { get; set; }
+        public string   Description   { get; set; }
+        public string   Email         { get; set; }
+        public string   PasswordHash  { get; set; }
+        public DateTime DateAdded     { get; set; }
+        public string   Notes         { get; set; }
+        public List<ToolTypes>? Tools { get; set; }
+        public byte[]   AesKey        { get; set; }
+        public DateTime UsageSince    { get; set; } = DateTime.MinValue;
+
+		// license types
+
+		public LicenseTypes LicenseType           { get; set; }
+
+		public Int32     MeteringCount            { get; set; }
+		public Int32     LicensingIntervalSeconds { get; set; }
+		public TimeSpan  SubscriptionTime         { get; set; }
     }
 }

@@ -7,11 +7,13 @@ public enum CustomerOrUser
 	typeCustomer  = 2,
 	typeUser      = 3
 }
+
+[Flags]
 public enum LicenseTypes
 {
-	licenseTypeMetered,
-	licenseTypeInterval,
-	licenseTypeSubscription
+	licenseTypeMetered      = 1,
+	licenseTypeInterval     = 2,
+	licenseTypeSubscription = 4
 }
 
 public enum ToolTypes
@@ -28,7 +30,7 @@ public enum ErrorCodes
 	errorInvalidUser		= 1,
 	errorInvalidPassword	= 2,
 	errorNoRegistrations    = 3, 
-	errorWErongToken      = 4,	
+	errorWrongToken			= 4,	
 	errorToolNotAuthorized  = 5,
 	errorNoLicense			= 6,
 	errorBadKeySize         = 7,

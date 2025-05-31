@@ -45,6 +45,9 @@ namespace DataIntegrityTool.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("LicenseType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -56,6 +59,9 @@ namespace DataIntegrityTool.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("SubscriptionEnd")
+                        .HasColumnType("timestamp with time zone");
 
                     b.PrimitiveCollection<int[]>("Tools")
                         .HasColumnType("integer[]");
@@ -157,9 +163,6 @@ namespace DataIntegrityTool.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("ErrorCode")
                         .HasColumnType("integer");
 
@@ -172,9 +175,34 @@ namespace DataIntegrityTool.Migrations
                     b.Property<int>("SessionId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("TimeBegin")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("SessionTransition", (string)null);
+                });
+
+            modelBuilder.Entity("DataIntegrityTool.Schema.Subscriptions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SeatCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("DataIntegrityTool.Schema.ToolParameters", b =>
@@ -208,22 +236,6 @@ namespace DataIntegrityTool.Migrations
                     b.ToTable("ToolParameters", (string)null);
                 });
 
-            modelBuilder.Entity("DataIntegrityTool.Schema.UserRegistration", b =>
-                {
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.PrimitiveCollection<int[]>("Tools")
-                        .IsRequired()
-                        .HasColumnType("integer[]");
-
-                    b.ToTable("UserRegistration", (string)null);
-                });
-
             modelBuilder.Entity("DataIntegrityTool.Schema.Users", b =>
                 {
                     b.Property<int>("Id")
@@ -235,6 +247,9 @@ namespace DataIntegrityTool.Migrations
                     b.Property<byte[]>("AesKey")
                         .IsRequired()
                         .HasColumnType("bytea");
+
+                    b.Property<int?>("ChangePasswordToken")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("integer");

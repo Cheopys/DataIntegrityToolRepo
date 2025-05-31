@@ -4,6 +4,7 @@ using DataIntegrityTool.Schema;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore.Internal;
 //using NLog;
@@ -98,10 +99,28 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				Users? user = context.Users.Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
+				Users?	   user		= context.Users	   .Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
+				Customers? customer = context.Customers.Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
 
-				response.RemainingSeconds = user.LicensingIntervalSeconds;
-				response.RemainingMetered = user.LicensingMeteredCount;
+				if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
+				{
+					Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(user.CustomerId)).FirstOrDefault();
+
+					// subscription begins with first use
+
+					if (subscription.ExpirationDate == null)
+					{
+						subscription.ExpirationDate = DateTime.UtcNow + customer.SubscriptionTime;
+					}
+				}
+				else if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
+				{
+					response.RemainingMetered = customer.MeteringCount;
+				}
+				else
+				{
+					// interval licensing
+				}
 
 				if (user != null)
 				{
@@ -113,9 +132,9 @@ namespace DataIntegrityTool.Services
 						{
 							logger.Info("LicenseType.Metered");
 
-							if (user.LicensingMeteredCount > 0)
+							if (customer.MeteringCount > 0)
 							{
-								logger.Info($"user has {user.LicensingMeteredCount} of license type 0");
+								logger.Info($"user has {customer.MeteringCount} of license type 0");
 
 								OK = true;
 							}
@@ -128,11 +147,11 @@ namespace DataIntegrityTool.Services
 						} // end metered
 						else if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
 						{
+							Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId == user.CustomerId).FirstOrDefault();
+
 							logger.Info("LicenseType.Subscription");
 
-							DateTime expiration = context.Customers.Where(cs => cs.Id.Equals(user.CustomerId)).Select(cs => cs.SubscriptionEnd).FirstOrDefault();
-
-							if (expiration < DateTime.Now)
+							if (subscription.ExpirationDate < DateTime.UtcNow)
 							{
 								OK = true; 
 							}
@@ -182,9 +201,9 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				Session? session = context.Session.Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
+				Session? session	= context.Session.Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
 				Customers? customer = context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
-				Users? user = context.Users.Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
+				Users? user		    = context.Users.Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
 
@@ -192,7 +211,16 @@ namespace DataIntegrityTool.Services
 				{
 					TimeSpan duration = session.TimeEnd.Subtract(session.TimeBegin);
 
-					user.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
+					customer.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
+				}
+				else if (session?.Licensetype == LicenseTypes.licenseTypeSubscription)
+				{
+					Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
+
+					if (subscription.ExpirationDate < DateTime.Now)
+					{
+						subscription.ExpirationDate = null;
+					}
 				}
 
 				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.TimeBegin).ToList();
@@ -256,28 +284,29 @@ namespace DataIntegrityTool.Services
 		{	
 			using (DataContext context = new())
 			{
-				Session? session = context.Session.Where(se => se.Id == sessionId).FirstOrDefault();
-				Users?   users   = context.Users  .Where(us => us.Id == session.UserId).FirstOrDefault();
+				Session?   session  = context.Session  .Where(se => se.Id == sessionId)      .FirstOrDefault();
+				Users?     user     = context.Users    .Where(us => us.Id == session.UserId) .FirstOrDefault();
+				Customers? customer = context.Customers.Where(cu => cu.Id == user.CustomerId).FirstOrDefault();
 
 				if (session.Licensetype == LicenseTypes.licenseTypeMetered)
 				{
-					users.LicensingMeteredCount--;					
+					customer.MeteringCount--;					
 				}
-				else
+				else if (session.Licensetype == LicenseTypes.licenseTypeInterval)
 				{
 					SessionTransition? transition = context.SessionTransition.Where(st => st.Id.Equals(sessionId)).OrderBy(st => st.Id).LastOrDefault();
 					TimeSpan		   timespan;
 
 					if (transition != null)
 					{
-						timespan = DateTime.Now - transition.TimeBegin;
+						timespan = DateTime.UtcNow - transition.TimeBegin;
 					}
 					else
 					{
-						timespan = DateTime.Now - session.TimeBegin;
+						timespan = DateTime.UtcNow - session.TimeBegin;
 					}
 
-					users.LicensingIntervalSeconds -= (int) timespan.TotalSeconds;
+					customer.LicensingIntervalSeconds -= (int) timespan.TotalSeconds;
 				}
 
 				context.SessionTransition.Add(new SessionTransition()

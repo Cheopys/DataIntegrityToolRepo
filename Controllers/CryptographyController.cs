@@ -18,7 +18,7 @@ namespace DataIntegrityTool.Controllers
     public class CryptographyController : ControllerBase
     {
         [HttpGet, Route("GetServerRSAPublicKey")]
-        public byte[] GetServerPublicKey()
+        public string GetServerPublicKey()
         {
             return ServerCryptographyService.GetServerRSAPublicKey();
         }

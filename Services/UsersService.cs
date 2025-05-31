@@ -56,10 +56,7 @@ namespace DataIntegrityTool.Services
                     Int32 seatsMax  = context.Subscriptions.Where(cu => cu.Equals(customer.Id)).Select(cu => cu.SeatCount).FirstOrDefault();
                     Int32 seatsUsed = context.Users        .Where(us => us.Equals(customer.Id)).Count();
 
-                    if (seatsUsed >= seatsMax)
-                    {
-                        CanAdd = false;
-                    }
+                    CanAdd = (seatsUsed < seatsMax);
                 }
 
                 if (CanAdd)
@@ -142,7 +139,7 @@ namespace DataIntegrityTool.Services
 
         // D
 
-		public static void DeleteUser(Int32 UserId)
+		public static void  DeleteUser(Int32 UserId)
 		{
 			using (DataContext context = new())
 			{
@@ -221,7 +218,7 @@ namespace DataIntegrityTool.Services
                     }
                     else
                     {
-                        errorCode = ErrorCodes.errorWErongToken;
+                        errorCode = ErrorCodes.errorWrongToken;
                     }
 				}
 				else
