@@ -70,8 +70,6 @@ namespace DataIntegrityTool.Services
 				    Name                     = request.Name,
 				    PasswordHash             = ServerCryptographyService.SHA256(request.Password),
 				    DateAdded                = DateTime.UtcNow,
-				    LicensingIntervalSeconds = 0,
-				    LicensingMeteredCount    = 0,
 				    Tools                    = request.Tools,
 			    };
 

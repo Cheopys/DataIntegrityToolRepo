@@ -106,7 +106,7 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("ChangePasswordAsk")]
 		public Int32 ChangePasswordAsk(Int32 UserId)
 		{
-			return UsersService.ChangePasswordAsk(UserId);
+			return (Int32) UsersService.ChangePasswordAsk(UserId);
 		}
 
 		[HttpPost, Route("ChangePasswordAnswer")]
