@@ -21,7 +21,7 @@ namespace DataIntegrityTool.Controllers
 								   bool   IsAdministrator)
 		{
 			Program.IsAdmin = IsAdministrator;
-			return SessionService.Login(Email, ServerCryptographyService.SHA256(Password), IsAdministrator);
+			return SessionService.Login(Email, Password, IsAdministrator);
 		}
 
 		[HttpPut, Route("BeginSession")]
