@@ -81,11 +81,11 @@ namespace DataIntegrityTool.Controllers
 		[HttpPut, Route("Login_Raw")]
 		public LoginResponse Login_Raw(string Email,
 									   string Password,
-									   bool   isAdministrator)
+									   LoginType loginType = LoginType.typeCustomer)
 		{
 			LoginResponse response = SessionService.Login(Email, 
 														  ServerCryptographyService.SHA256(Password), 
-														  isAdministrator); 
+														  loginType); 
 
 			return response;
 		}
