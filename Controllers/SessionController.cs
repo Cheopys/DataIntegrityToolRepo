@@ -18,10 +18,10 @@ namespace DataIntegrityTool.Controllers
 		[HttpGet, Route("Login")]
 		public LoginResponse Login(string Email,
 								   string PasswordHash,
-								   bool   IsAdministrator)
+								   LoginType loginType = LoginType.typeCustomer)		
 		{
-			Program.IsAdmin = IsAdministrator;
-			return SessionService.Login(Email, PasswordHash, IsAdministrator);
+			Program.loginType = loginType;
+			return SessionService.Login(Email, PasswordHash, loginType);
 		}
 
 		[HttpPut, Route("BeginSession")]

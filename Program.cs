@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using Microsoft.Extensions.Options;
 using System.Composition.Convention;
+using DataIntegrityTool.Schema;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 /*
@@ -96,6 +97,6 @@ app.Run();
 
 public partial class Program
 {
-	static public bool IsAdmin = false;
+	static public LoginType loginType = LoginType.typeCustomer;
 }
 
