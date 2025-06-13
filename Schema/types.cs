@@ -1,6 +1,6 @@
 ﻿namespace DataIntegrityTool.Schema;
 
-public enum CustomerOrUser
+public enum LoginType
 {
 	typeUndefined = 0,
 	typeDIT       = 1,

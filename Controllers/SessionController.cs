@@ -17,11 +17,11 @@ namespace DataIntegrityTool.Controllers
 	{
 		[HttpGet, Route("Login")]
 		public LoginResponse Login(string Email,
-								   string Password,
+								   string PasswordHash,
 								   bool   IsAdministrator)
 		{
 			Program.IsAdmin = IsAdministrator;
-			return SessionService.Login(Email, Password, IsAdministrator);
+			return SessionService.Login(Email, PasswordHash, IsAdministrator);
 		}
 
 		[HttpPut, Route("BeginSession")]

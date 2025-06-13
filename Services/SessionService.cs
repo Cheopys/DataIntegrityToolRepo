@@ -30,8 +30,8 @@ namespace DataIntegrityTool.Services
 		}
 
 		public static LoginResponse Login(string Email,
-								          string PasswordHash,
-										  bool   IsAdministrator)
+										  string PasswordHash,
+										  LoginType loginType = LoginType.typeCustomer)
 		{
 			LoginResponse response = new()
 			{
@@ -42,13 +42,14 @@ namespace DataIntegrityTool.Services
 			{
 				// From web site
 
-				if (IsAdministrator)
+				if (loginType == LoginType.typeCustomer
+				||  loginType == LoginType.typeDIT)
 				{
-                    Customers? customer = context.Customers.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+					Customers? customer = context.Customers.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
 
-                    if (customer != null)
-                    {
-                        if (customer.PasswordHash.Equals(PasswordHash))
+					if (customer != null)
+					{
+						if (customer.PasswordHash.Equals(PasswordHash))
 						{
 							response.Identifier = customer.Id;
 						}
@@ -56,16 +57,16 @@ namespace DataIntegrityTool.Services
 						{
 							response.errorcode = ErrorCodes.errorInvalidPassword;
 						}
-                    }
-                    else
-                    {
-                        response.errorcode = ErrorCodes.errorInvalidUser;
-                    }
-                } // end is admin
+					}
+					else
+					{
+						response.errorcode = ErrorCodes.errorInvalidUser;
+					}
+				} // end is customer
 
-                // from DIT Tool
+				// from DIT Tool
 
-                else
+				else if (loginType == LoginType.typeUser)
 				{
 					Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
 

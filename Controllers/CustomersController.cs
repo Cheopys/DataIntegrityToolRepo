@@ -65,7 +65,7 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				type			= CustomerOrUser.typeUser, // query comes from the tools, therefore user
+				type			= LoginType.typeUser, // query comes from the tools, therefore user
 				primaryKey		= UserId,
 				aesIV			= aesDIT.IV,
 				encryptedData	= customerJSON
@@ -106,7 +106,7 @@ namespace DataIntegrityTool.Controllers
 			{
 				aesIV		= aesDIT.IV,
 				primaryKey	= 0,
-				type		= CustomerOrUser.typeDIT,
+				type		= LoginType.typeDIT,
 			};
 				
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
@@ -126,7 +126,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("CheckEmail")]
-		public CustomerOrUser CheckEmail(string Email)
+		public LoginType CheckEmail(string Email)
 		{
 			return CustomersService.CheckEmail(Email);
 		}

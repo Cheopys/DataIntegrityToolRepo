@@ -276,9 +276,9 @@ namespace DataIntegrityTool.Services
             return usages;
         }
 
-        public static CustomerOrUser CheckEmail(string Email)
+        public static LoginType CheckEmail(string Email)
         {
-			CustomerOrUser type = CustomerOrUser.typeUser;
+			LoginType type = LoginType.typeUser;
 			
             using (DataContext context = new())
             {
@@ -286,7 +286,7 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 {
-                    type = (customer.Id == 4) ? CustomerOrUser.typeDIT : CustomerOrUser.typeCustomer;
+                    type = (customer.Id == 4) ? LoginType.typeDIT : LoginType.typeCustomer;
                 }
                 else
                 {
@@ -294,11 +294,11 @@ namespace DataIntegrityTool.Services
 
                     if (user != null)
                     {
-                        type = CustomerOrUser.typeCustomer;
+                        type = LoginType.typeCustomer;
                     }
                     else
                     {
-                        type = CustomerOrUser.typeUndefined;
+                        type = LoginType.typeUndefined;
                     }
                 }
 

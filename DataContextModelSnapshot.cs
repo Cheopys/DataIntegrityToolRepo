@@ -48,6 +48,12 @@ namespace DataIntegrityTool.Migrations
                     b.Property<int>("LicenseType")
                         .HasColumnType("integer");
 
+                    b.Property<int>("LicensingIntervalSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MeteringCount")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -60,8 +66,8 @@ namespace DataIntegrityTool.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("SubscriptionEnd")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<TimeSpan>("SubscriptionTime")
+                        .HasColumnType("interval");
 
                     b.PrimitiveCollection<int[]>("Tools")
                         .HasColumnType("integer[]");
@@ -194,7 +200,7 @@ namespace DataIntegrityTool.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("ExpirationDate")
+                    b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("SeatCount")
@@ -260,12 +266,6 @@ namespace DataIntegrityTool.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("LicensingIntervalSeconds")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LicensingMeteredCount")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -141,11 +141,11 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
             {
-				if (wrapper.type == CustomerOrUser.typeDIT)
+				if (wrapper.type == LoginType.typeDIT)
 				{
 					key = context.ToolParameters.Select(tp => tp.AesKey).FirstOrDefault();
 				}
-				else if (wrapper.type == CustomerOrUser.typeCustomer)
+				else if (wrapper.type == LoginType.typeCustomer)
 				{
 					key = context.Customers.Where (cu => cu.Id == wrapper.primaryKey)
 										   .Select(cu => cu.AesKey)

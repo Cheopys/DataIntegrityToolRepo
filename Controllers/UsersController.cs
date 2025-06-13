@@ -60,7 +60,7 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				type		  = CustomerOrUser.typeUser,
+				type		  = LoginType.typeUser,
 				primaryKey	  = UserId,
 				aesIV		  = aesDIT.IV,
 				encryptedData = userJSON
@@ -90,7 +90,7 @@ namespace DataIntegrityTool.Controllers
 			{
 				aesIV		= aesDIT.IV,
 				primaryKey	= 0,
-				type		= CustomerOrUser.typeDIT,
+				type		= LoginType.typeDIT,
 			};
 				
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
