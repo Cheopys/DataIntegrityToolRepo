@@ -17,7 +17,7 @@ namespace DataIntegrityTool.Schema
         public DateTime DateAdded     { get; set; }
         public string   Notes         { get; set; }
         public List<ToolTypes>? Tools { get; set; }
-        public byte[]   AesKey        { get; set; }
+        public byte[]?  AesKey        { get; set; }
         public DateTime UsageSince    { get; set; } = DateTime.MinValue;
 
 		// license types
