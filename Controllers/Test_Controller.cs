@@ -1,4 +1,5 @@
-﻿using DataIntegrityTool.Schema;
+﻿using DataIntegrityTool.Db;
+using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
@@ -94,6 +95,38 @@ namespace DataIntegrityTool.Controllers
 		public ErrorCodes ChangePasswordAnswer(ChangePasswordRequest request)
 		{
 			return UsersService.ChangePasswordAnswer(request);
+		}
+
+		[HttpPut, Route("CustomersToUsers")]
+		public void CustomersToUsers()
+		{
+			using (DataContext context = new())
+			{
+				List<Customers> customers = context.Customers.ToList();
+
+				customers.ForEach(cu =>
+				{
+					Users? user = context.Users.Where(user => user.Email.Equals(cu.Email)).FirstOrDefault();
+
+					if (user == null)
+					{
+						user = new Users()
+						{
+							AesKey			 = cu.AesKey,
+							DateAdded	 = cu.DateAdded,
+							Email		 = cu.Email,
+							Name		 = cu.Name,
+							PasswordHash = cu.PasswordHash,
+							Tools		 = cu.Tools
+						};
+
+						context.Add(user);
+					}
+
+					context.SaveChanges();
+					context.Dispose();
+				});
+			}
 		}
 	}
 }
