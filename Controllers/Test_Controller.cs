@@ -112,6 +112,7 @@ namespace DataIntegrityTool.Controllers
 					{
 						user = new Users()
 						{
+							CustomerId   = cu.Id,
 							AesKey		 = cu.AesKey,
 							DateAdded	 = cu.DateAdded,
 							Email		 = cu.Email,
