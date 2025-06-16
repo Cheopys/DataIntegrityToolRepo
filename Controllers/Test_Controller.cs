@@ -112,7 +112,7 @@ namespace DataIntegrityTool.Controllers
 					{
 						user = new Users()
 						{
-							AesKey			 = cu.AesKey,
+							AesKey		 = cu.AesKey,
 							DateAdded	 = cu.DateAdded,
 							Email		 = cu.Email,
 							Name		 = cu.Name,
@@ -122,10 +122,10 @@ namespace DataIntegrityTool.Controllers
 
 						context.Add(user);
 					}
-
-					context.SaveChanges();
-					context.Dispose();
 				});
+
+				context.SaveChanges();
+				context.Dispose();
 			}
 		}
 	}
