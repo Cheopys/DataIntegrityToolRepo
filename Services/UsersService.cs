@@ -49,18 +49,12 @@ namespace DataIntegrityTool.Services
                 // check if any available seats
 
                 Customers customer = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault();
-                bool      CanAdd   = true;
 
-                if (customer.LicenseType.Equals(LicenseTypes.licenseTypeSubscription))
-                {
-                    Int32 seatsMax  = context.Subscriptions.Where(cu => cu.Equals(customer.Id)).Select(cu => cu.SeatCount).FirstOrDefault();
-                    Int32 seatsUsed = context.Users        .Where(us => us.Equals(customer.Id)).Count();
+                Int32 seatsMax  = context.Subscriptions.Where(cu => cu.Equals(customer.Id)).Select(cu => cu.SeatCount).FirstOrDefault();
+                Int32 seatsUsed = context.Users        .Where(us => us.Equals(customer.Id)).Count();
 
-                    CanAdd = (seatsUsed < seatsMax);
-                }
-
-                if (CanAdd)
-                {
+                if (seatsUsed < seatsMax)
+				{
                     Users user = new Users()
                     {
                         CustomerId               = request.CustomerId,

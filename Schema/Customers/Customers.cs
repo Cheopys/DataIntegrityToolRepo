@@ -20,12 +20,7 @@ namespace DataIntegrityTool.Schema
         public byte[]?  AesKey        { get; set; }
         public DateTime UsageSince    { get; set; } = DateTime.MinValue;
 
-		// license types
-
-		public LicenseTypes LicenseType           { get; set; }
-
 		public Int32     MeteringCount            { get; set; }
-		public Int32     LicensingIntervalSeconds { get; set; }
 		public TimeSpan  SubscriptionTime         { get; set; }
     }
 }

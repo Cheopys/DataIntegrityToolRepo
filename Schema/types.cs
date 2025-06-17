@@ -12,7 +12,6 @@ public enum LoginType
 public enum LicenseTypes
 {
 	licenseTypeMetered      = 1,
-	licenseTypeInterval     = 2,
 	licenseTypeSubscription = 4
 }
 

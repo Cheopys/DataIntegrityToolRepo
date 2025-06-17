@@ -116,6 +116,7 @@ namespace DataIntegrityTool.Services
 					if (subscription.ExpirationDate == null)
 					{
 						subscription.ExpirationDate = DateTime.UtcNow + customer.SubscriptionTime;
+						context.SaveChanges();
 					}
 				}
 				else if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
@@ -212,13 +213,7 @@ namespace DataIntegrityTool.Services
 
 				session.TimeEnd = DateTime.UtcNow;
 
-				if (session?.Licensetype == LicenseTypes.licenseTypeInterval)
-				{
-					TimeSpan duration = session.TimeEnd.Subtract(session.TimeBegin);
-
-					customer.LicensingIntervalSeconds -= (Int32)duration.TotalSeconds;
-				}
-				else if (session?.Licensetype == LicenseTypes.licenseTypeSubscription)
+				if (session?.Licensetype == LicenseTypes.licenseTypeSubscription)
 				{
 					Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
 
@@ -296,22 +291,6 @@ namespace DataIntegrityTool.Services
 				if (session.Licensetype == LicenseTypes.licenseTypeMetered)
 				{
 					customer.MeteringCount--;					
-				}
-				else if (session.Licensetype == LicenseTypes.licenseTypeInterval)
-				{
-					SessionTransition? transition = context.SessionTransition.Where(st => st.Id.Equals(sessionId)).OrderBy(st => st.Id).LastOrDefault();
-					TimeSpan		   timespan;
-
-					if (transition != null)
-					{
-						timespan = DateTime.UtcNow - transition.TimeBegin;
-					}
-					else
-					{
-						timespan = DateTime.UtcNow - session.TimeBegin;
-					}
-
-					customer.LicensingIntervalSeconds -= (int) timespan.TotalSeconds;
 				}
 
 				context.SessionTransition.Add(new SessionTransition()
