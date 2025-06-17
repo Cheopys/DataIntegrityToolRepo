@@ -26,12 +26,13 @@ public enum ToolTypes
 
 public enum ErrorCodes
 {
-	errorNone				= 0,
-	errorInvalidUser		= 1,
-	errorInvalidPassword	= 2,
-	errorNoRegistrations    = 3, 
-	errorWrongToken			= 4,	
-	errorToolNotAuthorized  = 5,
-	errorNoLicense			= 6,
-	errorBadKeySize         = 7,
+	errorNone				  = 0,
+	errorInvalidUser		  = 1,
+	errorInvalidPassword	  = 2,
+	errorNoRegistrations      = 3, 
+	errorWrongToken			  = 4,	
+	errorToolNotAuthorized = 5,
+	errorNoLicense			  = 6,
+	errorBadKeySize           = 7,
+	errorUnknownLoginType     = 8,
 }

@@ -86,7 +86,11 @@ namespace DataIntegrityTool.Services
 						response.errorcode = ErrorCodes.errorInvalidUser;
 					}
 				}
-				context.Dispose();
+				else
+				{
+					response.errorcode = ErrorCodes.errorUnknownLoginType;
+				}
+					context.Dispose();
 			}
 
 			return response;
