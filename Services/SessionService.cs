@@ -173,7 +173,8 @@ namespace DataIntegrityTool.Services
 							Licensetype = request.Licensetype,
 							ToolType	= request.Tooltype,
 							TimeBegin	= DateTime.UtcNow,
-							TimeEnd		= DateTime.UtcNow
+							TimeEnd		= DateTime.UtcNow,
+							CustomerId  = user.CustomerId
 						};
 
 						context.Session.Add(session);
