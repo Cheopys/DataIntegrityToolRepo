@@ -104,28 +104,23 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				Users?	   user		= context.Users	   .Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
-				Customers? customer = context.Customers.Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
+				Users?	       user			= context.Users	       .Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
+				Customers?     customer		= context.Customers	   .Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
+				Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(user.CustomerId)).FirstOrDefault();
 
 				if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
 				{
-					Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(user.CustomerId)).FirstOrDefault();
-
 					// subscription begins with first use
 
 					if (subscription.ExpirationDate == null)
 					{
 						subscription.ExpirationDate = DateTime.UtcNow + customer.SubscriptionTime;
-						context.SaveChanges();
+						await context.SaveChangesAsync();
 					}
 				}
 				else if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
 				{
 					response.RemainingMetered = customer.MeteringCount;
-				}
-				else
-				{
-					// interval licensing
 				}
 
 				if (user != null)
@@ -153,11 +148,9 @@ namespace DataIntegrityTool.Services
 						} // end metered
 						else if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
 						{
-							Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId == user.CustomerId).FirstOrDefault();
-
 							logger.Info("LicenseType.Subscription");
 
-							if (subscription.ExpirationDate < DateTime.UtcNow)
+							if (subscription.ExpirationDate > DateTime.UtcNow)
 							{
 								OK = true; 
 							}
