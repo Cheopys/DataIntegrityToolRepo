@@ -112,9 +112,12 @@ namespace DataIntegrityTool.Services
 				{
 					// subscription begins with first use
 
-					if (subscription.ExpirationDate == null)
+					if (subscription.ExpirationDate   == null
+					&&  customer    .SubscriptionTime != null)
 					{
-						subscription.ExpirationDate = DateTime.UtcNow + customer.SubscriptionTime;
+						subscription.ExpirationDate   = DateTime.UtcNow + customer.SubscriptionTime;
+						customer    .SubscriptionTime = null;
+
 						await context.SaveChangesAsync();
 					}
 				}

@@ -154,14 +154,12 @@ namespace DataIntegrityTool.Services
                 Customers?   customer  = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
                 List<Users>   users    = context.Users    .Where(us => us.CustomerId.Equals(CustomerId)).ToList();
                 List<Session> sessions = context.Session  .Where(s  => s .CustomerId.Equals(CustomerId)).ToList();
-                List<LicenseInterval> licensesInterval = context.LicenseInterval.Where(li => li.CustomerId.Equals(CustomerId)).ToList();
                 List<LicenseMetered>  licensesetered   = context.LicenseMetered .Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
 
                 context.Remove     (customer);
                 context.RemoveRange(users);
                 context.RemoveRange(sessions);
                 context.RemoveRange(licensesetered);
-                context.RemoveRange(licensesInterval);
 
                 context.SaveChanges();
                 context.Dispose();
@@ -228,23 +226,8 @@ namespace DataIntegrityTool.Services
 
             // time interval licenses
 
-            List<LicenseInterval> intervals = context.LicenseInterval.Where(li => li.CustomerId.Equals(customerId)
-                                                                               && li.TimeBegin       > customerUsage)
-                                                                     .ToList();
-
 //          usage.IntervalSessions = intervals.Count();
             
-            foreach (LicenseInterval interval in intervals)
-            {
-                if (interval.TimeBegin != null
-                && interval .TimeEnd   != null)
-                {
-                    DateTime timeBegin = interval.TimeBegin.Value;
-                    DateTime timeEnd   = interval.TimeEnd;
-//                  usage.IntervalSeconds += (Int32)(timeEnd.Subtract(timeBegin)).TotalSeconds;
-                }
-            }
-
             return usage;
         }
 

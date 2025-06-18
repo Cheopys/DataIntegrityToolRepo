@@ -28,7 +28,6 @@ namespace DataIntegrityTool.Db
 		public DbSet<Customers>      Customers              { get; set; }
 		public DbSet<Subscriptions>  Subscriptions          { get; set; }
 		public DbSet<LicenseMetered> LicenseMetered         { get; set; }
-		public DbSet<LicenseInterval> LicenseInterval       { get; set; }
         public DbSet<Session>        Session                { get; set; }
         public DbSet<SessionTransition>  SessionTransition  { get; set; }
         public DbSet<Users>          Users                  { get; set; }
@@ -41,7 +40,6 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<Customers>        ().ToTable("Customers");
 			modelBuilder.Entity<Subscriptions>    ().ToTable("Subscriptions");
 			modelBuilder.Entity<LicenseMetered>   ().ToTable("LicenseMetered");
-			modelBuilder.Entity<LicenseInterval>  ().ToTable("LicenseInterval");
 			modelBuilder.Entity<Session>          ().ToTable("Session");
             modelBuilder.Entity<SessionTransition>().ToTable("SessionTransition");
             modelBuilder.Entity<Users>            ().ToTable("Users");

@@ -21,6 +21,6 @@ namespace DataIntegrityTool.Schema
         public DateTime UsageSince    { get; set; } = DateTime.MinValue;
 
 		public Int32     MeteringCount            { get; set; }
-		public TimeSpan  SubscriptionTime         { get; set; }
+		public TimeSpan? SubscriptionTime         { get; set; }
     }
 }
