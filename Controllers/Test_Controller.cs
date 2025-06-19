@@ -129,5 +129,31 @@ namespace DataIntegrityTool.Controllers
 				context.Dispose();
 			}
 		}
+
+		[HttpPut, Route("CustomersToAdministrators")]
+		public void CustomersToAdministrators()
+		{
+			using (DataContext context = new())
+			{
+				List<Customers> customers = context.Customers.Where(cu => cu.Id < 4).ToList();
+
+				customers.ForEach(cu =>
+				{
+					Administrators administrator = new Administrators()
+					{
+						AesKey		 = cu.AesKey,
+						DateAdded	 = cu.DateAdded,
+						Email		 = cu.Email,
+						Name		 = cu.Name,
+						PasswordHash = cu.PasswordHash,
+					};
+
+					context.Add(administrator);
+				});
+
+				context.SaveChanges();
+				context.Dispose();
+			}
+		}
 	}
 }
