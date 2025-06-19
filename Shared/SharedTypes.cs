@@ -65,7 +65,7 @@ public class BeginSessionRequest
 public class  BeginSessionResponse
 {
     public Int32 SessionId        { get; set; }
-    public Int32 RemainingSeconds { get; set; }
+    public DateTime? SubscriptionEnd  { get; set; }
 	public Int32 RemainingMetered { get; set; }
 	public ErrorCodes Error       { get; set; }
 }

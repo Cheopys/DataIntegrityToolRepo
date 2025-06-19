@@ -224,10 +224,6 @@ namespace DataIntegrityTool.Services
 
             earliest = metereds.Min(lm => lm.TimeBegun.Value);
 
-            // time interval licenses
-
-//          usage.IntervalSessions = intervals.Count();
-            
             return usage;
         }
 
@@ -277,11 +273,7 @@ namespace DataIntegrityTool.Services
 
                     if (user != null)
                     {
-                        type = LoginType.typeCustomer;
-                    }
-                    else
-                    {
-                        type = LoginType.typeUndefined;
+                        type = LoginType.typeUser;
                     }
                 }
 

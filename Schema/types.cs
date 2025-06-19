@@ -2,17 +2,15 @@
 
 public enum LoginType
 {
-	typeUndefined = 0,
-	typeDIT       = 1,
-	typeCustomer  = 2,
-	typeUser      = 3
+	typeUser	 = 1,
+	typeCustomer = 2,
+	typeDIT		 = 3
 }
 
-[Flags]
 public enum LicenseTypes
 {
 	licenseTypeMetered      = 1,
-	licenseTypeSubscription = 4
+	licenseTypeSubscription = 2
 }
 
 public enum ToolTypes
@@ -30,7 +28,7 @@ public enum ErrorCodes
 	errorInvalidPassword	  = 2,
 	errorNoRegistrations      = 3, 
 	errorWrongToken			  = 4,	
-	errorToolNotAuthorized = 5,
+	errorToolNotAuthorized    = 5,
 	errorNoLicense			  = 6,
 	errorBadKeySize           = 7,
 	errorUnknownLoginType     = 8,

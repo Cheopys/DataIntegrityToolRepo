@@ -42,8 +42,27 @@ namespace DataIntegrityTool.Services
 			{
 				// From web site
 
-				if (loginType == LoginType.typeCustomer
-				||  loginType == LoginType.typeDIT)
+				if (loginType == LoginType.typeDIT)
+				{
+					Administrators? administrator = context.Administrators.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+	
+					if (administrator != null)
+					{
+						if (administrator.PasswordHash.Equals(PasswordHash))
+						{
+							response.Identifier = administrator.Id;
+						}
+						else
+						{
+							response.errorcode = ErrorCodes.errorInvalidPassword;
+						}
+					}
+					else
+					{
+						response.errorcode = ErrorCodes.errorInvalidUser;
+					}
+				}
+				else if (loginType == LoginType.typeCustomer)
 				{
 					Customers? customer = context.Customers.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
 
@@ -91,6 +110,11 @@ namespace DataIntegrityTool.Services
 					response.errorcode = ErrorCodes.errorUnknownLoginType;
 				}
 					context.Dispose();
+			}
+
+			if (response.errorcode == ErrorCodes.errorNone)
+			{
+				Program.loginType = loginType;
 			}
 
 			return response;

@@ -84,13 +84,13 @@ namespace DataIntegrityTool.Controllers
 		{
 			List<Users> users = await UsersService.GetUsers(CustomerId);
 
-			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
+			System.Security.Cryptography.Aes aesCustomer = ServerCryptographyService.CreateAes();
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		= aesDIT.IV,
+				aesIV		= aesCustomer.IV,
 				primaryKey	= 0,
-				type		= LoginType.typeDIT,
+				type		= LoginType.typeCustomer,
 			};
 				
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
