@@ -13,7 +13,7 @@ namespace DataIntegrityTool.Shared
     public class EncryptionWrapperDIT
     {
         public Int32            primaryKey      { get; set; }
-        public LoginType   type            { get; set; }  
+        public LoginType        type            { get; set; }  
         public byte[]           aesIV           { get; set; } 
         public string           encryptedData   { get; set; }
     }
