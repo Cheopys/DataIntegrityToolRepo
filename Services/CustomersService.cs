@@ -97,7 +97,7 @@ namespace DataIntegrityTool.Services
             return response;
 		}
 
-		public ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
+		public static ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
         {
             ReprovisionCustomerResponse response = new()
             {
@@ -127,6 +127,8 @@ namespace DataIntegrityTool.Services
 
                 context.Dispose();
             }
+
+            return response;
         }
 
 			public static Customers GetCustomer (Int32 CustomerId)
