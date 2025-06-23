@@ -52,6 +52,12 @@ namespace DataIntegrityTool.Controllers
 			return response;
 		}
 
+		[HttpGet, Route("ReprovisionCustomer")]
+		public ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
+		{
+			return CustomersService.ReprovisionCustomer(request);
+		}
+
 		//  R
 
 		[HttpGet, Route("GetCustomer")]

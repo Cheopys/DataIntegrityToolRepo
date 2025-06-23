@@ -97,7 +97,39 @@ namespace DataIntegrityTool.Services
             return response;
 		}
 
-            public static Customers GetCustomer (Int32 CustomerId)
+		public ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
+        {
+            ReprovisionCustomerResponse response = new()
+            {
+                Error = ErrorCodes.errorNone
+            };
+
+			using (DataContext context = new())
+            {
+				Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault();
+
+                if (customer != null)
+                { 
+                    if (customer.PasswordHash.Equals(request.PasswordHash))
+                    {
+                        response.CustomerId = customer.Id;
+                        response.AesKey     = customer.AesKey.ToString();
+                    }
+                    else
+                    {
+						response.Error = ErrorCodes.errorInvalidPassword;
+					}
+				}
+                else
+                {
+                    response.Error = ErrorCodes.errorInvalidUser;
+                }
+
+                context.Dispose();
+            }
+        }
+
+			public static Customers GetCustomer (Int32 CustomerId)
             {
 			    Customers? customer = null;
 

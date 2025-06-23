@@ -38,6 +38,20 @@ public class RegisterCustomerResponse
 	public ErrorCodes ErrorCode  { get; set; }
 }
 
+public class ReprovisionCustomerRequest
+{
+	public string Email         { get; set; }
+	public string PasswordHash  { get; set; }
+}
+
+public class ReprovisionCustomerResponse
+{
+	public Int32        CustomerId { get; set; }
+	public string       AesKey     { get; set; }
+    public ErrorCodes   Error      { get; set; }
+}
+
+
 public class UpdateCustomerRequest
 {
     public Int32  Id            { get; set; }
