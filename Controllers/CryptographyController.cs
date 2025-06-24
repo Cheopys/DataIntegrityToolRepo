@@ -17,12 +17,13 @@ namespace DataIntegrityTool.Controllers
 
     public class CryptographyController : ControllerBase
     {
+        
         [HttpGet, Route("GetServerRSAPublicKey")]
         public string GetServerPublicKey()
         {
-            return ServerCryptographyService.GetServerRSAPublicKey();
+            return Convert.ToBase64String(ServerCryptographyService.GetServerRSAPublicKey());
         }
-
+        
         /*
          * Example
          * 

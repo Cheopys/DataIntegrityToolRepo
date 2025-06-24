@@ -12,8 +12,9 @@ namespace DataIntegrityTool.Services
 	{
         public string GetServerPublicKey()
         {
-            return ServerCryptographyService.GetServerRSAPublicKey();
+            return Convert.ToBase64String(ServerCryptographyService.GetServerRSAPublicKey());
         }
+
         public static Aes CreateAesKey()
         {
             Aes aes		= Aes.Create();
