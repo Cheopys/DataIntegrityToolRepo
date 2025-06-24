@@ -60,6 +60,33 @@ namespace DataIntegrityTool.Controllers
 			return CustomersService.RegisterCustomer(request);
 		}
 
+		[HttpPut, Route("RegisterCustomer")]
+		[Produces("application/json")]
+		public RegisterCustomerResponse RegisterCustomer(RegisterCustomerRequest request)
+		{
+			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
+
+			request.AesKey = Convert.ToHexString(aes.Key);
+
+			string requestSerialized = JsonSerializer.Serialize(request);
+
+			byte[] requestEncoded   = Encoding.UTF8.GetBytes(requestSerialized);
+			string requestEncryptedB64 = ServerCryptographyService.EncryptRSA(requestEncoded);
+
+			// begin API logic
+
+			byte[] decrypted = ServerCryptographyService.DecryptRSA(requestEncryptedB64);
+
+			RegisterCustomerRequest? requestOut= JsonSerializer.Deserialize<RegisterCustomerRequest>(decrypted);
+
+			RegisterCustomerResponse response = CustomersService.RegisterCustomer(requestOut);
+
+			return response;
+
+
+
+			return CustomersService.RegisterCustomer(request);
+		}
 
 		[HttpGet, Route("GetCustomers_Raw")]
 		[Produces("application/json")]

@@ -51,7 +51,7 @@ namespace DataIntegrityTool.Services
             }
         }
 
-        public static string GetServerRSAPublicKey()
+        public static byte[] GetServerRSAPublicKey()
 		{
 			byte[] key = null;
 			using (DataContext context = new())
@@ -79,7 +79,7 @@ namespace DataIntegrityTool.Services
 					context.Dispose();
 			}
 
-			return Convert.ToBase64String(key);
+			return key;
 		}
 
 		private static byte[] GetServerRSAPrivateKey()
@@ -171,6 +171,21 @@ namespace DataIntegrityTool.Services
 
             return aes;
         }
+
+		public static string EncryptRSA(byte[] cleartext)
+		{
+			byte[] publicKey = GetServerRSAPublicKey();
+
+			RSACryptoServiceProvider csp = new RSACryptoServiceProvider(4096);
+
+			int cbRead;
+			csp.ImportRSAPublicKey(publicKey, out cbRead);
+
+			byte[] textEncrypted = csp.Encrypt(cleartext, false); //PKCS7 padding
+
+			return Convert.ToBase64String(textEncrypted);
+
+		}
 
 		public static byte[] DecryptRSA(string requestEncryptedB64)
 		{
