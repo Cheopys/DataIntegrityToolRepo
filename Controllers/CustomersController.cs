@@ -43,10 +43,8 @@ namespace DataIntegrityTool.Controllers
 		[HttpPut, Route("RegisterCustomer")]
 		public async Task<RegisterCustomerResponse> RegisterCustomer(string registerCustomerB64 )
 		{
-			byte[] decrypted = ServerCryptographyService.DecryptRSA(registerCustomerB64);
+			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(registerCustomerB64);
 
-            RegisterCustomerRequest? request = JsonSerializer.Deserialize<RegisterCustomerRequest>(decrypted);
-            
 			RegisterCustomerResponse response = CustomersService.RegisterCustomer(request);
 
 			return response;
