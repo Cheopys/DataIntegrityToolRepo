@@ -1,16 +1,17 @@
-﻿using System.Text.Json;
-using System.Net;
+﻿using Amazon.Runtime.Internal;
+using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NLog;
-using System.Runtime.Intrinsics.Arm;
-using DataIntegrityTool.Db;
+using System.Collections.Generic;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 /*
 	This controller is for use of DIT 
@@ -40,19 +41,73 @@ namespace DataIntegrityTool.Controllers
 
 		//  C
 
-		[HttpPut, Route("RegisterCustomer")]
-		public async Task<RegisterCustomerResponse> RegisterCustomer(string registerCustomerB64 )
+		private static Aes CreateAes()
 		{
-			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(registerCustomerB64);
+			Aes aes		= Aes.Create();
+			aes.KeySize = 256;
+			aes.Mode	= CipherMode.CBC;
+			aes.Padding = PaddingMode.PKCS7;
+
+			return aes;
+		}
+
+		private static string EncryptRSA(byte[] cleartext)
+		{
+			byte[] publicKey = ServerCryptographyService.GetServerRSAPublicKey();
+
+			RSACryptoServiceProvider csp = new RSACryptoServiceProvider(4096);
+
+			int cbRead;
+			csp.ImportRSAPublicKey(publicKey, out cbRead);
+
+			byte[] textEncrypted = csp.Encrypt(cleartext, false); //PKCS7 padding
+
+			return Convert.ToBase64String(textEncrypted);
+		}
+
+		[HttpPut, Route("PrepareRegisterCustomerRequest")]
+		public void PrepareRegisterCustomerRequest(RegisterCustomerRequest request)
+		{
+			Aes aes = CreateAes();
+
+			request.AesKey = Convert.ToHexString(aes.Key);
+
+			string requestSerialized = JsonSerializer.Serialize(request);
+
+			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
+			Program.registerCustomerB64 = EncryptRSA(requestEncoded);
+		}
+
+		[HttpPut, Route("RegisterCustomer")]
+		public RegisterCustomerResponse RegisterCustomer()
+		{
+			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(Program.registerCustomerB64);
+
+			Program.registerCustomerB64 = String.Empty;
 
 			RegisterCustomerResponse response = CustomersService.RegisterCustomer(request);
 
 			return response;
 		}
 
-		[HttpGet, Route("ReprovisionCustomer")]
-		public ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
+		[HttpPut, Route("PrepareReprovisionCustomerRequest")]
+		public void PrepareReprovisionCustomerRequest(ReprovisionCustomerRequest request)
 		{
+			Aes aes = CreateAes();
+
+			string requestSerialized = JsonSerializer.Serialize(request);
+
+			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
+			Program.reprovisionCustomerB64 = EncryptRSA(requestEncoded);
+		}
+
+		[HttpGet, Route("ReprovisionCustomer")]
+		public ReprovisionCustomerResponse ReprovisionCustomer()
+		{
+			ReprovisionCustomerRequest request = ServerCryptographyService.DecryptRSA<ReprovisionCustomerRequest>(Program.registerCustomerB64);
+
+			Program.reprovisionCustomerB64 = String.Empty;
+
 			return CustomersService.ReprovisionCustomer(request);
 		}
 

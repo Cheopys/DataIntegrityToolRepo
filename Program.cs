@@ -98,5 +98,7 @@ app.Run();
 public partial class Program
 {
 	static public LoginType loginType = LoginType.typeCustomer;
+	static public string registerCustomerB64;
+	static public string reprovisionCustomerB64;
 }
 
