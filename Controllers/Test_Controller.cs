@@ -75,17 +75,9 @@ namespace DataIntegrityTool.Controllers
 
 			// begin API logic
 
-			byte[] decrypted = ServerCryptographyService.DecryptRSA(requestEncryptedB64);
+			RegisterCustomerRequest requestOut = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(requestEncryptedB64);
 
-			RegisterCustomerRequest? requestOut= JsonSerializer.Deserialize<RegisterCustomerRequest>(decrypted);
-
-			RegisterCustomerResponse response = CustomersService.RegisterCustomer(requestOut);
-
-			return response;
-
-
-
-			return CustomersService.RegisterCustomer(request);
+			return CustomersService.RegisterCustomer(requestOut);
 		}
 
 		[HttpGet, Route("GetCustomers_Raw")]

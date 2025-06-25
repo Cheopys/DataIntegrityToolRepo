@@ -187,7 +187,7 @@ namespace DataIntegrityTool.Services
 
 		}
 
-		public static byte[] DecryptRSA(string requestEncryptedB64)
+		public static T DecryptRSA<T>(string requestEncryptedB64)
 		{
             byte[] privateKey = GetServerRSAPrivateKey();
 
@@ -200,9 +200,7 @@ namespace DataIntegrityTool.Services
 
             byte[] textEncoded = csp.Decrypt(requestEncrypted, false); //PKCS7 padding
 
-            string requestDecryptedB64 = System.Text.Encoding.Unicode.GetString(textEncoded);
-
-            return Convert.FromBase64String(requestDecryptedB64);
+			return JsonSerializer.Deserialize<T>(textEncoded);
         }
 
 		public static void DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
