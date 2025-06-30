@@ -27,9 +27,8 @@ public class RegisterCustomerRequest
     public string Password      { get; set; }
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
-    public LicenseTypes licenseType { get; set; }
-    public Int32  MeteringSeconds   { get; set; }
-    public string SubscriptionTime  { get; set; }
+    public Int32    MeteringSecondsInitial   { get; set; }
+    public TimeSpan SubscriptionTimeInitial  { get; set; }
 }
 
 public class RegisterCustomerResponse 
@@ -40,8 +39,8 @@ public class RegisterCustomerResponse
 
 public class ReprovisionCustomerRequest
 {
-	public string Email         { get; set; }
-	public string PasswordHash  { get; set; }
+	public string Email     { get; set; }
+	public string Password  { get; set; }
 }
 
 public class ReprovisionCustomerResponse

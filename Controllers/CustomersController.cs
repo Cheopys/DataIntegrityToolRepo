@@ -66,7 +66,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("PrepareRegisterCustomerRequest")]
-		public void PrepareRegisterCustomerRequest(RegisterCustomerRequest request)
+		public string PrepareRegisterCustomerRequest(RegisterCustomerRequest request)
 		{
 			Aes aes = CreateAes();
 
@@ -76,6 +76,8 @@ namespace DataIntegrityTool.Controllers
 
 			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
 			Program.registerCustomerB64 = EncryptRSA(requestEncoded);
+
+			return Convert.ToHexString(aes.Key)
 		}
 
 		[HttpPut, Route("RegisterCustomer")]
@@ -93,8 +95,6 @@ namespace DataIntegrityTool.Controllers
 		[HttpPut, Route("PrepareReprovisionCustomerRequest")]
 		public void PrepareReprovisionCustomerRequest(ReprovisionCustomerRequest request)
 		{
-			Aes aes = CreateAes();
-
 			string requestSerialized = JsonSerializer.Serialize(request);
 
 			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);

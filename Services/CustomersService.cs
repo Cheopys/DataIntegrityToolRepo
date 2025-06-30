@@ -61,6 +61,9 @@ namespace DataIntegrityTool.Services
 				    AesKey       = Convert.FromHexString(request.AesKey),
 				    DateAdded    = DateTime.UtcNow,
 				    UsageSince   = DateTime.MinValue,
+                    Tools            = request.Tools,
+                    MeteringCount    = request.MeteringSecondsInitial,
+                    SubscriptionTime = request.SubscriptionTimeInitial
 			    };
 
 			    Users user = new Users()
@@ -110,10 +113,10 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 { 
-                    if (customer.PasswordHash.Equals(request.PasswordHash))
+                    if (customer.PasswordHash.Equals(ServerCryptographyService.SHA256(request.Password)))
                     {
                         response.CustomerId = customer.Id;
-                        response.AesKey     = customer.AesKey.ToString();
+                        response.AesKey     =  Convert.ToHexString(customer.AesKey);
                     }
                     else
                     {
