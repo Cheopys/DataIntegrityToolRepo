@@ -3,7 +3,8 @@
 	public class Administrators
 	{
 		public Int32 Id					{ get; set; }
-		public string Name				{ get; set; }
+		public string NameFirst			{ get; set; }
+		public string NameLast			{ get; set; }
 		public string Email				{ get; set; }
 		public string PasswordHash		{ get; set; }
         public byte[]? AesKey			{ get; set; }

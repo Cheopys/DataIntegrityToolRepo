@@ -21,8 +21,9 @@ namespace DataIntegrityTool.Shared
 public class RegisterCustomerRequest
 {
     public string AesKey        { get; set; }
-    public string Name          { get; set; }
-    public string Description   { get; set; }
+	public string NameFirst     { get; set; }
+	public string NameLast      { get; set; }
+    public string Company       { get; set; }
     public string Email         { get; set; }
     public string Password      { get; set; }
     public List<ToolTypes> Tools{ get; set; }
@@ -54,8 +55,8 @@ public class ReprovisionCustomerResponse
 public class UpdateCustomerRequest
 {
     public Int32  Id            { get; set; }
-	public string Name          { get; set; }
-	public string Description   { get; set; }
+	public string NameFirst     { get; set; }
+	public string NameLast      { get; set; }
 	public string Email         { get; set; }
 	public string Password      { get; set; }
 	public List<ToolTypes> Tools{ get; set; }
@@ -122,8 +123,9 @@ public class RegisterUserRequest
 {
     Int32        Id              { get; set; }
     public Int32 CustomerId      { get; set; }
-    public string Name           { get; set; }
-    public string Email          { get; set; }
+    public string NameFirst      { get; set; }
+	public string NameLast       { get; set; }
+	public string Email          { get; set; }
     public string Password       { get; set; }
     public string AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
@@ -139,7 +141,8 @@ public class RegisterUserResponse
 public class UpdateUserRequest
 {
     public Int32   UserId            { get; set; }
-	public string? Name              { get; set; }
+	public string? NameFirst         { get; set; }
+	public string? NameLast          { get; set; }
 	public string? Email             { get; set; }
 	public string? Password          { get; set; }
 	public List<ToolTypes>? Tools    { get; set; }

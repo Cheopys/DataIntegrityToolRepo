@@ -10,9 +10,10 @@ namespace DataIntegrityTool.Schema
     public class Customers
     {
         public int     Id             { get; set; }
-		public string   Name          { get; set; }
-        public string   Description   { get; set; }
-        public string   Email         { get; set; }
+		public string   NameFirst     { get; set; }
+		public string   NameLast      { get; set; }
+		public string   Company       { get; set; }
+		public string   Email         { get; set; }
         public string   PasswordHash  { get; set; }
         public DateTime DateAdded     { get; set; }
         public string   Notes         { get; set; }

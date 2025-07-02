@@ -12,6 +12,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 /*
 	This controller is for use of DIT 
@@ -77,7 +78,7 @@ namespace DataIntegrityTool.Controllers
 			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
 			Program.registerCustomerB64 = EncryptRSA(requestEncoded);
 
-			return Convert.ToHexString(aes.Key)
+			return Convert.ToHexString(aes.Key);
 		}
 
 		[HttpPut, Route("RegisterCustomer")]
@@ -102,13 +103,17 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("ReprovisionCustomer")]
-		public ReprovisionCustomerResponse ReprovisionCustomer()
+		public async Task<string> ReprovisionCustomer(System.Security.Cryptography.Aes AesKey)
 		{
 			ReprovisionCustomerRequest request = ServerCryptographyService.DecryptRSA<ReprovisionCustomerRequest>(Program.registerCustomerB64);
 
 			Program.reprovisionCustomerB64 = String.Empty;
 
-			return CustomersService.ReprovisionCustomer(request);
+			ReprovisionCustomerResponse response = CustomersService.ReprovisionCustomer(request);
+
+			string responseSeriaized = JsonSerializer.Serialize(response);
+
+			return await ServerCryptographyService.EncrypytAES(AesKey, responseSeriaized);
 		}
 
 		//  R

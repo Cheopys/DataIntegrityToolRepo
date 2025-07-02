@@ -58,8 +58,9 @@ namespace DataIntegrityTool.Services
                     Users user = new Users()
                     {
                         CustomerId               = request.CustomerId,
-                        Name                     = request.Name,
-                        Email                    = request.Email,
+                        NameFirst                = request.NameFirst,
+						NameLast				 = request.NameLast,
+						Email					 = request.Email,
                         PasswordHash             = ServerCryptographyService.SHA256(request.Password),
                         AesKey                   = Convert.FromHexString(request.AesKey),
                         Tools                    = request.Tools,
@@ -108,12 +109,17 @@ namespace DataIntegrityTool.Services
                     user.Tools = request.Tools;
                 }
 
-                if (request.Name != null)
+                if (request.NameFirst != null)
                 {
-                    user.Name = request.Name;
+                    user.NameFirst = request.NameFirst;
                 }
 
-                if (request.Email != null)
+				if (request.NameLast != null)
+				{
+					user.NameLast = request.NameLast;
+				}
+
+				if (request.Email != null)
                 {
                     user.Email = request.Email;
                 }
@@ -155,7 +161,7 @@ namespace DataIntegrityTool.Services
 			using (DataContext context = new())
 			{
 				Users = context.Users.Where(us => us.CustomerId.Equals(CustomerId))
-                                     .OrderBy(c => c.Name)
+                                     .OrderBy(c => c.NameLast)
                                      .ToList();
 
 				await context.DisposeAsync();

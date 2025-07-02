@@ -53,9 +53,10 @@ namespace DataIntegrityTool.Services
 			{
 			    Customers customer = new Customers()
 			    {
-				    Name        = request.Name,
-				    Description = request.Description,
-				    Email       = request.Email,
+				    NameFirst    = request.NameFirst,
+					NameLast     = request.NameLast,
+					Company      = request.Company,
+					Email        = request.Email,
 				    PasswordHash = ServerCryptographyService.SHA256(request.Password),
 				    Notes        = request.Notes,
 				    AesKey       = Convert.FromHexString(request.AesKey),
@@ -70,8 +71,9 @@ namespace DataIntegrityTool.Services
 			    {
 				    AesKey                   = Convert.FromHexString(request.AesKey),
 				    Email                    = request.Email,
-				    Name                     = request.Name,
-				    PasswordHash             = ServerCryptographyService.SHA256(request.Password),
+				    NameFirst                = request.NameFirst,
+					NameLast                 = request.NameLast,
+					PasswordHash             = ServerCryptographyService.SHA256(request.Password),
 				    DateAdded                = DateTime.UtcNow,
 				    Tools                    = request.Tools,
 			    };
@@ -154,17 +156,17 @@ namespace DataIntegrityTool.Services
 			{
                 Customers? customer = context.Customers.Where(cu => cu.Id.Equals(request.Id)).FirstOrDefault();
 
-                if (request.Name != null)
+                if (request.NameFirst != null)
                 {
-					customer.Name = request.Name;
+					customer.NameFirst = request.NameFirst;
 				}
 
-                if (request.Description != null)
-                {
-                    customer.Description = request.Description;
-                }
+				if (request.NameLast != null)
+				{
+					customer.NameLast = request.NameLast;
+				}
 
-                if (request.Email != null)
+				if (request.Email != null)
                 {
                     customer.Email = request.Email;
                 }
@@ -209,7 +211,7 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                customers = context.Customers.OrderBy(c => c.Name).ToList();
+                customers = context.Customers.OrderBy(c => c.NameLast).ToList();
 
                 await context.DisposeAsync();
             }

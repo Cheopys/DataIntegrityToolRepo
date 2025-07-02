@@ -279,6 +279,40 @@ namespace DataIntegrityTool.Services
 			return responseB64;
 		}		
 
+		public static async Task<string> EncrypytAES(System.Security.Cryptography.Aes aes, string cleartext)
+		{
+			string responseB64 = null;
+			byte[] encrypted = null;
+
+			ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+			// Create the streams used for encryption.
+
+			using (MemoryStream memorystream = new MemoryStream())
+			{
+				using (CryptoStream cryptostream = new CryptoStream(memorystream, encryptor, CryptoStreamMode.Write))
+				{
+					using (StreamWriter streamwriter = new StreamWriter(cryptostream))
+					{
+						// Write data to the stream.
+						streamwriter.Write(cleartext);
+
+						await streamwriter.DisposeAsync();
+					}
+
+					await cryptostream.DisposeAsync();
+				}
+
+				encrypted = memorystream.ToArray();
+
+				await memorystream.DisposeAsync();
+			}
+
+			responseB64 = Convert.ToBase64String(encrypted); //JsonSerializer.Serialize(encrypted);
+
+			return responseB64;
+		}
+
 		public static string SHA256(string input)
 		{
 			string output;

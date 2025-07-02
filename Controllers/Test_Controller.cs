@@ -31,10 +31,11 @@ namespace DataIntegrityTool.Controllers
 			RegisterCustomerRequest request = new()
 			{
 				AesKey		 = Convert.ToHexString(aeskey.Key),
-				Description	 = "Test Customer",
 				Email		 = "testcust@example.com",
-				Name		 = "Test Customer",
-				Notes		 = "each time this is run it will increment the primary key",
+				Company      = "testcompany@example.com",
+				NameFirst	 = "Test",
+				NameLast     = "Customer",
+				Notes	     = "each time this is run it will increment the primary key",
 				Password	 = "DIT",
 				Tools		 = new List<ToolTypes>
 				{
@@ -135,7 +136,8 @@ namespace DataIntegrityTool.Controllers
 							AesKey		 = cu.AesKey,
 							DateAdded	 = cu.DateAdded,
 							Email		 = cu.Email,
-							Name		 = cu.Name,
+							NameFirst	 = cu.NameFirst,
+							NameLast     = cu.NameLast,
 							PasswordHash = cu.PasswordHash,
 							Tools		 = cu.Tools
 						};
@@ -163,7 +165,8 @@ namespace DataIntegrityTool.Controllers
 						AesKey		 = cu.AesKey,
 						DateAdded	 = cu.DateAdded,
 						Email		 = cu.Email,
-						Name		 = cu.Name,
+						NameFirst    = cu.NameFirst,
+						NameLast     = cu.NameLast,
 						PasswordHash = cu.PasswordHash,
 					};
 
