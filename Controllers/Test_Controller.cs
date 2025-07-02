@@ -126,24 +126,17 @@ namespace DataIntegrityTool.Controllers
 
 				customers.ForEach(cu =>
 				{
-					Users? user = context.Users.Where(user => user.Email.Equals(cu.Email)).FirstOrDefault();
-
-					if (user == null)
+					context.Add(new Users()
 					{
-						user = new Users()
-						{
-							CustomerId   = cu.Id,
-							AesKey		 = cu.AesKey,
-							DateAdded	 = cu.DateAdded,
-							Email		 = cu.Email,
-							NameFirst	 = cu.NameFirst,
-							NameLast     = cu.NameLast,
-							PasswordHash = cu.PasswordHash,
-							Tools		 = cu.Tools
-						};
-
-						context.Add(user);
-					}
+						CustomerId   = (cu.Id > 4) ? cu.Id : 4,
+						AesKey		 = cu.AesKey,
+						DateAdded	 = cu.DateAdded,
+						Email		 = cu.Email,
+						NameFirst	 = cu.NameFirst,
+						NameLast     = cu.NameLast,
+						PasswordHash = cu.PasswordHash,
+						Tools		 = cu.Tools
+					});
 				});
 
 				context.SaveChanges();
