@@ -155,15 +155,46 @@ namespace DataIntegrityTool.Controllers
 				{
 					Administrators administrator = new Administrators()
 					{
-						AesKey		 = cu.AesKey,
-						DateAdded	 = cu.DateAdded,
-						Email		 = cu.Email,
-						NameFirst    = cu.NameFirst,
-						NameLast     = cu.NameLast,
+						AesKey = cu.AesKey,
+						DateAdded = cu.DateAdded,
+						Email = cu.Email,
+						NameFirst = cu.NameFirst,
+						NameLast = cu.NameLast,
 						PasswordHash = cu.PasswordHash,
 					};
 
 					context.Add(administrator);
+				});
+
+				context.SaveChanges();
+				context.Dispose();
+			}
+		}
+
+
+		[HttpPut, Route("UsersToCustomers")]
+		public void UsersToCustomers()
+		{
+			using (DataContext context = new())
+			{
+				List<Users> users = context.Users.Where(cu => cu.Id > 4).ToList();
+
+				users.ForEach(us =>
+				{
+					Customers customer = new Customers()
+					{
+						AesKey		 = us.AesKey,
+						DateAdded	 = us.DateAdded,
+						Email		 = us.Email,
+						NameFirst    = us.NameFirst,
+						NameLast     = us.NameLast,
+						PasswordHash = us.PasswordHash,
+						Company      = 
+
+
+					};
+
+					context.Add(customer);
 				});
 
 				context.SaveChanges();
