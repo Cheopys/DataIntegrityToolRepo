@@ -31,7 +31,7 @@ namespace DataIntegrityTool.Services
 
 		public static LoginResponse Login(string Email,
 										  string PasswordHash,
-										  LoginType loginType = LoginType.typeCustomer)
+										  LoginType loginType = LoginType.typeUser)
 		{
 			LoginResponse response = new()
 			{
