@@ -2,7 +2,6 @@
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
-using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,15 +28,6 @@ namespace DataIntegrityTool.Controllers
 		public async Task<byte[]> DownloadTool()
 		{
 			return await  S3Service.GetTool();
-		}
-
-		[HttpPost, Route("WebLogin")]
-		[Produces("application/json")]
-		public async Task<LoginResponse> WebLogin([FromBody] LoginRequest request)
-		{
-			return ApplicationService.WebLogin(request.Email, 
-											   request.PasswordHash, 
-											   request.loginType);
 		}
 	}
 }

@@ -91,7 +91,6 @@ namespace DataIntegrityTool.Services
 			if (response.errorcode == ErrorCodes.errorNone)
 			{
 				Program.loginType  = loginType;
-				response.loginType = loginType;
 			}
 
 			return response;

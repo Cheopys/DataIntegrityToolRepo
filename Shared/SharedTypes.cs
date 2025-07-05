@@ -63,18 +63,11 @@ public class UpdateCustomerRequest
 	public string Notes         { get; set; }
 }
 
-public class LoginRequest
-{
-	public string    Email { get; set; }
-	public string    PasswordHash { get; set; }
-	public LoginType loginType { get; set; }
-}
-
 public class LoginResponse
 { 
     public Int32      Identifier    { get; set; }
     public ErrorCodes errorcode     { get; set; }
-    public LoginType  loginType     { get; set; }
+    public Int32      CustOrUserID  { get; set; }
 }
 public class BeginSessionRequest
 {

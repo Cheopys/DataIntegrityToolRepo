@@ -99,12 +99,14 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(users);
 		}
 
-		[HttpPut, Route("Tool_Login_Raw")]
-		public LoginResponse Tool_Login_Raw(string Email,
-										    string Password)
+		[HttpPut, Route("Login_Raw")]
+		public LoginResponse Login_Raw(string Email,
+									   string Password,
+									   LoginType loginType = LoginType.typeCustomer)
 		{
 			LoginResponse response = SessionService.Login(Email, 
-														  ServerCryptographyService.SHA256(Password)); 
+														  ServerCryptographyService.SHA256(Password), 
+														  loginType); 
 
 			return response;
 		}
