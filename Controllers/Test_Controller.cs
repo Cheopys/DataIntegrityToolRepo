@@ -189,9 +189,11 @@ namespace DataIntegrityTool.Controllers
 						NameFirst    = us.NameFirst,
 						NameLast     = us.NameLast,
 						PasswordHash = us.PasswordHash,
-						Company      = 
-
-
+						Company      = "Beta Testers",
+						Tools		 = us.Tools,
+						MeteringCount= 1000,
+						Notes		 = "beta",
+						SubscriptionTime = TimeSpan.FromDays(365),
 					};
 
 					context.Add(customer);
