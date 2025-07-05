@@ -5,9 +5,9 @@ namespace DataIntegrityTool.Services
 {
 	public class ApplicationService
 	{
-		public static LoginResponse WebLogin(string Email,
-										    string PasswordHash,
-										    LoginType loginType)
+		public static LoginResponse WebLogin(string		Email,
+										     string		PasswordHash,
+										     LoginType	loginType)
 		{
 			LoginResponse response = new()
 			{
@@ -90,7 +90,8 @@ namespace DataIntegrityTool.Services
 
 			if (response.errorcode == ErrorCodes.errorNone)
 			{
-				Program.loginType = loginType;
+				Program.loginType  = loginType;
+				response.loginType = loginType;
 			}
 
 			return response;
