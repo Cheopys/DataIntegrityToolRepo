@@ -29,9 +29,12 @@ namespace DataIntegrityTool.Services
 			logger = NLog.LogManager.GetCurrentClassLogger();
 		}
 
+		/*
+		 * Tools Login: always User
+		 */
+
 		public static LoginResponse Login(string Email,
-										  string PasswordHash,
-										  LoginType loginType = LoginType.typeCustomer)
+										  string PasswordHash)
 		{
 			LoginResponse response = new()
 			{
@@ -40,81 +43,26 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				// From web site
+				Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
 
-				if (loginType == LoginType.typeDIT)
+				if (user != null)
 				{
-					Administrators? administrator = context.Administrators.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
-	
-					if (administrator != null)
+					if (user.PasswordHash.Equals(PasswordHash))
 					{
-						if (administrator.PasswordHash.Equals(PasswordHash))
-						{
-							response.Identifier = administrator.Id;
-						}
-						else
-						{
-							response.errorcode = ErrorCodes.errorInvalidPassword;
-						}
+						response.Identifier = user.Id;
+						response.loginType  = LoginType.typeUser;
 					}
 					else
 					{
-						response.errorcode = ErrorCodes.errorInvalidUser;
-					}
-				}
-				else if (loginType == LoginType.typeCustomer)
-				{
-					Customers? customer = context.Customers.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
-
-					if (customer != null)
-					{
-						if (customer.PasswordHash.Equals(PasswordHash))
-						{
-							response.Identifier = customer.Id;
-						}
-						else
-						{
-							response.errorcode = ErrorCodes.errorInvalidPassword;
-						}
-					}
-					else
-					{
-						response.errorcode = ErrorCodes.errorInvalidUser;
-					}
-				} // end is customer
-
-				// from DIT Tool
-
-				else if (loginType == LoginType.typeUser)
-				{
-					Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
-
-					if (user != null)
-					{
-						if (user.PasswordHash.Equals(PasswordHash))
-						{
-							response.Identifier = user.Id;
-						}
-						else
-						{
-							response.errorcode = ErrorCodes.errorInvalidPassword;
-						}
-					}
-					else
-					{
-						response.errorcode = ErrorCodes.errorInvalidUser;
+						response.errorcode = ErrorCodes.errorInvalidPassword;
 					}
 				}
 				else
 				{
-					response.errorcode = ErrorCodes.errorUnknownLoginType;
+					response.errorcode = ErrorCodes.errorInvalidUser;
 				}
-					context.Dispose();
-			}
 
-			if (response.errorcode == ErrorCodes.errorNone)
-			{
-				Program.loginType = loginType;
+				context.Dispose();
 			}
 
 			return response;
