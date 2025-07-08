@@ -75,7 +75,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Tests\Requests\" />
     <Folder Include="Tests\Services\" />
   </ItemGroup>

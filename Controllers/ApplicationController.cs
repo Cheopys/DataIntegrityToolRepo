@@ -29,6 +29,14 @@ namespace DataIntegrityTool.Controllers
 		{
 			return await  S3Service.GetTool();
 		}
+
+		[HttpPost, Route("WebLogin")]
+		public static LoginResponse WebLogin(string		Email,
+											 string		PasswordHash,
+											 LoginType	loginType)
+		{
+			return ApplicationService.WebLogin(Email, PasswordHash, loginType);
+		}
 	}
 }
 

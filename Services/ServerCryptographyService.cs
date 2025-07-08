@@ -40,8 +40,6 @@ namespace DataIntegrityTool.Services
                     {
                         publicKey		= rsa.ExportRSAPublicKey(),
                         privateKey		= rsa.ExportRSAPrivateKey(),
-						MinimumInterval = 3600,
-						AesKey          = CreateAes().Key
                     });
 
                     context.SaveChanges();
@@ -105,34 +103,6 @@ namespace DataIntegrityTool.Services
 
 			return aes;
         }
-        public static Aes GetDITAesKey()
-        {
-            Aes aes = CreateAes();
-
-            using (DataContext context = new())
-            {
-                ToolParameters? toolParameters = context.ToolParameters.FirstOrDefault();
-
-				byte[]? key = toolParameters.AesKey;
-
-                if (key != null)
-				{
-					aes.Key = key;
-				}
-				else
-				{
-					toolParameters.AesKey = aes.Key;
-					context.SaveChanges();
-				}
-
-				aes.GenerateIV();
-
-				context.Dispose();
-            }
-
-			return aes;
-        }
-
 
         public static Aes GetAesKey(EncryptionWrapperDIT wrapper)  
         {
@@ -143,7 +113,9 @@ namespace DataIntegrityTool.Services
             {
 				if (wrapper.type == LoginType.typeDIT)
 				{
-					key = context.ToolParameters.Select(tp => tp.AesKey).FirstOrDefault();
+					key = context.Administrators.Where(cu => cu.Id == wrapper.primaryKey)
+											    .Select(tp => tp.AesKey)
+												.FirstOrDefault();
 				}
 				else if (wrapper.type == LoginType.typeCustomer)
 				{
