@@ -101,15 +101,24 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("Login_Raw")]
 		public LoginResponse Login_Raw(string Email,
-									   string Password,
-									   LoginType loginType = LoginType.typeUser)
+									   string Password)
 		{
 			LoginResponse response = SessionService.Login(Email, 
-														  ServerCryptographyService.SHA256(Password), 
-														  loginType); 
+														  ServerCryptographyService.SHA256(Password)); 
 
 			return response;
 		}
+
+		[HttpPost, Route("WebLogin_Raw")]
+		public static LoginResponse WebLogin_Raw(string		Email,
+												 string		Password,
+												 LoginType	loginType)
+		{
+			return ApplicationService.WebLogin(Email, 
+											   ServerCryptographyService.SHA256(Password), 
+											   loginType);
+		}
+
 
 		[HttpPost, Route("ChangePasswordAnswer")]
 		public ErrorCodes ChangePasswordAnswer(ChangePasswordRequest request)
