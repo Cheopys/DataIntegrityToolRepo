@@ -39,24 +39,25 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-			Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
+				Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
 
-			if (user != null)
-			{
-				if (user.PasswordHash.Equals(PasswordHash))
+				if (user != null)
 				{
-					response.Identifier = user.Id;
+					if (user.PasswordHash.Equals(PasswordHash))
+					{
+						response.Identifier = user.Id;
+					}
+					else
+					{
+						response.errorcode = ErrorCodes.errorInvalidPassword;
+					}
 				}
 				else
 				{
-					response.errorcode = ErrorCodes.errorInvalidPassword;
+					response.errorcode = ErrorCodes.errorInvalidUser;
 				}
 			}
-			else
-			{
-				response.errorcode = ErrorCodes.errorInvalidUser;
-			}
-	
+			
 			return response;
 		}
 
