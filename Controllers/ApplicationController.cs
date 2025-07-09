@@ -30,6 +30,12 @@ namespace DataIntegrityTool.Controllers
 			return await  S3Service.GetTool();
 		}
 
+		[HttpGet, Route("LoginRolesForEmail")]
+		public List<LoginType> LoginRolesForEmail(string Email)
+		{
+			return ApplicationService.LoginRolesForEmail(Email);
+		}
+
 		[HttpPost, Route("WebLogin")]
 		public static LoginResponse WebLogin(string		Email,
 											 string		PasswordHash,

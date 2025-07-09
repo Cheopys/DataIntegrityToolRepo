@@ -1,10 +1,46 @@
 ﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
+using Microsoft.AspNetCore.Identity;
+using DataIntegrityTool.Shared;
 
 namespace DataIntegrityTool.Services
 {
 	public class ApplicationService
 	{
+		public static List<LoginType> LoginRolesForEmail(string Email)
+		{
+			List<LoginType> types = new List<LoginType>();
+			string EmailLower = Email.ToLower();
+
+			using (DataContext context  = new())
+			{
+				Administrators? admin =  context.Administrators.Where(ad => ad.Email.ToLower().Equals(EmailLower)).FirstOrDefault();
+
+				if (admin != null)
+				{
+					types.Add(LoginType.typeDIT);
+				}
+
+				Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(EmailLower)).FirstOrDefault();
+
+				if (customer != null)
+				{
+					types.Add(LoginType.typeCustomer);
+				}
+
+				Users? user = context.Users.Where(us => us.Email.ToLower().Equals(EmailLower)).FirstOrDefault();
+
+				if (user != null)
+				{
+					types.Add(LoginType.typeUser);
+				}
+
+				context.Dispose();
+			}
+
+			return types;
+		}
+
 		public static LoginResponse WebLogin(string		Email,
 										     string		PasswordHash,
 										     LoginType	loginType)

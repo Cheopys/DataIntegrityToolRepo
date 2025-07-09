@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NLog;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection.Metadata;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
@@ -107,6 +108,30 @@ namespace DataIntegrityTool.Controllers
 														  ServerCryptographyService.SHA256(Password)); 
 
 			return response;
+		}
+
+		[HttpGet, Route("LoginRolesForEmail")]
+		public string LoginRolesForEmail(string Email)
+		{
+			List<LoginType> types = ApplicationService.LoginRolesForEmail(Email);
+			string Types = String.Empty;
+
+			if (types.Contains(LoginType.typeDIT))
+			{
+				Types = "Administrator ";
+			}
+
+			if (types.Contains(LoginType.typeCustomer))
+			{
+				Types += "Customer ";
+			}
+
+			if (types.Contains(LoginType.typeUser))
+			{
+				Types += "User";
+			}
+
+			return Types; ;
 		}
 
 		[HttpPost, Route("WebLogin_Raw")]
