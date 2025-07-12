@@ -239,11 +239,12 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("RegisterUser_Raw")]
-		public async Task<RegisterUserResponse> RegisterUser_Raw(RegisterUserRequest request)
+		public RegisterUserResponse RegisterUser_Raw(RegisterUserRequest request)
 		{
 			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
 
 			request.AesKey = Convert.ToHexString(aes.Key);
+			request.CustomerId = 89;
 
 			return UsersService.RegisterUser(request);
 		}
