@@ -237,5 +237,16 @@ namespace DataIntegrityTool.Controllers
 				context.Dispose();
 			}
 		}
+
+		[HttpPut, Route("RegisterUser_Raw")]
+		public async Task<RegisterUserResponse> RegisterUser_Raw(RegisterUserRequest request)
+		{
+			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
+
+			request.AesKey = Convert.ToHexString(aes.Key);
+
+			return UsersService.RegisterUser(request);
+		}
+
 	}
 }
