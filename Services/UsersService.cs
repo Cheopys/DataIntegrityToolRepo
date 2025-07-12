@@ -51,7 +51,7 @@ namespace DataIntegrityTool.Services
 //                Customers customer = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault();
 
                 //Int32 seatsMax  = context.Subscriptions.Where(cu => cu.Equals(customer.Id)).Select(cu => cu.SeatCount).FirstOrDefault();
-				Subscriptions? subscription = context.Subscriptions.Where(cu => cu.Equals(request.CustomerId)).FirstOrDefault();
+				Subscriptions? subscription = context.Subscriptions.Where(cu => cu.CustomerId.Equals(request.CustomerId)).FirstOrDefault();
 				Int32 seatsUsed = context.Users        .Where(us => us.Equals(request.CustomerId)).Count();
 
                 if (seatsUsed < subscription.SeatCount)
