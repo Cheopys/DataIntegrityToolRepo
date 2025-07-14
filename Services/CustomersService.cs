@@ -51,7 +51,8 @@ namespace DataIntegrityTool.Services
 
             if (request.AesKey.Length != 32)
 			{
-			    Customers customer = new Customers()
+                Users     user     = null;
+				Customers customer = new Customers()
 			    {
 				    NameFirst    = request.NameFirst,
 					NameLast     = request.NameLast,
@@ -62,34 +63,39 @@ namespace DataIntegrityTool.Services
 				    AesKey       = Convert.FromHexString(request.AesKey),
 				    DateAdded    = DateTime.UtcNow,
 				    UsageSince   = DateTime.MinValue,
-                    Tools            = request.Tools,
+                    Tools        = request.Tools,
+                    SeatsMax     = 10,
                     MeteringCount    = request.MeteringSecondsInitial,
                     SubscriptionTime = request.SubscriptionTimeInitial
 			    };
 
-			    Users user = new Users()
-			    {
-				    AesKey                   = Convert.FromHexString(request.AesKey),
-				    Email                    = request.Email,
-				    NameFirst                = request.NameFirst,
-					NameLast                 = request.NameLast,
-					PasswordHash             = ServerCryptographyService.SHA256(request.Password),
-				    DateAdded                = DateTime.UtcNow,
-				    Tools                    = request.Tools,
-			    };
+                if (request.InitialUser)
+                { 
+			        user = new Users()
+			        {
+				        AesKey                   = Convert.FromHexString(request.AesKey),
+				        Email                    = request.Email,
+				        NameFirst                = request.NameFirst,
+					    NameLast                 = request.NameLast,
+					    PasswordHash             = ServerCryptographyService.SHA256(request.Password),
+				        DateAdded                = DateTime.UtcNow,
+				        Tools                    = request.Tools,
+			        };
+				};
 
-			    using (DataContext context = new())
+				using (DataContext context = new())
 			    {
 				    context.Customers.Add(customer);
 
 				    context.SaveChanges();
 
-				    user.CustomerId = customer.Id;
-
                     response.CustomerId = (Int64) customer.Id;
 
-					context.Users.Add(user);
-
+                    if (user != null)
+                    {
+						user.CustomerId = customer.Id;
+						context.Users.Add(user);
+                    }
 				    context.SaveChanges();
 				    context.Dispose();
 			    }

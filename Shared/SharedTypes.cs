@@ -30,6 +30,7 @@ public class RegisterCustomerRequest
     public string Notes         { get; set; }
     public Int32    MeteringSecondsInitial   { get; set; }
     public TimeSpan SubscriptionTimeInitial  { get; set; }
+    public bool InitialUser     { get; set; }
 }
 
 public class RegisterCustomerResponse 
@@ -129,7 +130,7 @@ public class RegisterUserRequest
     public string Password       { get; set; }
     public string AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
-    public Int32 LicensingMeteredCount      { get; set; }
+    public Int32 SeatsMax        { get; set; }
 }
 
 public class RegisterUserResponse

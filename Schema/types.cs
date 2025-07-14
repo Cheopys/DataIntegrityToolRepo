@@ -32,4 +32,5 @@ public enum ErrorCodes
 	errorNoLicense			  = 6,
 	errorBadKeySize           = 7,
 	errorUnknownLoginType     = 8,
+	errorNoSeats			  = 9,
 }
