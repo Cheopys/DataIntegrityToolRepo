@@ -54,7 +54,14 @@ namespace DataIntegrityTool.Services
 				Subscriptions? subscription = context.Subscriptions.Where(cu => cu.CustomerId.Equals(request.CustomerId)).FirstOrDefault();
 				Int32 seatsUsed = context.Users        .Where(us => us.CustomerId.Equals(request.CustomerId)).Count();
 
-                if (seatsUsed < subscription.SeatCount)
+				Int32 seatCount = 10;
+
+				if (subscription != null)
+				{
+					seatCount = subscription.SeatCount;
+				}
+
+                if (seatsUsed < seatCount)
 				{
                     Users user = new Users()
                     {
