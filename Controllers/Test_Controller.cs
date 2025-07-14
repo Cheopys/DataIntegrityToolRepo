@@ -249,5 +249,11 @@ namespace DataIntegrityTool.Controllers
 			return UsersService.RegisterUser(request);
 		}
 
+		[HttpGet, Route("UsersForCustomer")]
+		[Produces("application/json")]
+		public string UsersForCustomer(Int32 CustomerId)
+		{
+			List<Users> users = Usera
+		}
 	}
 }

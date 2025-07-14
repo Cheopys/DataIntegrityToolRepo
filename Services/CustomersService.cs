@@ -321,5 +321,11 @@ namespace DataIntegrityTool.Services
 
             return type;
         }
+
+        public static Int32 TopUpSubscription(Int32 CustomerId,
+                                              Int16 count)
+        {
+            return 0;
+        }
     }
 }
