@@ -251,9 +251,11 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpGet, Route("UsersForCustomer")]
 		[Produces("application/json")]
-		public string UsersForCustomer(Int32 CustomerId)
+		public async Task<string> UsersForCustomer(Int32 CustomerId)
 		{
-			List<Users> users = Usera
+			List<Users> users = await UsersService.GetUsers(CustomerId);
+
+			return JsonSerializer.Serialize(users);
 		}
 	}
 }
