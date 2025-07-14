@@ -244,7 +244,6 @@ namespace DataIntegrityTool.Controllers
 			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
 
 			request.AesKey = Convert.ToHexString(aes.Key);
-			request.CustomerId = 89;
 
 			return UsersService.RegisterUser(request);
 		}
