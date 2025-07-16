@@ -33,4 +33,6 @@ public enum ErrorCodes
 	errorBadKeySize           = 7,
 	errorUnknownLoginType     = 8,
 	errorNoSeats			  = 9,
+	errorInvalidCustomerId	  = 10,
 }
+

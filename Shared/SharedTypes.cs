@@ -18,6 +18,7 @@ namespace DataIntegrityTool.Shared
         public string           encryptedData   { get; set; }
     }
 }
+
 public class RegisterCustomerRequest
 {
     public string AesKey        { get; set; }
@@ -28,9 +29,8 @@ public class RegisterCustomerRequest
     public string Password      { get; set; }
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
-    public Int32    MeteringSecondsInitial   { get; set; }
-    public TimeSpan SubscriptionTimeInitial  { get; set; }
-    public bool InitialUser     { get; set; }
+	public bool   InitialUser   { get; set; }
+	public Int32  SubscriptionId   { get; set; }
 }
 
 public class RegisterCustomerResponse 
@@ -81,7 +81,7 @@ public class  BeginSessionResponse
 {
     public Int32 SessionId        { get; set; }
     public DateTime? SubscriptionEnd  { get; set; }
-	public Int32 RemainingMetered { get; set; }
+	public Int32 RemainingScans { get; set; }
 	public ErrorCodes Error       { get; set; }
 }
 
@@ -154,4 +154,19 @@ public class ChangePasswordRequest
 	public Int32  UserId      { get; set; }
 	public Int32  Token       { get; set; }
 	public string PasswordNew { get; set; }
+}
+
+public class TopupScansResponse
+{
+    public Int32 CustomerId { get; set; }
+    public Int32 ScansAfter { get; set; }
+    public ErrorCodes Error { get; set; }
+}
+
+public class AddSubscriptionResponse
+{
+	public Int32      CustomerId    { get; set; }
+    public DateTime   Expiration    { get; set; }
+	public Int32      ScansAfter    { get; set; }
+	public ErrorCodes Error         { get; set; }
 }

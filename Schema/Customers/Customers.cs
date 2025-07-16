@@ -21,7 +21,7 @@ namespace DataIntegrityTool.Schema
         public byte[]?  AesKey        { get; set; }
         public DateTime UsageSince    { get; set; } = DateTime.MinValue;
         public Int16    SeatsMax      { get; set; }
-		public Int32     MeteringCount            { get; set; }
+		public Int32    Scans         { get; set; }
 		public TimeSpan? SubscriptionTime         { get; set; }
     }
 }

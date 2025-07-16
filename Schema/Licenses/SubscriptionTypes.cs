@@ -1,8 +1,10 @@
 ﻿namespace DataIntegrityTool.Schema
 {
-	public enum Intervals
+	public class SubscriptionTypes
 	{
-		intervalMonth		= 1,
-		intervalYear		= 2,
+		public Int32				Id		 { get; set; }
+		public TimeSpan				duration { get; set; }
+		public Int32				scans	 { get; set; }
+		public string				level	 { get; set; }
 	};
 }

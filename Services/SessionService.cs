@@ -71,7 +71,7 @@ namespace DataIntegrityTool.Services
 			{
 				Users?	       user			= context.Users	       .Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
 				Customers?     customer		= context.Customers	   .Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
-				Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(user.CustomerId)).FirstOrDefault();
+				CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(su => su.CustomerId.Equals(user.CustomerId)).FirstOrDefault();
 
 				if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
 				{
@@ -88,7 +88,7 @@ namespace DataIntegrityTool.Services
 				}
 				else if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
 				{
-					response.RemainingMetered = customer.MeteringCount;
+					response.RemainingScans = customer.Scans;
 				}
 
 				if (user != null)
@@ -101,9 +101,9 @@ namespace DataIntegrityTool.Services
 						{
 							logger.Info("LicenseType.Metered");
 
-							if (customer.MeteringCount > 0)
+							if (customer.Scans > 0)
 							{
-								logger.Info($"user has {customer.MeteringCount} of license type 0");
+								logger.Info($"user has {customer.Scans} of license type 0");
 
 								OK = true;
 							}
@@ -177,7 +177,7 @@ namespace DataIntegrityTool.Services
 
 				if (session?.Licensetype == LicenseTypes.licenseTypeSubscription)
 				{
-					Subscriptions? subscription = context.Subscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
+					CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
 
 					if (subscription.ExpirationDate < DateTime.Now)
 					{
@@ -252,7 +252,7 @@ namespace DataIntegrityTool.Services
 
 				if (session.Licensetype == LicenseTypes.licenseTypeMetered)
 				{
-					customer.MeteringCount--;					
+					customer.Scans--;					
 				}
 
 				context.SessionTransition.Add(new SessionTransition()

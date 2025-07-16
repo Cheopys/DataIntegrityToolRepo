@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using Amazon.SimpleNotificationService.Model;
 using CloudinaryDotNet.Actions;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
@@ -42,95 +43,89 @@ namespace DataIntegrityTool.Services
             logger = LogManager.GetCurrentClassLogger();
         }
 
-		public static RegisterCustomerResponse RegisterCustomer(RegisterCustomerRequest request)
-		{
+        public static RegisterCustomerResponse RegisterCustomer(RegisterCustomerRequest request)
+        {
             RegisterCustomerResponse response = new()
             {
                 ErrorCode = ErrorCodes.errorNone
             };
 
-            if (request.AesKey.Length != 32)
+			using (DataContext context = new())
 			{
-                Users     user     = null;
-				Customers customer = new Customers()
-			    {
-				    NameFirst    = request.NameFirst,
-					NameLast     = request.NameLast,
-					Company      = request.Company,
-					Email        = request.Email,
-				    PasswordHash = ServerCryptographyService.SHA256(request.Password),
-				    Notes        = request.Notes,
-				    AesKey       = Convert.FromHexString(request.AesKey),
-				    DateAdded    = DateTime.UtcNow,
-				    UsageSince   = DateTime.MinValue,
+				SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(request.SubscriptionId)).FirstOrDefault();
+                Users user = null;
+                Customers customer = new Customers()
+                {
+                    NameFirst    = request.NameFirst,
+                    NameLast     = request.NameLast,
+                    Company      = request.Company,
+                    Email        = request.Email,
+                    PasswordHash = ServerCryptographyService.SHA256(request.Password),
+                    Notes        = request.Notes,
+                    AesKey       = Convert.FromHexString(request.AesKey),
+                    DateAdded    = DateTime.UtcNow,
+                    UsageSince   = DateTime.MinValue,
                     Tools        = request.Tools,
                     SeatsMax     = 10,
-                    MeteringCount    = request.MeteringSecondsInitial,
-                    SubscriptionTime = request.SubscriptionTimeInitial
-			    };
+                    Scans        = type.scans,
+                    SubscriptionTime = type.duration
+                };
 
                 if (request.InitialUser)
-                { 
-			        user = new Users()
-			        {
-				        AesKey                   = Convert.FromHexString(request.AesKey),
-				        Email                    = request.Email,
-				        NameFirst                = request.NameFirst,
-					    NameLast                 = request.NameLast,
-					    PasswordHash             = ServerCryptographyService.SHA256(request.Password),
-				        DateAdded                = DateTime.UtcNow,
-				        Tools                    = request.Tools,
-			        };
-				};
-
-				using (DataContext context = new())
-			    {
-				    context.Customers.Add(customer);
-
-				    context.SaveChanges();
-
-                    response.CustomerId = (Int64) customer.Id;
-
-                    if (user != null)
+                {
+                    user = new Users()
                     {
-						user.CustomerId = customer.Id;
-						context.Users.Add(user);
-                    }
-				    context.SaveChanges();
-				    context.Dispose();
-			    }
-			}
-            else
-            {
-                response.ErrorCode = ErrorCodes.errorBadKeySize;
+                        AesKey       = Convert.FromHexString(request.AesKey),
+                        Email        = request.Email,
+                        NameFirst    = request.NameFirst,
+                        NameLast     = request.NameLast,
+                        PasswordHash = ServerCryptographyService.SHA256(request.Password),
+                        DateAdded    = DateTime.UtcNow,
+                        Tools        = request.Tools,
+                    };
+                }
+
+                context.Customers.Add(customer);
+
+                context.SaveChanges();
+
+                response.CustomerId = (Int64)customer.Id;
+
+                if (user != null)
+                {
+                    user.CustomerId = customer.Id;
+                    context.Users.Add(user);
+                }
+                context.SaveChanges();
+                context.Dispose();
             }
 
             return response;
-		}
+        }
 
-		public static ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
+        public static ReprovisionCustomerResponse ReprovisionCustomer(ReprovisionCustomerRequest request)
         {
             ReprovisionCustomerResponse response = new()
             {
                 Error = ErrorCodes.errorNone
             };
 
-			using (DataContext context = new())
+            using (DataContext context = new())
             {
-				Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault();
+                Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault();
 
                 if (customer != null)
-                { 
+                {
                     if (customer.PasswordHash.Equals(ServerCryptographyService.SHA256(request.Password)))
                     {
                         response.CustomerId = customer.Id;
-                        response.AesKey     =  Convert.ToHexString(customer.AesKey);
+                        response.AesKey = Convert.ToHexString(customer.AesKey);
                     }
                     else
                     {
-						response.Error = ErrorCodes.errorInvalidPassword;
-					}
-				}
+                        response.Error = ErrorCodes.errorInvalidPassword;
+                    }
+                }
                 else
                 {
                     response.Error = ErrorCodes.errorInvalidUser;
@@ -142,37 +137,37 @@ namespace DataIntegrityTool.Services
             return response;
         }
 
-			public static Customers GetCustomer (Int32 CustomerId)
+        public static Customers GetCustomer(Int32 CustomerId)
+        {
+            Customers? customer = null;
+
+            using (DataContext context = new())
             {
-			    Customers? customer = null;
+                customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
 
-			    using (DataContext context = new())
-                {
-                    customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
+                context.Dispose();
+            }
 
-                    context.Dispose();
-                }
-
-    			return customer;
+            return customer;
         }
 
-		public static void UpdateCustomer(UpdateCustomerRequest request)
-		{
-			using (DataContext context = new())
-			{
+        public static void UpdateCustomer(UpdateCustomerRequest request)
+        {
+            using (DataContext context = new())
+            {
                 Customers? customer = context.Customers.Where(cu => cu.Id.Equals(request.Id)).FirstOrDefault();
 
                 if (request.NameFirst != null)
                 {
-					customer.NameFirst = request.NameFirst;
-				}
+                    customer.NameFirst = request.NameFirst;
+                }
 
-				if (request.NameLast != null)
-				{
-					customer.NameLast = request.NameLast;
-				}
+                if (request.NameLast != null)
+                {
+                    customer.NameLast = request.NameLast;
+                }
 
-				if (request.Email != null)
+                if (request.Email != null)
                 {
                     customer.Email = request.Email;
                 }
@@ -188,20 +183,20 @@ namespace DataIntegrityTool.Services
                 }
 
                 context.SaveChanges();
-				context.Dispose();
-			}
-		}
+                context.Dispose();
+            }
+        }
 
-		public static void DeleteCustomer(Int32 CustomerId)
+        public static void DeleteCustomer(Int32 CustomerId)
         {
             using (DataContext context = new())
             {
-                Customers?   customer  = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
-                List<Users>   users    = context.Users    .Where(us => us.CustomerId.Equals(CustomerId)).ToList();
-                List<Session> sessions = context.Session  .Where(s  => s .CustomerId.Equals(CustomerId)).ToList();
-                List<LicenseMetered>  licensesetered   = context.LicenseMetered .Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
+                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
+                List<Users> users = context.Users.Where(us => us.CustomerId.Equals(CustomerId)).ToList();
+                List<Session> sessions = context.Session.Where(s => s.CustomerId.Equals(CustomerId)).ToList();
+                List<LicenseMetered> licensesetered = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
 
-                context.Remove     (customer);
+                context.Remove(customer);
                 context.RemoveRange(users);
                 context.RemoveRange(sessions);
                 context.RemoveRange(licensesetered);
@@ -236,8 +231,8 @@ namespace DataIntegrityTool.Services
             {
                 Customers? customer = context.Customers.Find(request.CustomerId);
 
-                customer.MeteringCount += request.MeteringCount;
-                response.MeteringCount  = request.MeteringCount;
+                customer.Scans += request.MeteringCount;
+                response.MeteringCount = request.MeteringCount;
 
                 context.SaveChanges();
                 context.Dispose();
@@ -246,8 +241,8 @@ namespace DataIntegrityTool.Services
             return response;
         }
 
-        private static CustomerUsage UsageByCustomer(Int32 customerId, 
-                                              DataContext  context)
+        private static CustomerUsage UsageByCustomer(Int32 customerId,
+                                              DataContext context)
         {
             DateTime earliest = DateTime.MaxValue;
 
@@ -257,7 +252,7 @@ namespace DataIntegrityTool.Services
             };
 
             // last time customer was billed
-            DateTime? customerUsage = context.Customers.Where (cu => cu.Id.Equals(customerId))
+            DateTime? customerUsage = context.Customers.Where(cu => cu.Id.Equals(customerId))
                                                        .Select(cu => cu.UsageSince)
                                                        .FirstOrDefault();
             // metered licenses
@@ -274,7 +269,7 @@ namespace DataIntegrityTool.Services
 
         public static List<CustomerUsage> GetCustomerUsages(Int32? customerId)
         {
-            List<CustomerUsage>usages = new ();
+            List<CustomerUsage> usages = new();
 
             using (DataContext context = new())
             {
@@ -288,7 +283,7 @@ namespace DataIntegrityTool.Services
                 {
                     List<Int32> customerIds = context.Customers.Select(cu => cu.Id).ToList();
 
-                    foreach(Int32 id in  customerIds)
+                    foreach (Int32 id in customerIds)
                     {
                         usages.Add(UsageByCustomer(id, context));
                     }
@@ -302,8 +297,8 @@ namespace DataIntegrityTool.Services
 
         public static LoginType CheckEmail(string Email)
         {
-			LoginType type = LoginType.typeUser;
-			
+            LoginType type = LoginType.typeUser;
+
             using (DataContext context = new())
             {
                 Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
@@ -328,10 +323,86 @@ namespace DataIntegrityTool.Services
             return type;
         }
 
-        public static Int32 TopUpSubscription(Int32 CustomerId,
-                                              Int16 count)
+        public static TopupScansResponse TopUpScans(Int32 CustomerId,
+                                                    Int16 count)
         {
-            return 0;
+            TopupScansResponse response = new()
+            {
+                CustomerId = CustomerId,
+                Error = ErrorCodes.errorNone
+            };
+
+            using (DataContext context = new())
+            {
+                Customers customer = context.Customers.Find(CustomerId);
+
+                if (customer != null)
+                {
+                    customer.Scans += count;
+
+                    context.SaveChanges();
+
+                    response.ScansAfter = customer.Scans;
+                }
+                else
+                {
+                    response.Error = ErrorCodes.errorInvalidCustomerId;
+                }
+
+                context.Dispose();
+            }
+
+            return response;
+        }
+
+        public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
+															  Int32 subscriptiionId)
+        {
+            AddSubscriptionResponse response = new()
+            {
+                CustomerId = CustomerId,
+                Error = ErrorCodes.errorNone
+            };
+
+            using (DataContext context = new())
+            {
+                Customers?         customer     = context.Customers            .Where(cu => cu.Id        .Equals(CustomerId))     .FirstOrDefault();
+                SubscriptionTypes? subscription = context.SubscriptionTypes    .Where(st => st.Id        .Equals(subscriptiionId)).FirstOrDefault();
+                CustomerSubscriptions custsub   = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId))     .FirstOrDefault();
+
+                if (customer != null)
+                {
+                    // ExpirationDate is null for a subscription that hasn't been used yet
+
+					if (custsub.ExpirationDate    == null
+                    &&  customer.SubscriptionTime != null)
+					{
+                        custsub.ExpirationDate = DateTime.UtcNow + (subscription.duration + customer.SubscriptionTime);
+						customer.SubscriptionTime = null;
+					}
+                    else
+                    {
+						custsub.ExpirationDate += subscription.duration;
+						customer.SubscriptionTime = null;
+					}
+
+					customer.Scans += subscription.scans;
+
+                    context.SaveChanges();
+
+                    response.Expiration = custsub.ExpirationDate.Value;
+                    response.ScansAfter = customer.Scans;
+                }
+                else
+                {
+                    response.Error = ErrorCodes.errorInvalidCustomerId;
+                }
+
+                context.Dispose();
+            }
+
+            return response;
         }
     }
 }
+
