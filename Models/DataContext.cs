@@ -41,7 +41,7 @@ namespace DataIntegrityTool.Db
         {
             modelBuilder.Entity<Administrators>   ().ToTable("Administrators");
 			modelBuilder.Entity<Customers>        ().ToTable("Customers");
-			modelBuilder.Entity<CustomerSubscriptions>    ().ToTable("Subscriptions");
+			modelBuilder.Entity<CustomerSubscriptions>    ().ToTable("CustomerSubscriptions");
 			modelBuilder.Entity<SubscriptionTypes>().ToTable("SubscriptionTypes");
 			modelBuilder.Entity<LicenseMetered>   ().ToTable("LicenseMetered");
 			modelBuilder.Entity<Session>          ().ToTable("Session");

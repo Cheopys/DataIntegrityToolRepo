@@ -35,7 +35,7 @@ public class RegisterCustomerRequest
 
 public class RegisterCustomerResponse 
 {
-    public Int64      CustomerId { get; set; }
+    public Int32      CustomerId { get; set; }
 	public ErrorCodes ErrorCode  { get; set; }
 }
 

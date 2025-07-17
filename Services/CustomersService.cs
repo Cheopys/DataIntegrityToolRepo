@@ -71,7 +71,23 @@ namespace DataIntegrityTool.Services
                     SubscriptionTime = TimeSpan.FromDays(type.days)
                 };
 
-                if (request.InitialUser)
+
+				context.Customers.Add(customer);
+
+                // need the new customer PK to continue
+
+				context.SaveChanges();
+
+				response.CustomerId = customer.Id;
+
+                context.Add(new CustomerSubscriptions()
+                {
+                    CustomerId     = customer.Id,
+					SubscriptionId = request.SubscriptionId,
+					ExpirationDate = null
+				});
+
+				if (request.InitialUser)
                 {
                     user = new Users()
                     {
@@ -84,12 +100,6 @@ namespace DataIntegrityTool.Services
                         Tools        = request.Tools,
                     };
                 }
-
-                context.Customers.Add(customer);
-
-                context.SaveChanges();
-
-                response.CustomerId = (Int64)customer.Id;
 
                 if (user != null)
                 {
@@ -356,7 +366,7 @@ namespace DataIntegrityTool.Services
         }
 
         public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
-															  Int32 subscriptiionId)
+															  Int32 subscriptionId)
         {
             AddSubscriptionResponse response = new()
             {
@@ -366,9 +376,9 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                Customers?         customer     = context.Customers            .Where(cu => cu.Id        .Equals(CustomerId))     .FirstOrDefault();
-                SubscriptionTypes? subscription = context.SubscriptionTypes    .Where(st => st.Id        .Equals(subscriptiionId)).FirstOrDefault();
-                CustomerSubscriptions custsub   = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId))     .FirstOrDefault();
+                Customers?         customer     = context.Customers            .Where(cu => cu.Id        .Equals(CustomerId))    .FirstOrDefault();
+                SubscriptionTypes? subscription = context.SubscriptionTypes    .Where(st => st.Id        .Equals(subscriptionId)).FirstOrDefault();
+                CustomerSubscriptions custsub   = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId))    .FirstOrDefault();
 
                 if (customer != null)
                 {
