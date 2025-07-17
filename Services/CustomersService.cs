@@ -68,7 +68,7 @@ namespace DataIntegrityTool.Services
                     Tools        = request.Tools,
                     SeatsMax     = 10,
                     Scans        = type.scans,
-                    SubscriptionTime = type.duration
+                    SubscriptionTime = TimeSpan.FromDays(type.days)
                 };
 
                 if (request.InitialUser)
@@ -377,12 +377,12 @@ namespace DataIntegrityTool.Services
 					if (custsub.ExpirationDate    == null
                     &&  customer.SubscriptionTime != null)
 					{
-                        custsub.ExpirationDate = DateTime.UtcNow + (subscription.duration + customer.SubscriptionTime);
+                        custsub.ExpirationDate = DateTime.UtcNow + (TimeSpan.FromDays(subscription.days) + customer.SubscriptionTime);
 						customer.SubscriptionTime = null;
 					}
                     else
                     {
-						custsub.ExpirationDate += subscription.duration;
+						custsub.ExpirationDate += TimeSpan.FromDays(subscription.days);
 						customer.SubscriptionTime = null;
 					}
 

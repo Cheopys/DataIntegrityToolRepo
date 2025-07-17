@@ -3,7 +3,7 @@
 	public class SubscriptionTypes
 	{
 		public Int32				Id		 { get; set; }
-		public TimeSpan				duration { get; set; }
+		public Int16				days     { get; set; }
 		public Int32				scans	 { get; set; }
 		public string				level	 { get; set; }
 	};
