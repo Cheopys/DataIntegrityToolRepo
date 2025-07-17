@@ -194,5 +194,22 @@ namespace DataIntegrityTool.Controllers
 		{
 			return CustomersService.CheckEmail(Email);
 		}
-    }
+
+		[HttpGet, Route("GetSubscriptionTypes")]
+		[Produces("application/json")]
+		public string GetSubscriptionTypes()
+		{
+			List<SubscriptionTypes> subscriptions = new();
+
+			using (DataContext context = new())
+			{
+				subscriptions = context.SubscriptionTypes.ToList();
+
+				context.Dispose();
+			}
+
+			return JsonSerializer.Serialize(subscriptions);
+		}
+
+	}
 }
