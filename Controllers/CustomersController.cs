@@ -203,7 +203,7 @@ namespace DataIntegrityTool.Controllers
 
 			using (DataContext context = new())
 			{
-				subscriptions = context.SubscriptionTypes.ToList();
+				subscriptions = context.SubscriptionTypes.OrderBy(st => st.Id).ToList();
 
 				context.Dispose();
 			}
