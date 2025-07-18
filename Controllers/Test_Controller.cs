@@ -22,11 +22,23 @@ namespace DataIntegrityTool.Controllers
 
 	public class Test_Controller : ControllerBase
 	{
-		[HttpPut, Route("RegisterCustomer_Example")]
-		public async Task<RegisterCustomerResponse> RegisterCustomer_Example()
+		private static string EncryptRSA(byte[] cleartext)
 		{
-			RegisterCustomerResponse response;
+			byte[] publicKey = ServerCryptographyService.GetServerRSAPublicKey();
 
+			RSACryptoServiceProvider csp = new RSACryptoServiceProvider(4096);
+
+			int cbRead;
+			csp.ImportRSAPublicKey(publicKey, out cbRead);
+
+			byte[] textEncrypted = csp.Encrypt(cleartext, false); //PKCS7 padding
+
+			return Convert.ToBase64String(textEncrypted);
+		}
+
+		[HttpPut, Route("RegisterCustomer_Client")]
+		public string RegisterCustomer_Client()
+		{
 			System.Security.Cryptography.Aes aeskey = ServerCryptographyService.CreateAes();
 
 			RegisterCustomerRequest request = new()
@@ -44,12 +56,15 @@ namespace DataIntegrityTool.Controllers
 					ToolTypes.tooltypeDI,
 					ToolTypes.tooltypeArchive,
 					ToolTypes.tooltypeProduction
-				}
+				},
+				InitialUser = false,
+				SubscriptionId = 20
 			};
 
-			response = CustomersService.RegisterCustomer(request);
+			string requestSerialized = JsonSerializer.Serialize(request);
 
-			return response;
+			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
+			return EncryptRSA(requestEncoded);
 		}
 
 		[HttpPut, Route("RegisterCustomer_Raw")]

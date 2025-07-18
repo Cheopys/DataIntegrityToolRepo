@@ -93,6 +93,17 @@ namespace DataIntegrityTool.Controllers
 			return response;
 		}
 
+		[HttpPut, Route("RegisterCustomerRSA")]
+		[Produces("application/json")]
+		public async Task<string> RegisterCustomerRSA(string registerCustomerB64)
+		{
+			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(registerCustomerB64);
+
+			RegisterCustomerResponse response = CustomersService.RegisterCustomer(request);
+
+			return JsonSerializer.Serialize(response);
+		}
+
 		[HttpPut, Route("PrepareReprovisionCustomerRequest")]
 		public void PrepareReprovisionCustomerRequest(ReprovisionCustomerRequest request)
 		{
