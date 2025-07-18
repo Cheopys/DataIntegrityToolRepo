@@ -100,19 +100,6 @@ public class UserLicenseAllocation
     public Int32 UserMeteringCount { get; set; }
     public Int32 UserIntervalSeconds { get; set; }
 }
-public class AllocateLicensesRequest
-{
-    public Int32    CustomerId       { get; set; }
-    public Int32    MeteringCount    { get; set; }
-    public TimeSpan SubscriptionTime { get; set; }
-}
-public class AllocateLicensesResponse
-{
-    public Int32    CustomerId          { get; set; }
-    public Int32    MeteringCount       { get; set; }
-    public DateTime? SubscriptionEnd    { get; set; }
-}
-
 public class CustomerUsage
 {
     public Int32 CustomerId         { get; set; }

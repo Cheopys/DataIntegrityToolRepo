@@ -183,10 +183,11 @@ namespace DataIntegrityTool.Controllers
 			return CustomersService.GetCustomerUsages(customerId);
 		}
 
-		[HttpPut, Route("AllocateLicenses")]
-        public AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
+		[HttpPost, Route("AddCustomerScans")]
+        public Int32 AddCustomerScans(Int32 CustomerId,
+									  Int32 newScans)
 		{
-			return CustomersService.AllocateLicenses(request);
+			return CustomersService.AddCustomerScans(CustomerId, newScans);
 		}
 
 		[HttpGet, Route("CheckEmail")]

@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using Amazon.S3.Model;
 using Amazon.SimpleNotificationService.Model;
 using CloudinaryDotNet.Actions;
 using DataIntegrityTool.Db;
@@ -21,7 +22,6 @@ using System.Net;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text.Json;
-using static AllocateLicensesRequest;
 
 namespace DataIntegrityTool.Services
 {
@@ -70,8 +70,7 @@ namespace DataIntegrityTool.Services
                     Scans        = type.scans,
                     SubscriptionTime = TimeSpan.FromDays(type.days)
                 };
-
-
+    
 				context.Customers.Add(customer);
 
                 // need the new customer PK to continue
@@ -230,25 +229,24 @@ namespace DataIntegrityTool.Services
             return customers;
         }
 
-        public static AllocateLicensesResponse AllocateLicenses(AllocateLicensesRequest request)
+        public static Int32 AddCustomerScans(Int32 CustomerId, 
+                                             Int32 newScans)
         {
-            AllocateLicensesResponse response = new()
-            {
-                CustomerId = request.CustomerId
-            };
+            Int32 scans = 0;
 
             using (DataContext context = new())
             {
-                Customers? customer = context.Customers.Find(request.CustomerId);
+                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
 
-                customer.Scans += request.MeteringCount;
-                response.MeteringCount = request.MeteringCount;
+                customer.Scans += newScans;
+
+                scans = customer.Scans;
 
                 context.SaveChanges();
                 context.Dispose();
             }
 
-            return response;
+            return scans;
         }
 
         private static CustomerUsage UsageByCustomer(Int32 customerId,
