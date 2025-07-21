@@ -124,11 +124,6 @@ namespace DataIntegrityTool.Services
 				context.Dispose();
 			}
 
-			if (response.errorcode == ErrorCodes.errorNone)
-			{
-				Program.loginType  = loginType;
-			}
-
 			return response;
 		}
 	}

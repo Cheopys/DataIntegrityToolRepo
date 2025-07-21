@@ -89,7 +89,7 @@ namespace DataIntegrityTool.Controllers
 			EncryptionWrapperDIT wrapper = new()
 			{
 				aesIV		= aesCustomer.IV,
-				primaryKey	= 0,
+				primaryKey	= CustomerId,
 				type		= LoginType.typeCustomer,
 			};
 				

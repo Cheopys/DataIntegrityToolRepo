@@ -66,6 +66,7 @@ namespace DataIntegrityTool.Controllers
 			return Convert.ToBase64String(textEncrypted);
 		}
 
+		/*
 		[HttpPut, Route("PrepareRegisterCustomerRequest")]
 		public string PrepareRegisterCustomerRequest(RegisterCustomerRequest request)
 		{
@@ -80,22 +81,21 @@ namespace DataIntegrityTool.Controllers
 
 			return Convert.ToHexString(aes.Key);
 		}
-
 		[HttpPut, Route("RegisterCustomer")]
 		public RegisterCustomerResponse RegisterCustomer()
 		{
 			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(Program.registerCustomerB64);
 
-			Program.registerCustomerB64 = String.Empty;
+			//Program.registerCustomerB64 = String.Empty;
 
 			RegisterCustomerResponse response = CustomersService.RegisterCustomer(request);
 
 			return response;
 		}
-
+*/
 		[HttpPut, Route("RegisterCustomerRSA")]
 		[Produces("application/json")]
-		public async Task<string> RegisterCustomerRSA(string registerCustomerB64)
+		public async Task<string> RegisterCustomerRSA([FromBody] string registerCustomerB64)
 		{
 			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(registerCustomerB64);
 
@@ -116,7 +116,7 @@ namespace DataIntegrityTool.Controllers
 		[HttpGet, Route("ReprovisionCustomer")]
 		public async Task<string> ReprovisionCustomer(System.Security.Cryptography.Aes AesKey)
 		{
-			ReprovisionCustomerRequest request = ServerCryptographyService.DecryptRSA<ReprovisionCustomerRequest>(Program.registerCustomerB64);
+			ReprovisionCustomerRequest request = ServerCryptographyService.DecryptRSA<ReprovisionCustomerRequest>(Program.reprovisionCustomerB64);
 
 			Program.reprovisionCustomerB64 = String.Empty;
 
