@@ -50,19 +50,29 @@ namespace DataIntegrityTool.Controllers
         }
 
 		[HttpGet, Route("GetUser")]
-		public async Task<string> GetUser(Int32 UserId)
+		public async Task<string> GetUser(Int32		UserId, 
+										  byte[]	AesIV, 
+										  LoginType LoginType,
+										  Int32		PrimaryKey)
+
 		{
 			Users? user = UsersService.GetUser(UserId);
 
 			string userJSON = JsonSerializer.Serialize(user);
 
-			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
+			EncryptionWrapperDIT wrapperCaller = new()
+			{
+				type			= LoginType,
+				primaryKey		=PrimaryKey,
+			};
+
+			System.Security.Cryptography.Aes AesKey = ServerCryptographyService.GetAesKey(wrapperCaller);
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				type		  = LoginType.typeUser,
-				primaryKey	  = UserId,
-				aesIV		  = aesDIT.IV,
+				type		  = LoginType,
+				primaryKey	  = PrimaryKey,
+				aesIV		  = AesKey.IV,
 				encryptedData = userJSON
 			};
 
@@ -80,15 +90,13 @@ namespace DataIntegrityTool.Controllers
 		 }
 
 		[HttpGet, Route("GetUsers")]
-		public async Task<string> GetUsers(Int32 CustomerId)
+		public async Task<string> GetUsers(Int32 CustomerId, byte[] AesIV)
 		{
 			List<Users> users = await UsersService.GetUsers(CustomerId);
 
-			System.Security.Cryptography.Aes aesCustomer = ServerCryptographyService.CreateAes();
-
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		= aesCustomer.IV,
+				aesIV		= AesIV,
 				primaryKey	= CustomerId,
 				type		= LoginType.typeCustomer,
 			};

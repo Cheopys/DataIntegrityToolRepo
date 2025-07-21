@@ -171,16 +171,20 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpGet, Route("GetCustomers")]
 		[Produces("application/json")]
-		public async Task<string> GetCustomers()
+		public async Task<string> GetCustomers(Int32 AdministratorID, byte[] AesIV)
 		{
 			List<Customers> customers = await CustomersService.GetCustomers();
 
-			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
+			Aes aesDIT = ServerCryptographyService.GetAesKey(new EncryptionWrapperDIT 
+															{  
+																type = LoginType.typeDIT,			
+																primaryKey = AdministratorID
+															});
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		= aesDIT.IV,
-				primaryKey	= 0,
+				aesIV		= AesIV,
+				primaryKey	= AdministratorID,
 				type		= LoginType.typeDIT,
 			};
 				
