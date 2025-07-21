@@ -49,6 +49,20 @@ namespace DataIntegrityTool.Controllers
             return UsersService.RegisterUser(request);
         }
 
+		[HttpPut, Route("RegisterUserRSA")]
+		[Produces("application/json")]
+		public async Task<string> RegisterUserRSA([FromBody] string registerUserB64)
+		{
+			RegisterUserRequest request = ServerCryptographyService.DecryptRSA<RegisterUserRequest>(registerUserB64);
+
+			RegisterUserResponse response = UsersService.RegisterUser(request);
+
+			return JsonSerializer.Serialize(response);
+		}
+
+
+
+
 		[HttpGet, Route("GetUser")]
 		public async Task<string> GetUser(Int32		UserId, 
 										  byte[]	AesIV, 
