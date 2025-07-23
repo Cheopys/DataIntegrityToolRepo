@@ -14,7 +14,7 @@ using System.Text.Json;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Security.Cryptography;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -42,6 +42,29 @@ namespace DataIntegrityTool.Controllers
 											 LoginType	loginType)
 		{
 			return ApplicationService.WebLogin(Email, PasswordHash, loginType);
+		}
+
+		[HttpGet, Route("RecoverAESKey")]
+		[Produces("application/json")]
+		public async Task<RecoverAESKeyResponse> RecoverAESKey(RecoverAESKeyRequest request)
+		{
+			RecoverAESKeyResponse response = new()
+			{
+				ErrorCode = ErrorCodes.errorNone
+			};
+
+			using (DataContext context = new())
+			{
+				Aes aesCaller   = ServerCryptographyService.GetAesKey(request.wrapperCaller);
+				Aes aesRecovery = ServerCryptographyService.GetAesKey(request.wrapperRecovery);
+
+				response.AesIVCaller   = aesCaller.IV;
+				response.AesKeyRecover = await ServerCryptographyService.EncrypytAES(aesCaller, Convert.ToHexString(aesRecovery.Key));
+
+				context.Dispose();
+			}
+
+			return response;
 		}
 	}
 }

@@ -66,33 +66,6 @@ namespace DataIntegrityTool.Controllers
 			return Convert.ToBase64String(textEncrypted);
 		}
 
-		/*
-		[HttpPut, Route("PrepareRegisterCustomerRequest")]
-		public string PrepareRegisterCustomerRequest(RegisterCustomerRequest request)
-		{
-			Aes aes = CreateAes();
-
-			request.AesKey = Convert.ToHexString(aes.Key);
-
-			string requestSerialized = JsonSerializer.Serialize(request);
-
-			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
-			Program.registerCustomerB64 = EncryptRSA(requestEncoded);
-
-			return Convert.ToHexString(aes.Key);
-		}
-		[HttpPut, Route("RegisterCustomer")]
-		public RegisterCustomerResponse RegisterCustomer()
-		{
-			RegisterCustomerRequest request = ServerCryptographyService.DecryptRSA<RegisterCustomerRequest>(Program.registerCustomerB64);
-
-			//Program.registerCustomerB64 = String.Empty;
-
-			RegisterCustomerResponse response = CustomersService.RegisterCustomer(request);
-
-			return response;
-		}
-*/
 		[HttpPut, Route("RegisterCustomerRSA")]
 		[Produces("application/json")]
 		public async Task<string> RegisterCustomerRSA([FromBody] string registerCustomerB64)

@@ -117,7 +117,6 @@ public class RegisterUserRequest
     public string Password       { get; set; }
     public string AesKey         { get; set; }
     public List<ToolTypes> Tools { get; set; }
-    public Int32 SeatsMax        { get; set; }
 }
 
 public class RegisterUserResponse
@@ -156,4 +155,18 @@ public class AddSubscriptionResponse
     public DateTime   Expiration    { get; set; }
 	public Int32      ScansAfter    { get; set; }
 	public ErrorCodes Error         { get; set; }
+}
+
+
+public class RecoverAESKeyResponse
+{
+    public byte[]     AesIVCaller   { get; set; }
+	public string     AesKeyRecover { get; set; }
+	public ErrorCodes ErrorCode     { get; set; }
+}
+
+public class RecoverAESKeyRequest
+{
+    public EncryptionWrapperDIT wrapperCaller   { get; set; }
+    public EncryptionWrapperDIT wrapperRecovery  { get; set; }
 }
