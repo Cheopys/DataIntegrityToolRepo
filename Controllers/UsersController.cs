@@ -91,13 +91,13 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpGet, Route("GetUsersForCustomer")]
 		public async Task<string> GetUsers(Int32  CustomerId, 
-										   byte[] AesIV)
+										   string AesIVHex)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		= AesIV,
+				aesIV		= Convert.FromHexString(AesIVHex),
 				primaryKey	= CustomerId,
 				type		= LoginType.typeCustomer,
 			};
