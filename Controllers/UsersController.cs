@@ -51,7 +51,7 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpGet, Route("GetUser")]
 		public async Task<string> GetUser(Int32		UserId, 
-										  byte[]	AesIV, 
+										  string	AesIVHex, 
 										  LoginType LoginType,
 										  Int32		PrimaryKey)
 
@@ -62,8 +62,9 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapperCaller = new()
 			{
+				aesIV           = Convert.FromHexString(AesIVHex),
 				type			= LoginType,
-				primaryKey		=PrimaryKey,
+				primaryKey		= PrimaryKey,
 			};
 
 			System.Security.Cryptography.Aes AesKey = ServerCryptographyService.GetAesKey(wrapperCaller);
