@@ -110,7 +110,7 @@ namespace DataIntegrityTool.Controllers
 		[Produces("application/json")]
 		public async Task<string> GetUsers_Raw(Int32 CustomerId)
 		{
-			List<Users> users = await UsersService.GetUsers(CustomerId);
+			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
 			return JsonSerializer.Serialize(users);
 		}
@@ -180,7 +180,7 @@ namespace DataIntegrityTool.Controllers
 		[Produces("application/json")]
 		public async Task<string> UsersForCustomer(Int32 CustomerId)
 		{
-			List<Users> users = await UsersService.GetUsers(CustomerId);
+			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
 			return JsonSerializer.Serialize(users);
 		}

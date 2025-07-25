@@ -38,17 +38,6 @@ namespace DataIntegrityTool.Controllers
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
-        [HttpPut, Route("RegisterUser")]
-        public RegisterUserResponse RegisterUser([FromBody] EncryptionWrapperDIT wrapper)
-        {
-            ErrorCodes errorcode = ErrorCodes.errorNone;
-            RegisterUserRequest request;
-
-            ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out request);
-
-            return UsersService.RegisterUser(request);
-        }
-
 		[HttpPut, Route("RegisterUserRSA")]
 		[Produces("application/json")]
 		public async Task<string> RegisterUserRSA([FromBody] string registerUserB64)
@@ -59,9 +48,6 @@ namespace DataIntegrityTool.Controllers
 
 			return JsonSerializer.Serialize(response);
 		}
-
-
-
 
 		[HttpGet, Route("GetUser")]
 		public async Task<string> GetUser(Int32		UserId, 
@@ -103,10 +89,10 @@ namespace DataIntegrityTool.Controllers
 			UsersService.UpdateUser(request);
 		 }
 
-		[HttpGet, Route("GetUsers")]
+		[HttpGet, Route("GetUsersForCustomer")]
 		public async Task<string> GetUsers(Int32 CustomerId, byte[] AesIV)
 		{
-			List<Users> users = await UsersService.GetUsers(CustomerId);
+			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
 			EncryptionWrapperDIT wrapper = new()
 			{

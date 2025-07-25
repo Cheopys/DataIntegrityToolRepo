@@ -7,18 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DIT_WIN_GUI_nonObfuscation\**" />
     <Compile Remove="FromUnity\**" />
     <Compile Remove="Localizations\**" />
     <Compile Remove="LocalizeStrings\**" />
     <Compile Remove="Migrations - Copy\**" />
+    <Content Remove="DIT_WIN_GUI_nonObfuscation\**" />
     <Content Remove="FromUnity\**" />
     <Content Remove="Localizations\**" />
     <Content Remove="LocalizeStrings\**" />
     <Content Remove="Migrations - Copy\**" />
+    <EmbeddedResource Remove="DIT_WIN_GUI_nonObfuscation\**" />
     <EmbeddedResource Remove="FromUnity\**" />
     <EmbeddedResource Remove="Localizations\**" />
     <EmbeddedResource Remove="LocalizeStrings\**" />
     <EmbeddedResource Remove="Migrations - Copy\**" />
+    <None Remove="DIT_WIN_GUI_nonObfuscation\**" />
     <None Remove="FromUnity\**" />
     <None Remove="Localizations\**" />
     <None Remove="LocalizeStrings\**" />

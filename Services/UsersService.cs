@@ -156,15 +156,15 @@ namespace DataIntegrityTool.Services
 			}
 		}
 
-		public static async Task<List<Users>> GetUsers(Int32 CustomerId)
+		public static async Task<List<Users>> GetUsersForCustomer(Int32 CustomerId)
 		{
 			List<Users> Users;
 
 			using (DataContext context = new())
 			{
-				Users = context.Users.Where(us => us.CustomerId.Equals(CustomerId))
-                                     .OrderBy(c => c.NameLast)
-                                     .ToList();
+				Users = await context.Users.Where(us => us.CustomerId.Equals(CustomerId))
+										   .OrderBy(c => c.NameLast)
+                                           .ToListAsync();
 
 				await context.DisposeAsync();
 			}
