@@ -142,28 +142,6 @@ namespace DataIntegrityTool.Controllers
 			CustomersService.DeleteCustomer(customerId);
         }
 
-		[HttpGet, Route("GetCustomers")]
-		[Produces("application/json")]
-		public async Task<string> GetCustomers(Int32 AdministratorID, byte[] AesIV)
-		{
-			List<Customers> customers = await CustomersService.GetCustomers();
-
-			Aes aesDIT = ServerCryptographyService.GetAesKey(new EncryptionWrapperDIT 
-															{  
-																type = LoginType.typeDIT,			
-																primaryKey = AdministratorID
-															});
-
-			EncryptionWrapperDIT wrapper = new()
-			{
-				aesIV		= AesIV,
-				primaryKey	= AdministratorID,
-				type		= LoginType.typeDIT,
-			};
-				
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
-		}
-
 		[HttpGet, Route("GetCustomerUsage")]
 		[Produces("application/json")]
 		public List<CustomerUsage> GetCustomerUsages (Int32? customerId) 
