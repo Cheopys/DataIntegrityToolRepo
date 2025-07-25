@@ -38,5 +38,11 @@ namespace DataIntegrityTool.Controllers
         {
             return ServerCryptographyService.GetAesKey(wrapper);
         }
-    }
+
+		[HttpGet, Route("GetAesIV")]
+		public string GetAesIV()
+		{
+			return Convert.ToHexString(ServerCryptographyService.CreateAes().IV);
+		}
+	}
 }
