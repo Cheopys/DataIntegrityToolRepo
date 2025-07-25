@@ -9,7 +9,6 @@ using NLog;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection.Metadata;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -184,5 +183,23 @@ namespace DataIntegrityTool.Controllers
 
 			return JsonSerializer.Serialize(users);
 		}
+
+		[HttpGet, Route("GetUsersForCustomer")]
+		public async Task<string> GetUsers(Int32 CustomerId\)
+		{
+			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
+
+			Aes aes = ServerCryptographyService.CreateAes();
+
+			EncryptionWrapperDIT wrapper = new()
+			{
+				aesIV		= aes.IV,
+				primaryKey	= CustomerId,
+				type		= LoginType.typeCustomer,
+			};
+
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
+		}
+
 	}
 }
