@@ -90,7 +90,8 @@ namespace DataIntegrityTool.Controllers
 		 }
 
 		[HttpGet, Route("GetUsersForCustomer")]
-		public async Task<string> GetUsers(Int32 CustomerId, byte[] AesIV)
+		public async Task<string> GetUsers(Int32  CustomerId, 
+										   byte[] AesIV)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
