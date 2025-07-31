@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
 using static System.Net.Mime.MediaTypeNames;
@@ -202,9 +203,22 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("UpdateUser")]
-		public string UpdateUser(UpdateUserRequest request)
+		public async Task<string> UpdateUser(UpdateUserRequest request)
 		{
-			return UsersService.UpdateUser(request);
+			EncryptionWrapperDIT wrapper = new()
+			{
+				type = LoginType.typeUser,
+				primaryKey = 99,
+				aesIV = ServerCryptographyService.CreateAes().IV,
+			};
+
+			wrapper.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, request);
+
+			UpdateUserRequest requestInner;
+
+			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out requestInner);
+			
+			return UsersService.UpdateUser(requestInner);
 		}
 
 
