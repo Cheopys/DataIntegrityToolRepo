@@ -73,42 +73,21 @@ namespace DataIntegrityTool.Controllers
 			}
 		}
 
-		[HttpGet, Route("GetUser")]
-		public async Task<string> GetUser(Int32		UserId, 
-										  string	AesIVHex, 
-										  LoginType LoginType,
-										  Int32		PrimaryKey)
-
+		[HttpGet, Route("AdminGetUser")]
+		public async Task<string> AdminGetUser(Int32 UserIdSought,
+											   Int32 AdminIdSeeker,
+												  string AesIVHex)
 		{
-			Users? user = UsersService.GetUser(UserId);
+			Users? user = UsersService.GetUser(UserIdSought);
 
-			if (LoginType != LoginType.typeUser
-			||  PrimaryKey != UserId)
+			EncryptionWrapperDIT wrapper = new()
 			{
-				string userJSON = JsonSerializer.Serialize(user);
+				type		= LoginType.typeDIT,
+				primaryKey	= AdminIdSeeker,
+				aesIV		= Convert.FromHexString(AesIVHex),
+			};
 
-				EncryptionWrapperDIT wrapperCaller = new()
-				{
-					aesIV           = Convert.FromHexString(AesIVHex),
-					type			= LoginType,
-					primaryKey		= PrimaryKey,
-				};
-
-				System.Security.Cryptography.Aes AesKey = ServerCryptographyService.GetAesKey(wrapperCaller);
-
-				EncryptionWrapperDIT wrapper = new()
-				{
-					type		  = LoginType,
-					primaryKey	  = PrimaryKey,
-					aesIV		  = AesKey.IV,
-					encryptedData = userJSON
-				};
-				return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
-			}
-			else
-			{
-				return null;
-			}
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
 		}
 
 		[HttpPost, Route("UpdateUser")]

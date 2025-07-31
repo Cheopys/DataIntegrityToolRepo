@@ -100,6 +100,23 @@ namespace DataIntegrityTool.Controllers
 			return await ServerCryptographyService.EncrypytAES(AesKey, responseSeriaized);
 		}
 
+		[HttpGet, Route("AdminGetCustomer")]
+		public async Task<string> AdminGetCustomer(Int32  CustomerIdSought,
+												   Int32  AdminIdSeeker,
+												   string AesIVHex)
+		{
+			Customers? customer = CustomersService.GetCustomer(CustomerIdSought);
+
+			EncryptionWrapperDIT wrapper = new()
+			{
+				type		= LoginType.typeDIT,
+				primaryKey	= AdminIdSeeker,
+				aesIV		= Convert.FromHexString(AesIVHex),
+			};
+
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customer);
+		}
+
 		//  R
 
 		[HttpGet, Route("GetCustomer")]
