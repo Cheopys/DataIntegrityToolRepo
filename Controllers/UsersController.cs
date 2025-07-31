@@ -74,9 +74,9 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("AdminGetUser")]
-		public async Task<string> AdminGetUser(Int32 UserIdSought,
-											   Int32 AdminIdSeeker,
-												  string AesIVHex)
+		public async Task<string> AdminGetUser(Int32  UserIdSought,
+											   Int32  AdminIdSeeker,
+											   string AesIVHex)
 		{
 			Users? user = UsersService.GetUser(UserIdSought);
 

@@ -100,41 +100,52 @@ namespace DataIntegrityTool.Services
 
 		// U
 
-		public static void UpdateUser(UpdateUserRequest request)
+		public static string UpdateUser(UpdateUserRequest request)
 		{
+			string ret = String.Empty;
+
 			using (DataContext context = new())
 			{
 				Users? user = context.Users.Where(cu => cu.Id.Equals(request.UserId)).FirstOrDefault();
 
-                if (request.Tools != null)
-                {
-                    user.Tools = request.Tools;
-                }
-
-                if (request.NameFirst != null)
-                {
-                    user.NameFirst = request.NameFirst;
-                }
-
-				if (request.NameLast != null)
+				if (user != null)
 				{
-					user.NameLast = request.NameLast;
+					if (request.Tools != null)
+					{
+						user.Tools = request.Tools;
+					}
+
+					if (request.NameFirst != null)
+					{
+						user.NameFirst = request.NameFirst;
+					}
+
+					if (request.NameLast != null)
+					{
+						user.NameLast = request.NameLast;
+					}
+
+					if (request.Email != null)
+					{
+						user.Email = request.Email;
+					}
+
+					if (request.Password != null)
+					{
+						user.PasswordHash = ServerCryptographyService.SHA256(request.Password);
+					}
+					
+					context.SaveChanges();
 				}
-
-				if (request.Email != null)
-                {
-                    user.Email = request.Email;
-                }
-
-                if (request.Password != null)
-                {
-                    user.PasswordHash = ServerCryptographyService.SHA256(request.Password);
-                }
-
-				context.SaveChanges();
-
+				else
+				{
+					ret = $"User {request.UserId} not found";
+				}
+					
 				context.Dispose();
 			}
+
+			return ret;
 		}
 
         // D
