@@ -221,6 +221,12 @@ namespace DataIntegrityTool.Controllers
 			return UsersService.UpdateUser(requestInner);
 		}
 
+		[HttpPost, Route("UpdateUser_Raw")]
+		public async Task<string> UpdateUser_Raw(UpdateUserRequest request)
+		{
+			return UsersService.UpdateUser(request);
+		}
+
 
 	}
 }
