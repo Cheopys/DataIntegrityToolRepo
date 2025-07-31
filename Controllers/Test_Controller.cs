@@ -201,5 +201,12 @@ namespace DataIntegrityTool.Controllers
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
 		}
 
+		[HttpPost, Route("UpdateUser")]
+		public string UpdateUser(UpdateUserRequest request)
+		{
+			return UsersService.UpdateUser(request);
+		}
+
+
 	}
 }
