@@ -49,6 +49,30 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(response);
 		}
 
+		[HttpGet, Route("CustomerGetUser")]
+		public async Task<string> CustomerGetUser(Int32  UserIdSought,
+												  Int32  CustomerIdSeeker,
+												  string AesIVHex)
+		{
+			Users? user = UsersService.GetUser(UserIdSought);
+
+			if (user.CustomerId.Equals(CustomerIdSeeker))
+			{
+				EncryptionWrapperDIT wrapper = new()
+				{
+					type		= LoginType.typeCustomer,
+					primaryKey	= CustomerIdSeeker,
+					aesIV		= Convert.FromHexString(AesIVHex),
+				};
+
+				return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
+			}
+			else
+			{
+				return $"Error User {UserIdSought} does not belong to customer {CustomerIdSeeker}";
+			}
+		}
+
 		[HttpGet, Route("GetUser")]
 		public async Task<string> GetUser(Int32		UserId, 
 										  string	AesIVHex, 
@@ -58,26 +82,33 @@ namespace DataIntegrityTool.Controllers
 		{
 			Users? user = UsersService.GetUser(UserId);
 
-			string userJSON = JsonSerializer.Serialize(user);
-
-			EncryptionWrapperDIT wrapperCaller = new()
+			if (LoginType != LoginType.typeUser
+			||  PrimaryKey != UserId)
 			{
-				aesIV           = Convert.FromHexString(AesIVHex),
-				type			= LoginType,
-				primaryKey		= PrimaryKey,
-			};
+				string userJSON = JsonSerializer.Serialize(user);
 
-			System.Security.Cryptography.Aes AesKey = ServerCryptographyService.GetAesKey(wrapperCaller);
+				EncryptionWrapperDIT wrapperCaller = new()
+				{
+					aesIV           = Convert.FromHexString(AesIVHex),
+					type			= LoginType,
+					primaryKey		= PrimaryKey,
+				};
 
-			EncryptionWrapperDIT wrapper = new()
+				System.Security.Cryptography.Aes AesKey = ServerCryptographyService.GetAesKey(wrapperCaller);
+
+				EncryptionWrapperDIT wrapper = new()
+				{
+					type		  = LoginType,
+					primaryKey	  = PrimaryKey,
+					aesIV		  = AesKey.IV,
+					encryptedData = userJSON
+				};
+				return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
+			}
+			else
 			{
-				type		  = LoginType,
-				primaryKey	  = PrimaryKey,
-				aesIV		  = AesKey.IV,
-				encryptedData = userJSON
-			};
-
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, user);
+				return null;
+			}
 		}
 
 		[HttpPost, Route("UpdateUser")]
