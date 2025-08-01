@@ -152,5 +152,12 @@ namespace DataIntegrityTool.Controllers
 
 			return UsersService.ChangePasswordAnswer(request);
 		}
+
+		[HttpDelete, Route("DeleteUser")]
+		public void DeleteUser(Int32 CustomerId, 
+							   Int32 UserId)
+		{
+			UsersService.DeleteUser(CustomerId, UserId);
+		}
 	}
 }

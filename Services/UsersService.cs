@@ -150,7 +150,8 @@ namespace DataIntegrityTool.Services
 
         // D
 
-		public static void  DeleteUser(Int32 UserId)
+		public static void  DeleteUser(Int32 CustomerId, 
+									   Int32 UserId)
 		{
 			using (DataContext context = new())
 			{
@@ -158,11 +159,15 @@ namespace DataIntegrityTool.Services
 				List<Session> sessions = context.Session.Where(s => s.UserId.Equals(UserId)).ToList();
 				List<LicenseMetered> licensesetered = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(UserId)).ToList();
 
-				context.Remove(user);
-				context.RemoveRange(sessions);
-				context.RemoveRange(licensesetered);
+				if (user.CustomerId == CustomerId)
+				{
+					context.Remove(user);
+					context.RemoveRange(sessions);
+					context.RemoveRange(licensesetered);
 
-				context.SaveChanges();
+					context.SaveChanges();
+				}
+
 				context.Dispose();
 			}
 		}
