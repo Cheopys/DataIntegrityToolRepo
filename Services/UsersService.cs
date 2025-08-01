@@ -102,7 +102,7 @@ namespace DataIntegrityTool.Services
 
 		public static string UpdateUser(UpdateUserRequest request)
 		{
-			string ret = String.Empty;
+			string ret = $"changes applied to user {request.UserId}";
 
 			using (DataContext context = new())
 			{

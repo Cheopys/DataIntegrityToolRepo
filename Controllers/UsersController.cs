@@ -91,13 +91,13 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("UpdateUser")]
-		public void UpdateUser([FromBody] EncryptionWrapperDIT wrapper)
+		public string UpdateUser([FromBody] EncryptionWrapperDIT wrapper)
 		{
 			UpdateUserRequest request;
 
 			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
 
-			UsersService.UpdateUser(request);
+			return UsersService.UpdateUser(request);
 		 }
 
 		[HttpGet, Route("GetUsersForCustomer")]
