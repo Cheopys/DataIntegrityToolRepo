@@ -22,8 +22,8 @@ namespace DataIntegrityTool.Shared
 	{
 		public Int32 primaryKey { get; set; }
 		public LoginType type { get; set; }
-		public string encryptedData { get; set; }
-		public string? aesIVString { get; set; }
+		public string? encryptedData { get; set; }
+		public string aesIVString { get; set; }
 	}
 }
 
