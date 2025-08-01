@@ -111,7 +111,7 @@ namespace DataIntegrityTool.Controllers
 			}
 			else
 			{
-				return $"bad IV size; is {wrapper.aesIV.Length}, should be 16";
+				return $"bad IV size; hex is {wrapperString.aesIVString.Length}, IV is {wrapper.aesIV.Length}, should be 16";
 			}
 		}
 
