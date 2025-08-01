@@ -91,19 +91,11 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("UpdateUser")]
-		public string UpdateUser([FromBody] EncryptionWrapperDITString wrapper)
+		public string UpdateUser([FromBody] EncryptionWrapperDIT wrapper)
 		{
-			EncryptionWrapperDIT wrapperDIT = new()
-			{
-				type = LoginType.typeUser,
-				primaryKey = wrapper.primaryKey,
-				encryptedData = wrapper.encryptedData,
-				aesIV = Convert.FromHexString(wrapper.aesIVString)
-			};
-
 			UpdateUserRequest request;
 
-			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapperDIT, out request);
+			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
 
 			return UsersService.UpdateUser(request);
 		 }

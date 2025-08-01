@@ -214,13 +214,13 @@ namespace DataIntegrityTool.Controllers
 
 			wrapper.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, request);
 
-			return wrapper.encryptedData;
-			/*
+//			return wrapper.encryptedData;
+	
 			UpdateUserRequest requestInner;
 
 			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out requestInner);
 			
-			return UsersService.UpdateUser(requestInner);*/
+			return UsersService.UpdateUser(requestInner);
 		}
 
 		[HttpPost, Route("UpdateUser_Raw")]
