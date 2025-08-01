@@ -101,12 +101,19 @@ namespace DataIntegrityTool.Controllers
 				encryptedData = wrapperString.encryptedData
 			};
 
-			UpdateUserRequest request;
+			if (wrapper.aesIV.Length == 16)
+			{
+				UpdateUserRequest request;
 
-			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
+				ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
 
-			return UsersService.UpdateUser(request);
-		 }
+				return UsersService.UpdateUser(request);
+			}
+			else
+			{
+				return $"bad IV size; is {wrapper.aesIV.Length}, should be 16";
+			}
+		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
 		public async Task<string> GetUsersForCustomer(Int32  CustomerId, 
