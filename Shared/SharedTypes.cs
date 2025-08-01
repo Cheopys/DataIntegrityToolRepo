@@ -16,7 +16,14 @@ namespace DataIntegrityTool.Shared
         public LoginType        type            { get; set; }  
         public byte[]           aesIV           { get; set; } 
         public string           encryptedData   { get; set; }
-		public string?          aesIVString     { get; set; }
+	}
+
+	public class EncryptionWrapperDITString
+	{
+		public Int32 primaryKey { get; set; }
+		public LoginType type { get; set; }
+		public string encryptedData { get; set; }
+		public string? aesIVString { get; set; }
 	}
 }
 
