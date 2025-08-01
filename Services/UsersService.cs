@@ -169,7 +169,9 @@ namespace DataIntegrityTool.Services
 					context.SaveChanges();
 				}
 				else
-				{ ret = $"User {UserId} does not belohng to customer {CustomerId}"}
+				{
+					ret = $"User {UserId} does not belong to customer {CustomerId}";
+				}
 					
 				context.Dispose();
 			}
