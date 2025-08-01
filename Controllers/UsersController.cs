@@ -95,7 +95,7 @@ namespace DataIntegrityTool.Controllers
 		{
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		  = Convert.FromHexString(wrapperString.aesIVString),
+				aesIV		  = Convert.FromHexString(wrapperString.aesIVHex),
 				primaryKey	  = wrapperString.primaryKey,
 				type		  = wrapperString.type,
 				encryptedData = wrapperString.encryptedData
@@ -111,7 +111,7 @@ namespace DataIntegrityTool.Controllers
 			}
 			else
 			{
-				return $"bad IV size; hex is {wrapperString.aesIVString.Length}, IV is {wrapper.aesIV.Length}, should be 16";
+				return $"bad IV size; hex is {wrapperString.aesIVHex.Length}, IV is {wrapper.aesIV.Length}, should be 16";
 			}
 		}
 
@@ -154,10 +154,10 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpDelete, Route("DeleteUser")]
-		public void DeleteUser(Int32 CustomerId, 
-							   Int32 UserId)
+		public string DeleteUser(Int32 CustomerId, 
+							     Int32 UserId)
 		{
-			UsersService.DeleteUser(CustomerId, UserId);
+			return UsersService.DeleteUser(CustomerId, UserId);
 		}
 	}
 }

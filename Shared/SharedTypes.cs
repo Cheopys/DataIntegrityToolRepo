@@ -20,10 +20,10 @@ namespace DataIntegrityTool.Shared
 
 	public class EncryptionWrapperDITString
 	{
-		public Int32 primaryKey { get; set; }
-		public LoginType type { get; set; }
-		public string? encryptedData { get; set; }
-		public string aesIVString { get; set; }
+		public Int32     primaryKey     { get; set; }
+		public LoginType type           { get; set; }
+		public string?   encryptedData  { get; set; }
+		public string    aesIVHex       { get; set; }
 	}
 }
 
@@ -63,7 +63,7 @@ public class ReprovisionCustomerResponse
 
 public class UpdateCustomerRequest
 {
-    public Int32  Id            { get; set; }
+    public Int32  CustomerId    { get; set; }
 	public string NameFirst     { get; set; }
 	public string NameLast      { get; set; }
 	public string Email         { get; set; }

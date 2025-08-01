@@ -150,9 +150,10 @@ namespace DataIntegrityTool.Services
 
         // D
 
-		public static void  DeleteUser(Int32 CustomerId, 
-									   Int32 UserId)
+		public static string  DeleteUser(Int32 CustomerId, 
+									     Int32 UserId)
 		{
+			string ret = $"User {UserId} deleted";
 			using (DataContext context = new())
 			{
 				Users?        user     = context.Users  .Where(us => us.Id.Equals(UserId)).FirstOrDefault();
@@ -167,9 +168,13 @@ namespace DataIntegrityTool.Services
 
 					context.SaveChanges();
 				}
-
+				else
+				{ ret = $"User {UserId} does not belohng to customer {CustomerId}"}
+					
 				context.Dispose();
 			}
+
+			return ret;
 		}
 
 		public static async Task<List<Users>> GetUsersForCustomer(Int32 CustomerId)

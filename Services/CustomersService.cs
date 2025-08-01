@@ -164,7 +164,7 @@ namespace DataIntegrityTool.Services
         {
             using (DataContext context = new())
             {
-                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(request.Id)).FirstOrDefault();
+                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault();
 
                 if (request.NameFirst != null)
                 {
@@ -200,17 +200,19 @@ namespace DataIntegrityTool.Services
         {
             using (DataContext context = new())
             {
-                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
-                List<Users> users = context.Users.Where(us => us.CustomerId.Equals(CustomerId)).ToList();
-                List<Session> sessions = context.Session.Where(s => s.CustomerId.Equals(CustomerId)).ToList();
-                List<LicenseMetered> licensesetered = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
+                Customers?                  customer        = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
+                List<Users>                 users           = context.Users.Where(us => us.CustomerId.Equals(CustomerId)).ToList();
+                List<Session>               sessions        = context.Session.Where(s => s.CustomerId.Equals(CustomerId)).ToList();
+                List<LicenseMetered>        licensesetered  = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
+                List<CustomerSubscriptions> subscriptions   = context.CustomerSubscriptions.Where(s => s.CustomerId == CustomerId).ToList();
 
-                context.Remove(customer);
                 context.RemoveRange(users);
                 context.RemoveRange(sessions);
                 context.RemoveRange(licensesetered);
+				context.RemoveRange(subscriptions);
+				context.Remove     (customer);
 
-                context.SaveChanges();
+				context.SaveChanges();
                 context.Dispose();
             }
         }
