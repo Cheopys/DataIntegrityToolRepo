@@ -159,13 +159,6 @@ namespace DataIntegrityTool.Controllers
 											   loginType);
 		}
 
-
-		[HttpPost, Route("ChangePasswordAnswer")]
-		public ErrorCodes ChangePasswordAnswer(ChangePasswordRequest request)
-		{
-			return UsersService.ChangePasswordAnswer(request);
-		}
-
 		[HttpPut, Route("RegisterUser_Raw")]
 		public RegisterUserResponse RegisterUser_Raw(RegisterUserRequest request)
 		{
