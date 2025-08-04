@@ -94,7 +94,13 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("UpdateUser")]
 		public string UpdateUser([FromBody] EncryptionWrapperDITString wrapperString)
 		{
-			EncryptionWrapperDIT wrapper = wrapperString.ToBinaryVersion();
+			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			{
+				primaryKey		= wrapperString.primaryKey,
+				type			= wrapperString.type,
+				encryptedData	= wrapperString.encryptedData,
+				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
+			};
 
 			UpdateUserRequest request;
 

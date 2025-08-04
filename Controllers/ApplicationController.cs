@@ -78,7 +78,7 @@ namespace DataIntegrityTool.Controllers
 			{
 				aesIV		= Convert.FromHexString(AesIVHex),
 				primaryKey	= AdministratorID,
-				type		= LoginType.typeDIT,
+				type	= LoginType.typeDIT,
 			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
@@ -89,14 +89,29 @@ namespace DataIntegrityTool.Controllers
 		{
 			ChangePasswordAskResponse response = UsersService.ChangePasswordAsk(wrapperString);
 
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapperString.ToBinaryVersion(), response);
+			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			{
+				primaryKey	  = wrapperString.primaryKey,
+				type		  = wrapperString.type,
+				encryptedData = wrapperString.encryptedData,
+				aesIV		  = Convert.FromHexString(wrapperString.aesIVHex)
+			};
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
 		}
 
 		[HttpPost, Route("ChangePasswordAnswer")]
 		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDITString wrapperString)
 		{
+			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			{
+				primaryKey		= wrapperString.primaryKey,
+				type			= wrapperString.type,
+				encryptedData	= wrapperString.encryptedData,
+				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
+			};
+
 			ChangePasswordRequest? request;
-			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapperString.ToBinaryVersion(), out request);
+			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapper, out request);
 
 			return UsersService.ChangePasswordAnswer(request.LoginType,
 													 request.PrimaryKey,

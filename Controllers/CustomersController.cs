@@ -10,6 +10,7 @@ using NLog;
 using System.Collections.Generic;
 using System.Net;
 using System.Security.Cryptography;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -144,7 +145,13 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("UpdateCustomer")]
 		public void UpdateCustomer(EncryptionWrapperDITString wrapperString)
 		{
-			EncryptionWrapperDIT wrapper = wrapperString.ToBinaryVersion();
+			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			{
+				primaryKey		= wrapperString.primaryKey,
+				type			= wrapperString.type,
+				encryptedData	= wrapperString.encryptedData,
+				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
+			};
 
 			UpdateCustomerRequest request;
 
