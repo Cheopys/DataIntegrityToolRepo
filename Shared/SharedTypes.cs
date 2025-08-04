@@ -197,6 +197,7 @@ public class ChangePasswordAskResponse
 	public LoginType LoginType  { get; set; }
     public string NameFirst     { get; set; }
     public string Namelast      { get; set; }
+	public string Email			{ get; set; }
     public Int32 ChangePasswordToken	{ get; set; }
     public ErrorCodes ErrorCode			{ get; set; }
 }
