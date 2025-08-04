@@ -93,6 +93,9 @@ namespace DataIntegrityTool.Migrations
                     b.Property<byte[]>("AesKey")
                         .HasColumnType("bytea");
 
+                    b.Property<int>("ChangePasswordToken")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Company")
                         .IsRequired()
                         .HasColumnType("text");
