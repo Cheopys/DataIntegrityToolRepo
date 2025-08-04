@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Drawing;
 using NuGet.Packaging;
 using System.Globalization;
+using DataIntegrityTool.Shared;
 
 namespace DataIntegrityTool.Services
 {
@@ -197,56 +198,120 @@ namespace DataIntegrityTool.Services
 
         // change password
 
-        public static ErrorCodes ChangePasswordAsk(Int32 UserId)
+        public static ChangePasswordAskResponse ChangePasswordAsk(EncryptionWrapperDITString wrapperString)
         {
-            ErrorCodes errorCode = ErrorCodes.errorNone;
-
+			ChangePasswordAskResponse response = new ChangePasswordAskResponse()
+			{
+				ErrorCode = ErrorCodes.errorNone
+			};
             using (DataContext context = new())
             {
-                Users? user = context.Users.Where(us => us.Id.Equals(UserId)).FirstOrDefault();
+				if (wrapperString.type == LoginType.typeUser)
+				{
+					Users? user = context.Users.Where(us => us.Id.Equals(wrapperString.primaryKey)).FirstOrDefault();
 
-                if (user != null)
-                {
-                    user.ChangePasswordToken = (new Random()).Next() % 1000000;
+					if (user != null)
+					{
+						response.Namelast			 = user.NameLast;
+						response.NameFirst			 = user.NameFirst;
+						response.ChangePasswordToken = (new Random()).Next() % 1000000;
+						response.PrimaryKey			 = wrapperString.primaryKey;
+						response.LoginType			 = wrapperString.type;
+						context.SaveChanges();
+					}
+					else
+					{
+						response.ErrorCode = ErrorCodes.errorInvalidUser;
+					}
+				}
+				else if (wrapperString.type == LoginType.typeCustomer)
+				{
+					Customers? customer = context.Customers.Where(us => us.Id.Equals(wrapperString.primaryKey)).FirstOrDefault();
 
-                    context.SaveChanges();  
-                }
-                else
-                {
-                    errorCode = ErrorCodes.errorInvalidUser;
-                }
+					if (customer != null)
+					{
+						response.Namelast			 = customer.NameLast;
+						response.NameFirst			 = customer.NameFirst;
+						response.ChangePasswordToken = (new Random()).Next() % 1000000;
+						response.PrimaryKey			 = wrapperString.primaryKey;
+						response.LoginType			 = wrapperString.type;
 
-                context.Dispose();
+						context.SaveChanges();
+					}
+					else
+					{
+						response.ErrorCode = ErrorCodes.errorInvalidCustomerId;
+					}
+				}
+
+				if (response.ErrorCode == ErrorCodes.errorNone)
+				{
+					context.SaveChanges();
+				}
+
+				context.Dispose();
             }
 
-            return errorCode;
+            return response;
 		}
 
-        public static ErrorCodes ChangePasswordAnswer(ChangePasswordRequest request)
+        public static ErrorCodes ChangePasswordAnswer(LoginType loginType,
+													  Int32     primaryKey,
+													  Int32     token,
+													  string    passwordNew)
         {
 			ErrorCodes errorCode = ErrorCodes.errorNone;
 
 			using (DataContext context = new())
 			{
-				Users? user = context.Users.Where(us => us.Id.Equals(request.UserId)).FirstOrDefault();
-
-				if (user != null)
+				if (loginType == LoginType.typeUser)
 				{
-                    if (user.ChangePasswordToken.Equals(request.Token))
-                    {
-                        user.PasswordHash        = ServerCryptographyService.SHA256(request.PasswordNew);
-                        user.ChangePasswordToken = 0;
-                    }
-                    else
-                    {
-                        errorCode = ErrorCodes.errorWrongToken;
-                    }
+					Users? user = context.Users.Where(us => us.Id.Equals(primaryKey)).FirstOrDefault();
+
+					if (user != null)
+					{
+						if (user.ChangePasswordToken.Equals(token))
+						{
+							user.PasswordHash        = ServerCryptographyService.SHA256(passwordNew);
+							user.ChangePasswordToken = 0;
+						}
+						else
+						{
+							errorCode = ErrorCodes.errorWrongToken;
+						}
+					}
+					else
+					{
+						errorCode = ErrorCodes.errorInvalidUser;
+					}
 				}
-				else
+				else if (loginType == LoginType.typeCustomer)
 				{
-					errorCode = ErrorCodes.errorInvalidUser;
+					Customers? customer = context.Customers.Where(us => us.Id.Equals(primaryKey)).FirstOrDefault();
+
+					if (customer != null)
+					{
+						if (customer.ChangePasswordToken.Equals(token))
+						{
+							customer.PasswordHash = ServerCryptographyService.SHA256(passwordNew);
+						}
+						else
+						{
+							errorCode = ErrorCodes.errorWrongToken;
+						}
+
+						customer.ChangePasswordToken = 0;
+					}
+					else
+					{
+						errorCode = ErrorCodes.errorInvalidCustomerId;
+					}
 				}
 
+				if (errorCode == ErrorCodes.errorNone)
+				{
+					context.SaveChanges();
+				}
 				context.Dispose();
 			}
 

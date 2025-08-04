@@ -76,13 +76,35 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV = Convert.FromHexString(AesIVHex),
-				primaryKey = AdministratorID,
-				type = LoginType.typeDIT,
+				aesIV		= Convert.FromHexString(AesIVHex),
+				primaryKey	= AdministratorID,
+				type		= LoginType.typeDIT,
 			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
 		}
+
+		[HttpPost, Route("ChangePasswordAsk")]
+		public async Task<string> ChangePasswordAsk(EncryptionWrapperDITString wrapperString)
+		{
+			ChangePasswordAskResponse response = UsersService.ChangePasswordAsk(wrapperString);
+
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapperString.ToBinaryVersion(), response);
+		}
+
+		[HttpPost, Route("ChangePasswordAnswer")]
+		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDITString wrapperString)
+		{
+			ChangePasswordRequest? request;
+			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapperString.ToBinaryVersion(), out request);
+
+			return UsersService.ChangePasswordAnswer(request.LoginType,
+													 request.PrimaryKey,
+													 request.Token,
+													 request.PasswordNew);
+		}
+
+
 	}
 }
 

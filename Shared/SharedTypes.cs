@@ -24,6 +24,17 @@ namespace DataIntegrityTool.Shared
 		public LoginType type           { get; set; }
 		public string?   encryptedData  { get; set; }
 		public string    aesIVHex       { get; set; }
+
+		public EncryptionWrapperDIT ToBinaryVersion()
+		{
+			return new EncryptionWrapperDIT()
+			{
+				primaryKey      = primaryKey,
+				type            = type,
+				encryptedData   = encryptedData,
+				aesIV           = Convert.FromHexString(aesIVHex)
+			};
+		}
 	}
 }
 
@@ -145,9 +156,10 @@ public class UpdateUserRequest
 
 public class ChangePasswordRequest
 {
-	public Int32  UserId      { get; set; }
-	public Int32  Token       { get; set; }
-	public string PasswordNew { get; set; }
+	public Int32  PrimaryKey   { get; set; }
+	public LoginType LoginType { get; set; }
+	public Int32  Token        { get; set; }
+	public string PasswordNew  { get; set; }
 }
 
 public class TopupScansResponse
@@ -177,4 +189,14 @@ public class RecoverAESKeyRequest
 {
     public EncryptionWrapperDIT wrapperCaller   { get; set; }
     public EncryptionWrapperDIT wrapperRecovery  { get; set; }
+}
+
+public class ChangePasswordAskResponse
+{
+    public Int32  PrimaryKey    { get; set; }
+	public LoginType LoginType  { get; set; }
+    public string NameFirst     { get; set; }
+    public string Namelast      { get; set; }
+    public Int32 ChangePasswordToken	{ get; set; }
+    public ErrorCodes ErrorCode			{ get; set; }
 }

@@ -144,13 +144,7 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("UpdateCustomer")]
 		public void UpdateCustomer(EncryptionWrapperDITString wrapperString)
 		{
-			EncryptionWrapperDIT wrapper = new()
-			{
-				aesIV		  = Convert.FromHexString(wrapperString.aesIVHex),
-				primaryKey	  = wrapperString.primaryKey,
-				type		  = wrapperString.type,
-				encryptedData = wrapperString.encryptedData
-			};
+			EncryptionWrapperDIT wrapper = wrapperString.ToBinaryVersion();
 
 			UpdateCustomerRequest request;
 

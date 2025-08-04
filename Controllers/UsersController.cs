@@ -6,6 +6,7 @@ using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NLog;
 using System.Collections.Generic;
 using System.Net;
@@ -93,26 +94,13 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("UpdateUser")]
 		public string UpdateUser([FromBody] EncryptionWrapperDITString wrapperString)
 		{
-			EncryptionWrapperDIT wrapper = new()
-			{
-				aesIV		  = Convert.FromHexString(wrapperString.aesIVHex),
-				primaryKey	  = wrapperString.primaryKey,
-				type		  = wrapperString.type,
-				encryptedData = wrapperString.encryptedData
-			};
+			EncryptionWrapperDIT wrapper = wrapperString.ToBinaryVersion();
 
-			if (wrapper.aesIV.Length == 16)
-			{
-				UpdateUserRequest request;
+			UpdateUserRequest request;
 
-				ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
+			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
 
-				return UsersService.UpdateUser(request);
-			}
-			else
-			{
-				return $"bad IV size; hex is {wrapperString.aesIVHex.Length}, IV is {wrapper.aesIV.Length}, should be 16";
-			}
+			return UsersService.UpdateUser(request);
 		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
@@ -136,21 +124,6 @@ namespace DataIntegrityTool.Controllers
 		public List<CustomerUsage> GetCustomerUsages (Int32? customerId) 
 		{
 			return CustomersService.GetCustomerUsages(customerId);
-		}
-
-		[HttpPost, Route("ChangePasswordAsk")]
-		public Int32 ChangePasswordAsk(Int32 UserId)
-		{
-			return (Int32) UsersService.ChangePasswordAsk(UserId);
-		}
-
-		[HttpPost, Route("ChangePasswordAnswer")]
-		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDIT wrapper)
-		{
-			ChangePasswordRequest? request;
-			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapper, out request);
-
-			return UsersService.ChangePasswordAnswer(request);
 		}
 
 		[HttpDelete, Route("DeleteUser")]
