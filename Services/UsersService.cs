@@ -233,6 +233,7 @@ namespace DataIntegrityTool.Services
 					{
 						response.Namelast			 = customer.NameLast;
 						response.NameFirst			 = customer.NameFirst;
+						response.Email				 = customer.Email;
 						response.ChangePasswordToken = (new Random()).Next() % 1000000;
 						response.PrimaryKey			 = wrapperString.primaryKey;
 						response.LoginType			 = wrapperString.type;
