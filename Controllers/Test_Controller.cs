@@ -222,6 +222,24 @@ namespace DataIntegrityTool.Controllers
 			return UsersService.UpdateUser(request);
 		}
 
+		[HttpGet, Route("DecryptPasswordAskResponse")]
+		[Produces("application/json")]
+		public string DecryptPasswordAskResponse(LoginType loginType,
+												  Int32 primaryKey,
+												  string AesIVHex,
+												  string responseB64)
+		{
+			EncryptionWrapperDIT wrapper = new()
+			{
+				type		= loginType,
+				primaryKey	= primaryKey,
+				aesIV		= Convert.FromHexString(AesIVHex),
+			};
 
+			ChangePasswordAskResponse response;
+			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordAskResponse>(wrapper, out response);
+
+			return JsonSerializer.Serialize(response);
+		}
 	}
 }
