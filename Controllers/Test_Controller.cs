@@ -234,6 +234,7 @@ namespace DataIntegrityTool.Controllers
 				type		= loginType,
 				primaryKey	= primaryKey,
 				aesIV		= Convert.FromHexString(AesIVHex),
+				encryptedData = responseB64
 			};
 
 			ChangePasswordAskResponse response;
