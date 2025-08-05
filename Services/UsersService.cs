@@ -217,7 +217,9 @@ namespace DataIntegrityTool.Services
 						response.Email				 = user.Email;
 						response.ChangePasswordToken = (new Random()).Next() % 1000000;
 						response.PrimaryKey			 = wrapperString.primaryKey;
-						response.LoginType			 = wrapperString.type;
+						response.LoginType = wrapperString.type;
+
+						user.ChangePasswordToken = response.ChangePasswordToken;
 						context.SaveChanges();
 					}
 					else
@@ -238,6 +240,7 @@ namespace DataIntegrityTool.Services
 						response.PrimaryKey			 = wrapperString.primaryKey;
 						response.LoginType			 = wrapperString.type;
 
+						customer.ChangePasswordToken = response.ChangePasswordToken;
 						context.SaveChanges();
 					}
 					else
