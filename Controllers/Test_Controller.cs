@@ -224,21 +224,10 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpGet, Route("DecryptPasswordAskResponse")]
 		[Produces("application/json")]
-		public string DecryptPasswordAskResponse(LoginType loginType,
-												  Int32 primaryKey,
-												  string AesIVHex,
-												  string responseB64)
+		public string DecryptPasswordAskResponse(EncryptionWrapperDITString wrapperString)
 		{
-			EncryptionWrapperDIT wrapper = new()
-			{
-				type		= loginType,
-				primaryKey	= primaryKey,
-				aesIV		= Convert.FromHexString(AesIVHex),
-				encryptedData = responseB64
-			};
-
 			ChangePasswordAskResponse response;
-			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordAskResponse>(wrapper, out response);
+			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordAskResponse>(wrapperString.ToBinaryVersion(), out response);
 
 			return JsonSerializer.Serialize(response);
 		}
