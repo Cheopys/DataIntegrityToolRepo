@@ -242,5 +242,20 @@ namespace DataIntegrityTool.Controllers
 
 			return JsonSerializer.Serialize(response);
 		}
+
+		[HttpPost, Route("EncryptChangePasswordRequest")]
+		public async Task<EncryptionWrapperDITString> EncryptChangePasswordRequest(ChangePasswordRequest request)
+		{
+			EncryptionWrapperDITString wrapperString = new()
+			{
+				primaryKey	= request.PrimaryKey,
+				type		= request.LoginType,
+				aesIVHex	= request.AesIVHex,
+			};
+
+			wrapperString.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse<ChangePasswordRequest>(wrapperString.ToBinaryVersion(), request);
+
+			return wrapperString;
+		}
 	}
 }

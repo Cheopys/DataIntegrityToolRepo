@@ -102,24 +102,14 @@ namespace DataIntegrityTool.Controllers
 		[HttpPost, Route("ChangePasswordAnswer")]
 		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDITString wrapperString)
 		{
-			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
-			{
-				primaryKey		= wrapperString.primaryKey,
-				type			= wrapperString.type,
-				encryptedData	= wrapperString.encryptedData,
-				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
-			};
-
 			ChangePasswordRequest? request;
-			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapper, out request);
+			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapperString.ToBinaryVersion(), out request);
 
 			return UsersService.ChangePasswordAnswer(request.LoginType,
 													 request.PrimaryKey,
 													 request.Token,
 													 request.PasswordNew);
 		}
-
-
 	}
 }
 

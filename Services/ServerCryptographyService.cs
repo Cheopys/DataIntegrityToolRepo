@@ -132,6 +132,7 @@ namespace DataIntegrityTool.Services
 
                 if (key != null)
 				{
+					aes.KeySize = 256;
 					aes.Key		= key;
 					aes.IV		= wrapper.aesIV;
                     aes.Mode	= CipherMode.CBC; 
@@ -175,7 +176,7 @@ namespace DataIntegrityTool.Services
 			return JsonSerializer.Deserialize<T>(textEncoded);
         }
 
-		public static void DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
+		public static void	DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
 													  out T?			   request)
 		{
 			request = default(T);

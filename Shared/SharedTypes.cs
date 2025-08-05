@@ -158,6 +158,7 @@ public class ChangePasswordRequest
 {
 	public Int32  PrimaryKey   { get; set; }
 	public LoginType LoginType { get; set; }
+	public string AesIVHex     { get; set; }
 	public Int32  Token        { get; set; }
 	public string PasswordNew  { get; set; }
 }
