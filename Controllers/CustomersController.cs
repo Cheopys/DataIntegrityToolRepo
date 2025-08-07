@@ -110,7 +110,7 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				type		= LoginType.typeDIT,
+				type		= LoginType.typeAdministrator,
 				primaryKey	= AdminIdSeeker,
 				aesIV		= Convert.FromHexString(AesIVHex),
 			};

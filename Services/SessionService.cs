@@ -54,7 +54,7 @@ namespace DataIntegrityTool.Services
 				}
 				else
 				{
-					response.errorcode = ErrorCodes.errorInvalidUser;
+					response.errorcode = ErrorCodes.errorInvalidUserId;
 				}
 			}
 			
@@ -154,7 +154,7 @@ namespace DataIntegrityTool.Services
 				}
 				else
 				{
-					response.Error = ErrorCodes.errorInvalidUser;
+					response.Error = ErrorCodes.errorInvalidUserId;
 				}
 
 				await context.DisposeAsync();

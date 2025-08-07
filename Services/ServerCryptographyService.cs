@@ -111,7 +111,7 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
             {
-				if (wrapper.type == LoginType.typeDIT)
+				if (wrapper.type == LoginType.typeAdministrator)
 				{
 					key = context.Administrators.Where(cu => cu.Id == wrapper.primaryKey)
 											    .Select(tp => tp.AesKey)

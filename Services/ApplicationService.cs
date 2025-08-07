@@ -18,7 +18,7 @@ namespace DataIntegrityTool.Services
 
 				if (admin != null)
 				{
-					types.Add(LoginType.typeDIT);
+					types.Add(LoginType.typeAdministrator);
 				}
 
 				Customers? customer = context.Customers.Where(cu => cu.Email.ToLower().Equals(EmailLower)).FirstOrDefault();
@@ -54,7 +54,7 @@ namespace DataIntegrityTool.Services
 			{
 				// From web site
 
-				if (loginType == LoginType.typeDIT)
+				if (loginType == LoginType.typeAdministrator)
 				{
 					Administrators? administrator = context.Administrators.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
 
@@ -71,7 +71,7 @@ namespace DataIntegrityTool.Services
 					}
 					else
 					{
-						response.errorcode = ErrorCodes.errorInvalidUser;
+						response.errorcode = ErrorCodes.errorInvalidUserId;
 					}
 				}
 				else if (loginType == LoginType.typeCustomer)
@@ -91,7 +91,7 @@ namespace DataIntegrityTool.Services
 					}
 					else
 					{
-						response.errorcode = ErrorCodes.errorInvalidUser;
+						response.errorcode = ErrorCodes.errorInvalidUserId;
 					}
 				} // end is customer
 
@@ -114,7 +114,7 @@ namespace DataIntegrityTool.Services
 					}
 					else
 					{
-						response.errorcode = ErrorCodes.errorInvalidUser;
+						response.errorcode = ErrorCodes.errorInvalidUserId;
 					}
 				}
 				else

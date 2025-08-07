@@ -217,14 +217,14 @@ namespace DataIntegrityTool.Services
 						response.Email				 = user.Email;
 						response.ChangePasswordToken = (new Random()).Next() % 1000000;
 						response.PrimaryKey			 = wrapperString.primaryKey;
-						response.LoginType = wrapperString.type;
+						response.LoginType			 = wrapperString.type;
 
 						user.ChangePasswordToken = response.ChangePasswordToken;
 						context.SaveChanges();
 					}
 					else
 					{
-						response.ErrorCode = ErrorCodes.errorInvalidUser;
+						response.ErrorCode = ErrorCodes.errorInvalidUserId;
 					}
 				}
 				else if (wrapperString.type == LoginType.typeCustomer)
@@ -247,6 +247,28 @@ namespace DataIntegrityTool.Services
 					{
 						response.ErrorCode = ErrorCodes.errorInvalidCustomerId;
 					}
+				}
+				else if (wrapperString.type == LoginType.typeAdministrator)
+				{
+					Administrators? administrator = context.Administrators.Where(us => us.Id.Equals(wrapperString.primaryKey)).FirstOrDefault();
+
+					if (administrator != null)
+					{
+						response.Namelast			 = administrator.NameLast;
+						response.NameFirst			 = administrator.NameFirst;
+						response.Email				 = administrator.Email;
+						response.ChangePasswordToken = (new Random()).Next() % 1000000;
+						response.PrimaryKey			 = wrapperString.primaryKey;
+						response.LoginType			 = wrapperString.type;
+
+						administrator.ChangePasswordToken = response.ChangePasswordToken;
+						context.SaveChanges();
+					}
+					else
+					{
+						response.ErrorCode = ErrorCodes.errorInvalidAdministratorId;
+					}
+
 				}
 
 				if (response.ErrorCode == ErrorCodes.errorNone)
@@ -287,7 +309,7 @@ namespace DataIntegrityTool.Services
 					}
 					else
 					{
-						errorCode = ErrorCodes.errorInvalidUser;
+						errorCode = ErrorCodes.errorInvalidUserId;
 					}
 				}
 				else if (loginType == LoginType.typeCustomer)

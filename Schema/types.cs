@@ -4,7 +4,7 @@ public enum LoginType
 {
 	typeUser	 = 1,
 	typeCustomer = 2,
-	typeDIT		 = 3
+	typeAdministrator		 = 3
 }
 
 public enum LicenseTypes
@@ -24,7 +24,7 @@ public enum ToolTypes
 public enum ErrorCodes
 {
 	errorNone				  = 0,
-	errorInvalidUser		  = 1,
+	errorInvalidUserId		  = 1,
 	errorInvalidPassword	  = 2,
 	errorNoRegistrations      = 3, 
 	errorWrongToken			  = 4,	
@@ -34,5 +34,6 @@ public enum ErrorCodes
 	errorUnknownLoginType     = 8,
 	errorNoSeats			  = 9,
 	errorInvalidCustomerId	  = 10,
+	errorInvalidAdministratorId = 11,
 }
 

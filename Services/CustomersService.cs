@@ -137,7 +137,7 @@ namespace DataIntegrityTool.Services
                 }
                 else
                 {
-                    response.Error = ErrorCodes.errorInvalidUser;
+                    response.Error = ErrorCodes.errorInvalidUserId;
                 }
 
                 context.Dispose();
@@ -315,7 +315,7 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 {
-                    type = (customer.Id == 4) ? LoginType.typeDIT : LoginType.typeCustomer;
+                    type = (customer.Id == 4) ? LoginType.typeAdministrator : LoginType.typeCustomer;
                 }
                 else
                 {

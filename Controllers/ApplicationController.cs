@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -78,25 +79,88 @@ namespace DataIntegrityTool.Controllers
 			{
 				aesIV		= Convert.FromHexString(AesIVHex),
 				primaryKey	= AdministratorID,
-				type	= LoginType.typeDIT,
+				type	= LoginType.typeAdministrator,
 			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customers);
 		}
 
 		[HttpPost, Route("ChangePasswordAsk")]
-		public async Task<string> ChangePasswordAsk(EncryptionWrapperDITString wrapperString)
+		public async Task<string> ChangePasswordAsk(string requestRSA)
 		{
-			ChangePasswordAskResponse response = UsersService.ChangePasswordAsk(wrapperString);
-
-			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			string retval = string.Empty;
+			ChangePasswordAskRequest request = ServerCryptographyService.DecryptRSA<ChangePasswordAskRequest>(requestRSA);
+			EncryptionWrapperDITString wrapperString = new()
 			{
-				primaryKey	  = wrapperString.primaryKey,
-				type		  = wrapperString.type,
-				encryptedData = wrapperString.encryptedData,
-				aesIV		  = Convert.FromHexString(wrapperString.aesIVHex)
+				aesIVHex = request.AesIVHex,
+				type	 = request.LoginType
 			};
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
+
+			ErrorCodes error = ErrorCodes.errorNone;
+
+			using (DataContext context = new())
+			{
+				switch (request.LoginType)
+				{
+					case LoginType.typeUser:
+						Users? user = context.Users.Where(us => us.Email.Equals(request.Email)).FirstOrDefault();
+						if (user != null)
+						{
+							wrapperString.primaryKey = user.Id;
+						}
+						else
+						{
+							error = ErrorCodes.errorInvalidUserId;
+						}
+						break;
+
+					case LoginType.typeCustomer:
+						Customers? customer = context.Customers.Where(cus => cus.Email.Equals(request.Email)).FirstOrDefault();
+						if (customer != null)
+						{
+							wrapperString.primaryKey = customer.Id;
+						}
+						else
+						{
+							error = ErrorCodes.errorInvalidCustomerId;
+						}
+						break;
+
+					case LoginType.typeAdministrator:
+						Administrators? administrator = context.Administrators.Where(ad => ad.Email.Equals(request.Email)).FirstOrDefault();
+						if (administrator != null)
+						{
+							wrapperString.primaryKey = administrator.Id;
+						}
+						else
+						{
+							error = ErrorCodes.errorInvalidUserId;
+						}
+						break;
+				}
+			}
+
+			ChangePasswordAskResponse response;
+
+			if (error == ErrorCodes.errorNone)
+			{
+				response = UsersService.ChangePasswordAsk(wrapperString);
+
+				EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+				{
+					primaryKey	= wrapperString.primaryKey,
+					type		= wrapperString.type,
+					aesIV		= Convert.FromHexString(wrapperString.aesIVHex)
+				};
+
+				retval = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
+			}
+			else
+			{
+				retval = $"error {error} finding Email {request.Email} of type {request.LoginType}";
+			}
+
+			return retval;
 		}
 
 		[HttpPost, Route("ChangePasswordAnswer")]

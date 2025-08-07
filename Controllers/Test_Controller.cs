@@ -131,7 +131,7 @@ namespace DataIntegrityTool.Controllers
 			List<LoginType> types = ApplicationService.LoginRolesForEmail(Email);
 			string Types = String.Empty;
 
-			if (types.Contains(LoginType.typeDIT))
+			if (types.Contains(LoginType.typeAdministrator))
 			{
 				Types = "Administrator ";
 			}

@@ -192,6 +192,13 @@ public class RecoverAESKeyRequest
     public EncryptionWrapperDIT wrapperRecovery  { get; set; }
 }
 
+public class ChangePasswordAskRequest
+{
+	public string Email		   { get; set; }
+	public LoginType LoginType { get; set; } // 1 = User, 2 = Customer, 3 = Administrator
+	public string	 AesIVHex  { get; set; }
+}
+
 public class ChangePasswordAskResponse
 {
     public Int32  PrimaryKey    { get; set; }
