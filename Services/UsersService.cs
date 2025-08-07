@@ -334,6 +334,28 @@ namespace DataIntegrityTool.Services
 						errorCode = ErrorCodes.errorInvalidCustomerId;
 					}
 				}
+				else if (loginType == LoginType.typeAdministrator)
+				{
+					Administrators? administrator = context.Administrators.Where(us => us.Id.Equals(primaryKey)).FirstOrDefault();
+
+					if (administrator != null)
+					{
+						if (administrator.ChangePasswordToken.Equals(token))
+						{
+							administrator.PasswordHash = ServerCryptographyService.SHA256(passwordNew);
+						}
+						else
+						{
+							errorCode = ErrorCodes.errorWrongToken;
+						}
+
+						administrator.ChangePasswordToken = 0;
+					}
+					else
+					{
+						errorCode = ErrorCodes.errorInvalidAdministratorId;
+					}
+				}
 
 				if (errorCode == ErrorCodes.errorNone)
 				{
