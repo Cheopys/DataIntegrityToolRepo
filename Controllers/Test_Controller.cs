@@ -247,8 +247,8 @@ namespace DataIntegrityTool.Controllers
 			return wrapperString;
 		}
 
-		[HttpGet, Route("InterleavedKayTest")]
-		public async Task<string> InterleavedKayTest(string input)
+		[HttpGet, Route("InterleavedKeyTest")]
+		public async Task<string> InterleavedKeyTest(string input)
 		{
 			Aes aesInput = ServerCryptographyService.CreateAes();
 			Aes aesInterleaved = ServerCryptographyService.CreateAes();
@@ -269,12 +269,12 @@ namespace DataIntegrityTool.Controllers
 
 			for (int i = 2; i < stegnokey.Length; i += 2)
 			{
-				hexOriginal = stegnokey.Substring(i, 2);
+				hexOriginal += stegnokey.Substring(i, 2);
 			}
 
 			byte[] key = Convert.FromHexString(hexOriginal);
 
-			return $"before interlerave {hexInput} after restore {hexOriginal}";
+			return $"before interleave {hexInput} after restore {hexOriginal}";
 		}
 	}
 }
