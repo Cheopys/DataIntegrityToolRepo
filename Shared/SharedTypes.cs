@@ -38,6 +38,21 @@ namespace DataIntegrityTool.Shared
 	}
 }
 
+public class RegisterAdministratorRequest
+{
+	public string NameFirst		  { get; set; }
+	public string NameLast		  { get; set; }
+	public string Email		      { get; set; }
+	public string Password		  { get; set; }
+	public string AesKey		  { get; set; }
+}
+
+public class RegisterAdministratorResponse
+{
+	public Int32 UserId			{ get; set; }
+	public ErrorCodes errorCode { get; set; }
+}
+
 public class RegisterCustomerRequest
 {
     public string AesKey        { get; set; }
@@ -140,8 +155,8 @@ public class RegisterUserRequest
 
 public class RegisterUserResponse
 {
-    public Int32      UserId    { get; set; }
-    public ErrorCodes errorCode { get; set; }
+    public Int32      UserId   { get; set; }
+    public ErrorCodes errorCode			{ get; set; }
 }
 
 public class UpdateUserRequest

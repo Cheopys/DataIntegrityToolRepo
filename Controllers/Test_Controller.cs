@@ -43,14 +43,14 @@ namespace DataIntegrityTool.Controllers
 
 			RegisterCustomerRequest request = new()
 			{
-				AesKey		 = Convert.ToHexString(aeskey.Key),
-				Email		 = "testcust@example.com",
-				Company      = "testcompany@example.com",
-				NameFirst	 = "Test",
-				NameLast     = "Customer",
-				Notes	     = "each time this is run it will increment the primary key",
-				Password	 = "DIT",
-				Tools		 = new List<ToolTypes>
+				AesKey = Convert.ToHexString(aeskey.Key),
+				Email = "testcust@example.com",
+				Company = "testcompany@example.com",
+				NameFirst = "Test",
+				NameLast = "Customer",
+				Notes = "each time this is run it will increment the primary key",
+				Password = "DIT",
+				Tools = new List<ToolTypes>
 				{
 					ToolTypes.tooltypeVFX,
 					ToolTypes.tooltypeDI,
@@ -87,7 +87,7 @@ namespace DataIntegrityTool.Controllers
 
 			string requestSerialized = JsonSerializer.Serialize(request);
 
-			byte[] requestEncoded   = Encoding.UTF8.GetBytes(requestSerialized);
+			byte[] requestEncoded = Encoding.UTF8.GetBytes(requestSerialized);
 			string requestEncryptedB64 = ServerCryptographyService.EncryptRSA(requestEncoded);
 
 			// begin API logic
@@ -119,8 +119,8 @@ namespace DataIntegrityTool.Controllers
 		public LoginResponse Login_Raw(string Email,
 									   string Password)
 		{
-			LoginResponse response = SessionService.Login(Email, 
-														  ServerCryptographyService.SHA256(Password)); 
+			LoginResponse response = SessionService.Login(Email,
+														  ServerCryptographyService.SHA256(Password));
 
 			return response;
 		}
@@ -150,12 +150,12 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("WebLogin_Raw")]
-		public static LoginResponse WebLogin_Raw(string		Email,
-												 string		Password,
-												 LoginType	loginType)
+		public static LoginResponse WebLogin_Raw(string Email,
+												 string Password,
+												 LoginType loginType)
 		{
-			return ApplicationService.WebLogin(Email, 
-											   ServerCryptographyService.SHA256(Password), 
+			return ApplicationService.WebLogin(Email,
+											   ServerCryptographyService.SHA256(Password),
 											   loginType);
 		}
 
@@ -187,9 +187,9 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		= aes.IV,
-				primaryKey	= CustomerId,
-				type		= LoginType.typeCustomer,
+				aesIV = aes.IV,
+				primaryKey = CustomerId,
+				type = LoginType.typeCustomer,
 			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
@@ -207,12 +207,12 @@ namespace DataIntegrityTool.Controllers
 
 			wrapper.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, request);
 
-//			return wrapper.encryptedData;
-	
+			//			return wrapper.encryptedData;
+
 			UpdateUserRequest requestInner;
 
 			ServerCryptographyService.DecodeAndDecryptRequest(wrapper, out requestInner);
-			
+
 			return UsersService.UpdateUser(requestInner);
 		}
 
@@ -237,14 +237,44 @@ namespace DataIntegrityTool.Controllers
 		{
 			EncryptionWrapperDITString wrapperString = new()
 			{
-				primaryKey	= request.PrimaryKey,
-				type		= request.LoginType,
-				aesIVHex	= request.AesIVHex,
+				primaryKey = request.PrimaryKey,
+				type = request.LoginType,
+				aesIVHex = request.AesIVHex,
 			};
 
 			wrapperString.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse<ChangePasswordRequest>(wrapperString.ToBinaryVersion(), request);
 
 			return wrapperString;
+		}
+
+		[HttpGet, Route("InterleavedKayTest")]
+		public async Task<string> InterleavedKayTest(string input)
+		{
+			Aes aesInput = ServerCryptographyService.CreateAes();
+			Aes aesInterleaved = ServerCryptographyService.CreateAes();
+
+			string hexInput       = Convert.ToHexString(aesInput.Key);
+			string hexInterleaved = Convert.ToHexString(aesInterleaved.Key);
+			string stegnokey      = String.Empty;
+
+//			string stringEncrypted = await ServerCryptographyService.EncrypytAES(aesInput, input);
+
+			for (int i = 0; i < hexInput.Length; i += 2)
+			{
+				stegnokey += hexInterleaved.Substring(i, 2);
+				stegnokey += hexInput.Substring(i, 2);
+			}
+
+			string hexOriginal = String.Empty;
+
+			for (int i = 2; i < stegnokey.Length; i += 2)
+			{
+				hexOriginal = stegnokey.Substring(i, 2);
+			}
+
+			byte[] key = Convert.FromHexString(hexOriginal);
+
+			return $"before interlerave {hexInput} after restore {hexOriginal}";
 		}
 	}
 }

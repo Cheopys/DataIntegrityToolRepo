@@ -24,15 +24,6 @@ namespace DataIntegrityTool.Controllers
             return Convert.ToBase64String(ServerCryptographyService.GetServerRSAPublicKey());
         }
         
-        /*
-         * Example
-         * 
-         * wrapper.primaryKey = Cust/User
-         * wrapper.type       = CustomerOrUser.User
-         * wrapper.aesIV      = aesIV
-         * wrapper,encryo     = null
-         */
-
         [HttpGet, Route("GetAesKey")]
         public Aes GetAesKey(EncryptionWrapperDIT wrapper)
         {

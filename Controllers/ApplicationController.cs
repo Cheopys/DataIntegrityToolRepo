@@ -69,6 +69,60 @@ namespace DataIntegrityTool.Controllers
 			return response;
 		}
 
+		[HttpPut, Route("RegisterAdministratorRSA")]
+		[Produces("application/json")]
+		public async Task<string> RegisterAdministratorRSA([FromBody] string registerAdminisrtatorB64)
+		{
+			RegisterAdministratorRequest request = ServerCryptographyService.DecryptRSA<RegisterAdministratorRequest>(registerAdminisrtatorB64);
+
+			RegisterUserResponse response = new()
+			{
+				errorCode = ErrorCodes.errorNone
+			};
+
+			using (DataContext context = new())
+			{
+				Administrators administrator = new Administrators()
+				{
+					NameFirst	 = request.NameFirst,
+					NameLast	 = request.NameLast,
+					Email        = request.Email,
+					PasswordHash = ServerCryptographyService.SHA256(request.Password),
+					AesKey		 = Convert.FromHexString(request.AesKey),
+					DateAdded	 = DateTime.UtcNow
+				};
+
+				context.Administrators.Add(administrator);
+
+				context.SaveChanges();
+
+				response.AdministratorId = administrator.Id;
+
+				context.Dispose();
+			}
+
+			return JsonSerializer.Serialize(response);
+		}
+
+		[HttpDelete, Route("DeleteAdministrator")]
+		[Produces("application/json")]
+		public void DeleteAdministrator(Int32 AdministratorId)
+		{
+			using (DataContext context = new())
+			{
+				Administrators? administrator = context.Administrators.FirstOrDefault(x => x.Id == AdministratorId);
+
+				if (administrator != null)
+				{
+					context.Administrators.Remove(administrator);
+
+					context.SaveChanges();
+				}
+
+				context.Dispose();
+			}
+		}
+
 		[HttpGet, Route("GetCustomers")]
 		[Produces("application/json")]
 		public async Task<string> GetCustomers(Int32 AdministratorID, string AesIVHex)
