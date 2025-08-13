@@ -267,7 +267,7 @@ namespace DataIntegrityTool.Controllers
 
 			string hexOriginal = String.Empty;
 
-			for (int i = 2; i < stegnokey.Length; i += 2)
+			for (int i = 2; i < stegnokey.Length; i += 4)
 			{
 				hexOriginal += stegnokey.Substring(i, 2);
 			}
