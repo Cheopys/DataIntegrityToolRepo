@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using Amazon.S3.Model;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Shared;
 
@@ -49,8 +50,8 @@ public class RegisterAdministratorRequest
 
 public class RegisterAdministratorResponse
 {
-	public Int32 UserId			{ get; set; }
-	public ErrorCodes errorCode { get; set; }
+	public Int32 AdministratorId { get; set; }
+	public ErrorCodes errorCode  { get; set; }
 }
 
 public class RegisterCustomerRequest

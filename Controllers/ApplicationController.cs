@@ -75,7 +75,7 @@ namespace DataIntegrityTool.Controllers
 		{
 			RegisterAdministratorRequest request = ServerCryptographyService.DecryptRSA<RegisterAdministratorRequest>(registerAdminisrtatorB64);
 
-			RegisterUserResponse response = new()
+			RegisterAdministratorResponse response = new()
 			{
 				errorCode = ErrorCodes.errorNone
 			};
