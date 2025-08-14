@@ -38,12 +38,38 @@ namespace DataIntegrityTool.Controllers
 			return ApplicationService.LoginRolesForEmail(Email);
 		}
 
-		[HttpPost, Route("WebLogin")]
-		public static LoginResponse WebLogin(string Email,
-											 string PasswordHash,
-											 LoginType loginType)
+		private static byte[] ExtractInterleavedKey(string keyInterleaved)
 		{
-			return ApplicationService.WebLogin(Email, PasswordHash, loginType);
+			string hexOriginal = String.Empty;
+
+			for (int i = 2; i < keyInterleaved.Length; i += 4)
+			{
+				hexOriginal += keyInterleaved.Substring(i, 2);
+			}
+
+			return Convert.FromHexString(hexOriginal);
+		}
+		/*
+			[HttpPost, Route("WebLogin")]
+			public static LoginResponse WebLogin(string Email,
+													string PasswordHash,
+													LoginType loginType)
+			{
+				return ApplicationService.WebLogin(Email, PasswordHash, loginType);
+			}
+		*/
+		[HttpPost, Route("WebLogin")]
+		public static LoginResponse WebLogin(string requestB64,
+											 string keyInterleaved,
+											 string hexIV)
+		{
+			byte[] key = ExtractInterleavedKey(keyInterleaved);
+			Aes aes = ServerCryptographyService.CreateAes();
+			aes.Key = key;
+			aes.IV  = Convert.FromHexString(hexIV);
+			WebLoginRequest request;
+			ServerCryptographyService.DecodeAndDecryptLoginRequest(aes, requestB64, out request);
+			return ApplicationService.WebLogin(ServerCryptographyService.SHA256(request.Email), PasswordHash, loginType);
 		}
 
 		[HttpGet, Route("RecoverAESKey")]

@@ -39,6 +39,13 @@ namespace DataIntegrityTool.Shared
 	}
 }
 
+public class WebLoginRequest
+{
+	public LoginType LoginType	{ get; set; }
+	public string    Password	{ get; set; }
+	public string    Email		{ get; set; }
+}
+
 public class RegisterAdministratorRequest
 {
 	public string NameFirst		  { get; set; }
