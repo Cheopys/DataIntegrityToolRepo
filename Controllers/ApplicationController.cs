@@ -69,7 +69,7 @@ namespace DataIntegrityTool.Controllers
 			aes.IV  = Convert.FromHexString(hexIV);
 			WebLoginRequest request;
 			ServerCryptographyService.DecodeAndDecryptLoginRequest(aes, requestB64, out request);
-			return ApplicationService.WebLogin(ServerCryptographyService.SHA256(request.Email), PasswordHash, loginType);
+			return ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
 		}
 
 		[HttpGet, Route("RecoverAESKey")]
