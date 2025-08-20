@@ -84,6 +84,7 @@ namespace DataIntegrityTool.Controllers
 						administrator.AesKey = key;
 						break;
 				}
+				context.SaveChanges();
 				context.Dispose();
 			}
 
