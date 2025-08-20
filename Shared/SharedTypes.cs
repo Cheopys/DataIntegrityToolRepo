@@ -108,9 +108,9 @@ public class UpdateCustomerRequest
 
 public class LoginResponse
 { 
-    public Int32      Identifier    { get; set; }
-    public ErrorCodes errorcode     { get; set; }
-    public Int32      CustOrUserID  { get; set; }
+    public Int32      Identifier { get; set; }
+    public LoginType  loginType  { get; set; }
+	public ErrorCodes errorcode  { get; set; }
 }
 public class BeginSessionRequest
 {

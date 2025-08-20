@@ -2,10 +2,8 @@
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
-using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -25,12 +23,6 @@ namespace DataIntegrityTool.Controllers
 
 	public class ApplicationController : Controller
 	{
-
-		[HttpGet, Route("DownloadTool")]
-		public async Task<byte[]> DownloadTool()
-		{
-			return await S3Service.GetTool();
-		}
 
 		[HttpGet, Route("LoginRolesForEmail")]
 		public List<LoginType> LoginRolesForEmail(string Email)
@@ -59,17 +51,43 @@ namespace DataIntegrityTool.Controllers
 			}
 		*/
 		[HttpPost, Route("WebLogin")]
-		public static LoginResponse WebLogin(string requestB64,
-											 string keyInterleaved,
-											 string hexIV)
+		public LoginResponse WebLogin(string requestB64,
+									  string keyInterleaved,
+									  string hexIV)
 		{
 			byte[] key = ExtractInterleavedKey(keyInterleaved);
 			Aes aes = ServerCryptographyService.CreateAes();
 			aes.Key = key;
 			aes.IV  = Convert.FromHexString(hexIV);
+
 			WebLoginRequest request;
 			ServerCryptographyService.DecodeAndDecryptLoginRequest(aes, requestB64, out request);
-			return ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
+
+			LoginResponse response = ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
+
+			using (DataContext context = new())
+			{
+				switch (request.LoginType)
+				{
+					case LoginType.typeUser:
+						Users? user = context.Users.Find(response.Identifier);
+						user.AesKey = key;
+						break;
+
+					case LoginType.typeCustomer:
+						Customers? customer = context.Customers.Find(response.Identifier);
+						customer.AesKey = key;
+						break;
+
+					case LoginType.typeAdministrator:
+						Administrators? administrator = context.Administrators.Find(response.Identifier);
+						administrator.AesKey = key;
+						break;
+				}
+				context.Dispose();
+			}
+
+			return response;
 		}
 
 		[HttpGet, Route("RecoverAESKey")]
@@ -83,10 +101,10 @@ namespace DataIntegrityTool.Controllers
 
 			using (DataContext context = new())
 			{
-				Aes aesCaller = ServerCryptographyService.GetAesKey(request.wrapperCaller);
+				Aes aesCaller   = ServerCryptographyService.GetAesKey(request.wrapperCaller);
 				Aes aesRecovery = ServerCryptographyService.GetAesKey(request.wrapperRecovery);
 
-				response.AesIVCaller = aesCaller.IV;
+				response.AesIVCaller   = aesCaller.IV;
 				response.AesKeyRecover = await ServerCryptographyService.EncrypytAES(aesCaller, Convert.ToHexString(aesRecovery.Key));
 
 				context.Dispose();
@@ -118,13 +136,13 @@ namespace DataIntegrityTool.Controllers
 					DateAdded	 = DateTime.UtcNow
 				};
 
-				context.Administrators.Add(administrator);
+				context.Administrators.AddAsync(administrator);
 
-				context.SaveChanges();
+				context.SaveChangesAsync();
 
 				response.AdministratorId = administrator.Id;
 
-				context.Dispose();
+				context.DisposeAsync();
 			}
 
 			return JsonSerializer.Serialize(response);
