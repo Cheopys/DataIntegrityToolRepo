@@ -191,7 +191,7 @@ namespace DataIntegrityTool.Controllers
 				type = LoginType.typeCustomer,
 			};
 
-			string enc = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper.ToBinaryVersion(), users);
+			wrapper.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper.ToBinaryVersion(), users);
 
 			return DecryptAES(wrapper);
 		}
