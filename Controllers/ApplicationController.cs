@@ -55,42 +55,27 @@ namespace DataIntegrityTool.Controllers
 									  string keyInterleaved,
 									  string hexIV)
 		{
+			LoginResponse response = new();
+
 			byte[] key = ExtractInterleavedKey(keyInterleaved);
 			Aes aes = ServerCryptographyService.CreateAes();
 			aes.Key = key;
 			aes.IV  = Convert.FromHexString(hexIV);
 
-			WebLoginRequest request;
-			ServerCryptographyService.DecodeAndDecryptLoginRequest(aes, requestB64, out request);
-
-			LoginResponse response = ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
-
-			using (DataContext context = new())
+			if (aes.Key.Length == 32)
 			{
-				Users?			user;
-				Customers?		customer;
-				Administrators? administrator;
-				switch (request.LoginType)
-				{
-					case LoginType.typeUser:
-						user = context.Users.Find(response.Identifier);
-						user.AesKey = key;
-						break;
+				WebLoginRequest request;
+				ServerCryptographyService.DecodeAndDecryptLoginRequest(aes, requestB64, out request);
 
-					case LoginType.typeCustomer:
-						customer = context.Customers.Find(response.Identifier);
-						customer.AesKey = key;
-						break;
+				response = ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
 
-					case LoginType.typeAdministrator:
-						administrator = context.Administrators.Find(response.Identifier);
-						administrator.AesKey = key;
-						break;
-				}
-				context.SaveChanges();
-				context.Dispose();
+				response.errorcode = ServerCryptographyService.SetAesKey(request.LoginType, response.Identifier, key);
 			}
-
+			else
+			{
+				response.errorcode = ErrorCodes.errorBadKeySize;
+			}
+				
 			return response;
 		}
 

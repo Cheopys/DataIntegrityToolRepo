@@ -169,9 +169,9 @@ namespace DataIntegrityTool.Controllers
 			return UsersService.RegisterUser(request);
 		}
 
-		[HttpGet, Route("UsersForCustomer")]
+		[HttpGet, Route("GetUsersForCustomer_Raw")]
 		[Produces("application/json")]
-		public async Task<string> UsersForCustomer(Int32 CustomerId)
+		public async Task<string> GetUsersForCustomer_Raw(Int32 CustomerId)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
@@ -179,17 +179,16 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
-		public async Task<string> GetUsers(Int32 CustomerId)
+		public async Task<string> GetUsers(Int32  CustomerId, 
+										   string hexAesIV)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
-			Aes aes = ServerCryptographyService.CreateAes();
-
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV = aes.IV,
-				primaryKey = CustomerId,
-				type = LoginType.typeCustomer,
+				aesIV		= Convert.FromHexString(hexAesIV),
+				primaryKey	= CustomerId,
+				type		= LoginType.typeCustomer,
 			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
@@ -305,6 +304,8 @@ namespace DataIntegrityTool.Controllers
 			string req = JsonSerializer.Serialize(loginRequest);
 
 			string reqb = await ServerCryptographyService.EncrypytAES(aesInput, req);
+
+
 
 			List<Users> users = await UsersService.GetUsersForCustomer(1);
 

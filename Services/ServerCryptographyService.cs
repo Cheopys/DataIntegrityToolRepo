@@ -1,7 +1,9 @@
-﻿using DataIntegrityTool.Db;
+﻿using Amazon.Runtime.Internal;
+using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Shared;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
 using System.Security.Cryptography;
@@ -328,6 +330,46 @@ namespace DataIntegrityTool.Services
 			}
 
 			return output;
+		}
+
+		public static ErrorCodes SetAesKey(LoginType loginType, Int32 id, Byte[] key)
+		{
+			Users? user;
+			Customers? customer;
+			Administrators? administrator;
+			ErrorCodes errorCodes = ErrorCodes.errorNone;
+
+			using (DataContext context = new())
+			{
+				switch (loginType)
+				{
+					case LoginType.typeUser:
+						user = context.Users.Find(id);
+						user.AesKey = key;
+						break;
+
+					case LoginType.typeCustomer:
+						customer = context.Customers.Find(id);
+						customer.AesKey = key;
+						break;
+
+					case LoginType.typeAdministrator:
+						administrator = context.Administrators.Find(id);
+						administrator.AesKey = key;
+						break;
+
+					default:
+						errorCodes = ErrorCodes.errorInvalidCustomerId;
+						break;
+				}
+				context.SaveChanges();
+				context.Dispose();
+
+				return errorCodes;
+			}
+
+
+
 		}
 	}
 }
