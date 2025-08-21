@@ -306,7 +306,22 @@ namespace DataIntegrityTool.Controllers
 
 			string reqb = await ServerCryptographyService.EncrypytAES(aesInput, req);
 
-			return $"req = {reqb}, keyInt = {stegnokey}, IV = {Convert.ToHexString(aesInput.IV)}";
+			List<Users> users = await UsersService.GetUsersForCustomer(1);
+
+			EncryptionWrapperDIT wrapper = new()
+			{
+				aesIV = Convert.FromHexString(hexInput),
+				primaryKey = 1,
+				type = LoginType.typeCustomer,
+			};
+
+			string enc = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
+
+			List<Users> list;
+
+			ServerCryptographyService.DecodeAndDecryptRequest<List<Users>>(wrapper, out list);
+
+			return JsonSerializer.Serialize(list);
 		}
 	}
 }
