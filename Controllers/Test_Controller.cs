@@ -179,7 +179,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
-		public async Task<string> GetUsers(Int32 CustomerId,
+		public async Task<List<Users>> GetUsers(Int32 CustomerId,
 										   string hexAesIV)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
@@ -327,7 +327,7 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(list);
 		}
 
-		public static string DecryptAES(EncryptionWrapperDITString wrapper)
+		public static List<Users> DecryptAES(EncryptionWrapperDITString wrapper)
 		{
 			EncryptionWrapperDIT ewd = new()
 			{
@@ -337,8 +337,8 @@ namespace DataIntegrityTool.Controllers
 				primaryKey		= wrapper.primaryKey
 			};
 
-			string clear;
-			ServerCryptographyService.DecodeAndDecryptRequest(ewd, out clear);
+			List<Users> clear;
+			ServerCryptographyService.DecodeAndDecryptRequest<List<Users>>(ewd, out clear);
 
 			return clear;
 		}
