@@ -276,5 +276,37 @@ namespace DataIntegrityTool.Controllers
 
 			return $"before interleave {hexInput} after restore {hexOriginal}";
 		}
+
+		[HttpGet, Route("InterleavedKeyLoginTest")]
+		public async Task<string> InterleavedKeyLoginTest()
+		{
+			Aes aesInput = ServerCryptographyService.CreateAes();
+			Aes aesInterleaved = ServerCryptographyService.CreateAes();
+
+			string hexInput = Convert.ToHexString(aesInput.Key);
+			string hexInterleaved = Convert.ToHexString(aesInterleaved.Key);
+			string stegnokey = String.Empty;
+
+			//			string stringEncrypted = await ServerCryptographyService.EncrypytAES(aesInput, input);
+
+			for (int i = 0; i < hexInput.Length; i += 2)
+			{
+				stegnokey += hexInterleaved.Substring(i, 2);
+				stegnokey += hexInput.Substring(i, 2);
+			}
+
+			WebLoginRequest loginRequest = new()
+			{
+				Email = "davidpcrawford@gmail.com",
+				LoginType = LoginType.typeCustomer,
+				Password = "DIT"
+			};
+
+			string req = JsonSerializer.Serialize(loginRequest);
+
+			string reqb = await ServerCryptographyService.EncrypytAES(aesInput, req);
+
+			return $"req = {reqb}, keyInt = {stegnokey}, IV = {Convert.ToHexString(aesInput.IV)}";
+		}
 	}
 }
