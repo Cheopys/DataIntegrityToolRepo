@@ -179,19 +179,21 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
-		public async Task<string> GetUsers(Int32  CustomerId, 
+		public async Task<string> GetUsers(Int32 CustomerId,
 										   string hexAesIV)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
-			EncryptionWrapperDIT wrapper = new()
+			EncryptionWrapperDITString wrapper = new()
 			{
-				aesIV		= Convert.FromHexString(hexAesIV),
-				primaryKey	= CustomerId,
-				type		= LoginType.typeCustomer,
+				aesIVHex   = hexAesIV,
+				primaryKey = CustomerId,
+				type = LoginType.typeCustomer,
 			};
 
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
+			string enc = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper.ToBinaryVersion(), users);
+
+			return DecryptAES(wrapper);
 		}
 
 		[HttpPost, Route("UpdateUser")]
@@ -323,6 +325,22 @@ namespace DataIntegrityTool.Controllers
 			ServerCryptographyService.DecodeAndDecryptRequest<List<Users>>(wrapper, out list);
 
 			return JsonSerializer.Serialize(list);
+		}
+
+		public static string DecryptAES(EncryptionWrapperDITString wrapper)
+		{
+			EncryptionWrapperDIT ewd = new()
+			{
+				aesIV			= Convert.FromHexString(wrapper.aesIVHex),
+				encryptedData	= wrapper.encryptedData,
+				type			= wrapper.type,
+				primaryKey		= wrapper.primaryKey
+			};
+
+			string clear;
+			ServerCryptographyService.DecodeAndDecryptRequest(ewd, out clear);
+
+			return clear;
 		}
 	}
 }
