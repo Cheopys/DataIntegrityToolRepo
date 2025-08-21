@@ -67,20 +67,23 @@ namespace DataIntegrityTool.Controllers
 
 			using (DataContext context = new())
 			{
+				Users?			user;
+				Customers?		customer;
+				Administrators? administrator;
 				switch (request.LoginType)
 				{
 					case LoginType.typeUser:
-						Users? user = context.Users.Find(response.Identifier);
+						user = context.Users.Find(response.Identifier);
 						user.AesKey = key;
 						break;
 
 					case LoginType.typeCustomer:
-						Customers? customer = context.Customers.Find(response.Identifier);
+						customer = context.Customers.Find(response.Identifier);
 						customer.AesKey = key;
 						break;
 
 					case LoginType.typeAdministrator:
-						Administrators? administrator = context.Administrators.Find(response.Identifier);
+						administrator = context.Administrators.Find(response.Identifier);
 						administrator.AesKey = key;
 						break;
 				}
