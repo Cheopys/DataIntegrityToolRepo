@@ -119,26 +119,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		//  R
-
-		[HttpGet, Route("GetCustomer")]
-		public async Task<string> GetCustomer(Int32  UserId, 
-											  Int32  CustomerId, 
-											  string AesIVHex)
-		{
-			Customers? customer = CustomersService.GetCustomer(CustomerId);
-
-			string customerJSON = JsonSerializer.Serialize(customer);
-
-			EncryptionWrapperDIT wrapper = new()
-			{
-				type			= LoginType.typeUser, // query comes from the tools, therefore user
-				primaryKey		= UserId,
-				aesIV			= Convert.FromHexString(AesIVHex),
-				encryptedData	= customerJSON
-			};
-
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customer);
-		}
+		// N/A
 
 		//  U
 
