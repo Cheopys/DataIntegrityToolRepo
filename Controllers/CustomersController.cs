@@ -121,19 +121,19 @@ namespace DataIntegrityTool.Controllers
 		//  R
 
 		[HttpGet, Route("GetCustomer")]
-		public async Task<string> GetCustomer(Int32  CustomerId, Int32 UserId)
+		public async Task<string> GetCustomer(Int32  UserId, 
+											  Int32  CustomerId, 
+											  string AesIVHex)
 		{
 			Customers? customer = CustomersService.GetCustomer(CustomerId);
 
 			string customerJSON = JsonSerializer.Serialize(customer);
 
-			System.Security.Cryptography.Aes aesDIT = ServerCryptographyService.CreateAes();
-
 			EncryptionWrapperDIT wrapper = new()
 			{
 				type			= LoginType.typeUser, // query comes from the tools, therefore user
 				primaryKey		= UserId,
-				aesIV			= aesDIT.IV,
+				aesIV			= Convert.FromHexString(AesIVHex),
 				encryptedData	= customerJSON
 			};
 
