@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Services;
 using System.Configuration;
