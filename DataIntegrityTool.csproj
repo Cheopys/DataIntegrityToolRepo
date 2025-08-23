@@ -57,6 +57,8 @@
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
     <PackageReference Include="NLog" Version="5.4.0" />
+    <PackageReference Include="NSwag.Annotations" Version="14.5.0" />
+    <PackageReference Include="NSwag.Core" Version="14.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.0" />
     <PackageReference Include="AspNet.WebApi.CookiesPassthrough" Version="1.0.0" />
     <PackageReference Include="AutoMapper" Version="14.0.0" />
