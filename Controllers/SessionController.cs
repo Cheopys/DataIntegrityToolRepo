@@ -15,6 +15,12 @@ namespace DataIntegrityTool.Controllers
 
 	public class SessionController : ControllerBase
 	{
+		/// <summary>
+		/// These API are only used by the DIT tool, not in the web site.
+		/// there is no encryption in these and 
+		/// they are only called by Users, never customers
+		/// </summary>
+		/// <returns>standard USER login returning user primary key</returns>
 		[HttpGet, Route("Login")]
 		public LoginResponse Login(string Email,
 								   string PasswordHash)		

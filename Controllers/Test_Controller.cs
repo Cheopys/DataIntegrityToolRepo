@@ -328,7 +328,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("DecryptAES")]
-		public static List<Users> DecryptAES(EncryptionWrapperDITString wrapper)
+		public List<Users> DecryptAES(EncryptionWrapperDITString wrapper)
 		{
 			EncryptionWrapperDIT ewd = new()
 			{
