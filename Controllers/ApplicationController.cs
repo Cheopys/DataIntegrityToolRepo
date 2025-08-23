@@ -50,6 +50,9 @@ namespace DataIntegrityTool.Controllers
 				return ApplicationService.WebLogin(Email, PasswordHash, loginType);
 			}
 		*/
+		/// <summary>
+		/// Login for web site
+		/// </summary>
 		[HttpPost, Route("WebLogin")]
 		public LoginResponse WebLogin(string requestB64,
 									  string keyInterleaved,
