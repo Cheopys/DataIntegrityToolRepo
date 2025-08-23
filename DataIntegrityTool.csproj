@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup> 
+  
   <ItemGroup>
     <Compile Remove="DIT_WIN_GUI_nonObfuscation\**" />
     <Compile Remove="FromUnity\**" />
