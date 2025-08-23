@@ -50,6 +50,7 @@ namespace DataIntegrityTool.Controllers
 				return ApplicationService.WebLogin(Email, PasswordHash, loginType);
 			}
 		*/
+		// <snippet_WebLogin>
 		/// <summary>
 		/// Login for web site
 		/// </summary>
@@ -81,6 +82,7 @@ namespace DataIntegrityTool.Controllers
 				
 			return response;
 		}
+		// </snippet_WebLogin>
 
 		[HttpGet, Route("RecoverAESKey")]
 		[Produces("application/json")]
