@@ -367,6 +367,7 @@ namespace DataIntegrityTool.Controllers
 				context.Remove(users);
 				context.Remove(sessions);
 				context.Remove(subs);
+				context.SaveChanges();
 				context.Dispose();
 			}
 		}
