@@ -363,10 +363,10 @@ namespace DataIntegrityTool.Controllers
 																						  && us.CustomerId != 89)
 												 .ToList();
 
-				context.Remove(customers);
-				context.Remove(users);
-				context.Remove(sessions);
-				context.Remove(subs);
+				context.RemoveRange(customers);
+				context.RemoveRange(users);
+				context.RemoveRange(sessions);
+				context.RemoveRange(subs);
 				context.SaveChanges();
 				context.Dispose();
 			}
