@@ -15,12 +15,17 @@ using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using Swashbuckle.AspNetCore.Annotations;
+using NSwag.Annotations;
 
 namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
 
+	/// <summary>
+	/// Application Controller
+	/// </summary>
 	public class ApplicationController : Controller
 	{
 
@@ -41,15 +46,7 @@ namespace DataIntegrityTool.Controllers
 
 			return Convert.FromHexString(hexOriginal);
 		}
-		/*
-			[HttpPost, Route("WebLogin")]
-			public static LoginResponse WebLogin(string Email,
-													string PasswordHash,
-													LoginType loginType)
-			{
-				return ApplicationService.WebLogin(Email, PasswordHash, loginType);
-			}
-		*/
+
 		// <snippet_WebLogin>
 		/// <summary>
 		/// Login for web site

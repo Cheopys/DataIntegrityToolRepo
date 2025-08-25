@@ -343,5 +343,27 @@ namespace DataIntegrityTool.Controllers
 
 			return clear;
 		}
+
+		[HttpDelete, Route("ClearTheDecks")]
+		public void ClearTheDecks()
+		{
+			using (DataContext context = new())
+			{
+				List<Customers> customers = context.Customers.Where(us => us.Id > 4
+																	   && us.Id != 89)
+												 .ToList();
+				List<Users> users = context.Users.Where(us => us.CustomerId > 4
+					                                       && us.CustomerId != 89)
+												 .ToList();
+				List<Session> sessions  = context.Session.Where(us => us.CustomerId > 4
+														           && us.CustomerId != 89)
+												 .ToList();
+
+				List<CustomerSubscriptions> subs = context.CustomerSubscriptions.Where(us => us.CustomerId > 4
+																						  && us.CustomerId != 89)
+												 .ToList();
+				context.Dispose();
+			}
+		}
 	}
 }
