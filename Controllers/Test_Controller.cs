@@ -362,6 +362,11 @@ namespace DataIntegrityTool.Controllers
 				List<CustomerSubscriptions> subs = context.CustomerSubscriptions.Where(us => us.CustomerId > 4
 																						  && us.CustomerId != 89)
 												 .ToList();
+
+				context.Remove(customers);
+				context.Remove(users);
+				context.Remove(sessions);
+				context.Remove(subs);
 				context.Dispose();
 			}
 		}
