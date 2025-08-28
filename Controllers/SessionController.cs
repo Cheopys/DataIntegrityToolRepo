@@ -7,17 +7,12 @@ using DataIntegrityTool.Services;
 using NuGet.Common;
 using System.Threading.Tasks;
 using Amazon.S3.Model.Internal.MarshallTransformations;
-using Swashbuckle.AspNetCore.Annotations;
-using NSwag.Annotations;
 
 namespace DataIntegrityTool.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
 
-	/// <summary>
-	/// These API are only used by the DIT tool, not in the web site.
-	/// </summary>
 	public class SessionController : ControllerBase
 	{
 		[HttpGet, Route("Login")]
