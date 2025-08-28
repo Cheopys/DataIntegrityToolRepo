@@ -175,7 +175,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("ChangePasswordAsk")]
-		[Consumes("application/json")]
+		[Produces("application/json")]
 		public async Task<string> ChangePasswordAsk([FromBody] string requestRSA)
 		{
 			string retval = string.Empty;
@@ -243,9 +243,9 @@ namespace DataIntegrityTool.Controllers
 					aesIV		= Convert.FromHexString(wrapperString.aesIVHex)
 				};
 
-				//retval = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
+				retval = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
 
-				retval = JsonSerializer.Serialize(response);
+				//retval = JsonSerializer.Serialize(response);
 			}
 			else
 			{

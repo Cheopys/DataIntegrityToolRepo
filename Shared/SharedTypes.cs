@@ -221,7 +221,7 @@ public class ChangePasswordAskRequest
 	public LoginType LoginType { get; set; } // 1 = User, 2 = Customer, 3 = Administrator
 	public string	 AesIVHex  { get; set; }
 }
-
+	
 public class ChangePasswordAskResponse
 {
     public Int32  PrimaryKey    { get; set; }
