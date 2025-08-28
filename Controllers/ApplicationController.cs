@@ -175,6 +175,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("ChangePasswordAsk")]
+		[Consumes("application/json")]
 		public async Task<string> ChangePasswordAsk([FromBody] string requestRSA)
 		{
 			string retval = string.Empty;
