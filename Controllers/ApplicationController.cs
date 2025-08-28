@@ -243,7 +243,9 @@ namespace DataIntegrityTool.Controllers
 					aesIV		= Convert.FromHexString(wrapperString.aesIVHex)
 				};
 
-				retval = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
+				//retval = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
+
+				retval = JsonSerializer.Serialize(response);
 			}
 			else
 			{
