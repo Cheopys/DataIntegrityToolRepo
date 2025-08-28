@@ -175,7 +175,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("ChangePasswordAsk")]
-		public async Task<string> ChangePasswordAsk(string requestRSA)
+		public async Task<string> ChangePasswordAsk([FromBody] string requestRSA)
 		{
 			string retval = string.Empty;
 			ChangePasswordAskRequest request = ServerCryptographyService.DecryptRSA<ChangePasswordAskRequest>(requestRSA);
