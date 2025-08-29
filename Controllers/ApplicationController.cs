@@ -260,7 +260,13 @@ namespace DataIntegrityTool.Controllers
 			{
 				response = new ChangePasswordAskResponse()
 				{
-					ErrorCode = error
+					PrimaryKey			= 0,
+					LoginType			= request.LoginType,
+					Email				= request.Email,
+					NameFirst			= String.Empty,
+					Namelast			= String.Empty,
+					ChangePasswordToken = 0,
+					ErrorCode			= error
 				};
 			}
 
