@@ -178,13 +178,14 @@ namespace DataIntegrityTool.Controllers
 		[Produces("application/json")]
 		public async Task<string> ChangePasswordAsk([FromBody] string requestRSA)
 		{
-			string retval = string.Empty;
 			ChangePasswordAskRequest request = ServerCryptographyService.DecryptRSA<ChangePasswordAskRequest>(requestRSA);
 			EncryptionWrapperDITString wrapperString = new()
 			{
 				aesIVHex = request.AesIVHex,
 				type	 = request.LoginType
 			};
+
+			byte[] aeskey = Convert.FromHexString(request.AesKeyHex);
 
 			ErrorCodes error = ErrorCodes.errorNone;
 
@@ -196,6 +197,7 @@ namespace DataIntegrityTool.Controllers
 						Users? user = context.Users.Where(us => us.Email.Equals(request.Email)).FirstOrDefault();
 						if (user != null)
 						{
+							user.AesKey = aeskey;
 							wrapperString.primaryKey = user.Id;
 						}
 						else
@@ -208,6 +210,7 @@ namespace DataIntegrityTool.Controllers
 						Customers? customer = context.Customers.Where(cus => cus.Email.Equals(request.Email)).FirstOrDefault();
 						if (customer != null)
 						{
+							customer.AesKey = aeskey;
 							wrapperString.primaryKey = customer.Id;
 						}
 						else
@@ -220,6 +223,7 @@ namespace DataIntegrityTool.Controllers
 						Administrators? administrator = context.Administrators.Where(ad => ad.Email.Equals(request.Email)).FirstOrDefault();
 						if (administrator != null)
 						{
+							administrator.AesKey	 = aeskey;
 							wrapperString.primaryKey = administrator.Id;
 						}
 						else
@@ -227,32 +231,40 @@ namespace DataIntegrityTool.Controllers
 							error = ErrorCodes.errorInvalidUserId;
 						}
 						break;
+
+					default:
+						error = ErrorCodes.errorInvalidLoginType;
+						break;
 				}
+
+				context.SaveChanges();
+				context.Dispose();		
 			}
 
 			ChangePasswordAskResponse response;
+
+			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			{
+				primaryKey	= wrapperString.primaryKey,
+				type		= wrapperString.type,
+				aesIV		= Convert.FromHexString(wrapperString.aesIVHex)
+			};
 
 			if (error == ErrorCodes.errorNone)
 			{
 				response = UsersService.ChangePasswordAsk(wrapperString);
 
-				EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
-				{
-					primaryKey	= wrapperString.primaryKey,
-					type		= wrapperString.type,
-					aesIV		= Convert.FromHexString(wrapperString.aesIVHex)
-				};
-
-				retval = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
-
-				//retval = JsonSerializer.Serialize(response);
+				response.ErrorCode = error;
 			}
 			else
 			{
-				retval = $"error {error} finding Email {request.Email} of type {request.LoginType}";
+				response = new ChangePasswordAskResponse()
+				{
+					ErrorCode = error
+				};
 			}
 
-			return retval;
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
 		}
 
 		[HttpPost, Route("ChangePasswordAnswer")]

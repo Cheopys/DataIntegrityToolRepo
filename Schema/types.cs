@@ -35,5 +35,6 @@ public enum ErrorCodes
 	errorNoSeats			  = 9,
 	errorInvalidCustomerId	  = 10,
 	errorInvalidAdministratorId = 11,
+	errorInvalidLoginType     = 12,
 }
 
