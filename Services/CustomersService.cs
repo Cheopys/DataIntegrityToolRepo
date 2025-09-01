@@ -206,9 +206,13 @@ namespace DataIntegrityTool.Services
                 List<LicenseMetered>        licensesetered  = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
                 List<CustomerSubscriptions> subscriptions   = context.CustomerSubscriptions.Where(s => s.CustomerId == CustomerId).ToList();
 
+                List<Int32> sessionIds = sessions.Select(s => s.Id).ToList();
+                List<SessionTransition> transitions = context.SessionTransition.Where(s => sessionIds.Contains(s.SessionId)).ToList();
+
                 context.RemoveRange(users);
                 context.RemoveRange(sessions);
-                context.RemoveRange(licensesetered);
+				context.RemoveRange(transitions);
+				context.RemoveRange(licensesetered);
 				context.RemoveRange(subscriptions);
 				context.Remove     (customer);
 
