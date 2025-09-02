@@ -60,6 +60,34 @@ namespace DataIntegrityTool.Migrations
                     b.ToTable("Administrators", (string)null);
                 });
 
+            modelBuilder.Entity("DataIntegrityTool.Schema.CustomerPayments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<short?>("Scans")
+                        .HasColumnType("smallint");
+
+                    b.Property<int?>("SubscriptionType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CustomerPayments", (string)null);
+                });
+
             modelBuilder.Entity("DataIntegrityTool.Schema.CustomerSubscriptions", b =>
                 {
                     b.Property<int>("Id")

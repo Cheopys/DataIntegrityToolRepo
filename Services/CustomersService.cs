@@ -1,8 +1,10 @@
 ﻿using Amazon.Runtime.Internal;
 using Amazon.S3.Model;
 using Amazon.SimpleNotificationService.Model;
+using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using DataIntegrityTool.Db;
+using DataIntegrityTool.Migrations;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using Humanizer;
@@ -91,6 +93,7 @@ namespace DataIntegrityTool.Services
                     user = new Users()
                     {
                         AesKey       = Convert.FromHexString(request.AesKey),
+                        CustomerId   = customer.Id,
                         Email        = request.Email,
                         NameFirst    = request.NameFirst,
                         NameLast     = request.NameLast,
@@ -98,13 +101,12 @@ namespace DataIntegrityTool.Services
                         DateAdded    = DateTime.UtcNow,
                         Tools        = request.Tools,
                     };
-                }
 
-                if (user != null)
-                {
-                    user.CustomerId = customer.Id;
-                    context.Users.Add(user);
-                }
+					context.Users.Add(user);
+				}
+
+                AddSubscription(customer.Id, 13, 0);
+
                 context.SaveChanges();
                 context.Dispose();
             }
@@ -274,7 +276,7 @@ namespace DataIntegrityTool.Services
             List<LicenseMetered> metereds = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(customerId)
                                                                             && lm.TimeBegun > customerUsage)
                                                                   .ToList();
-            usage.MeteringCount = metereds.Count();
+            usage.ScanCount = metereds.Count();
 
             earliest = metereds.Min(lm => lm.TimeBegun.Value);
 
@@ -338,7 +340,8 @@ namespace DataIntegrityTool.Services
         }
 
         public static TopupScansResponse TopUpScans(Int32 CustomerId,
-                                                    Int16 count)
+                                                    Int16 Count,
+                                                    Int32 Amount)
         {
             TopupScansResponse response = new()
             {
@@ -352,13 +355,25 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 {
-                    customer.Scans += count;
+                    customer.Scans += Count;
 
                     context.SaveChanges();
 
                     response.ScansAfter = customer.Scans;
-                }
-                else
+
+					context.Add(new CustomerPayments()
+					{
+						CustomerId       = customer.Id,
+						Amount           = Amount,
+						Date             = DateTime.UtcNow,
+						SubscriptionType = null,
+						Scans            = Count
+					});
+
+					context.SaveChanges();
+
+				}
+				else
                 {
                     response.Error = ErrorCodes.errorInvalidCustomerId;
                 }
@@ -370,7 +385,8 @@ namespace DataIntegrityTool.Services
         }
 
         public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
-															  Int32 subscriptionId)
+															  Int32 subscriptionId,
+                                                              Int32 Amount)
         {
             AddSubscriptionResponse response = new()
             {
@@ -402,12 +418,21 @@ namespace DataIntegrityTool.Services
 
 					customer.Scans += subscription.scans;
 
-                    context.SaveChanges();
-
                     response.Expiration = custsub.ExpirationDate.Value;
                     response.ScansAfter = customer.Scans;
-                }
-                else
+
+                    context.Add(new CustomerPayments()
+                    {
+                        CustomerId       = customer.Id,
+                        Amount           = Amount,
+                        Date             = DateTime.UtcNow,
+                        SubscriptionType = subscriptionId,
+                        Scans            = null
+                    });
+
+					context.SaveChanges();
+				}
+				else
                 {
                     response.Error = ErrorCodes.errorInvalidCustomerId;
                 }

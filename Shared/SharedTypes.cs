@@ -136,16 +136,10 @@ public class EndSessionResponse
 	public ErrorCodes ErrorCode     { get; set; } = ErrorCodes.errorNone;
 }
 
-public class UserLicenseAllocation
-{
-    public Int32 UserId { get; set; }
-    public Int32 UserMeteringCount { get; set; }
-    public Int32 UserIntervalSeconds { get; set; }
-}
 public class CustomerUsage
 {
     public Int32 CustomerId         { get; set; }
-    public Int32 MeteringCount      { get; set; }
+    public Int32 ScanCount      { get; set; }
     public DateTime EarliestUse     { get; set; }
 }
 

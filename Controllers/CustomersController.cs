@@ -36,8 +36,8 @@ namespace DataIntegrityTool.Controllers
 			// Rules for mapping loggers to targets            
 			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
 
-            // Apply config           
-            LogManager.Configuration = config;
+			// Apply config           
+			LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
 		}
 
@@ -45,9 +45,9 @@ namespace DataIntegrityTool.Controllers
 
 		private static Aes CreateAes()
 		{
-			Aes aes		= Aes.Create();
+			Aes aes = Aes.Create();
 			aes.KeySize = 256;
-			aes.Mode	= CipherMode.CBC;
+			aes.Mode = CipherMode.CBC;
 			aes.Padding = PaddingMode.PKCS7;
 
 			return aes;
@@ -102,17 +102,17 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("AdminGetCustomer")]
-		public async Task<string> AdminGetCustomer(Int32  CustomerIdSought,
-												   Int32  AdminIdSeeker,
+		public async Task<string> AdminGetCustomer(Int32 CustomerIdSought,
+												   Int32 AdminIdSeeker,
 												   string AesIVHex)
 		{
 			Customers? customer = CustomersService.GetCustomer(CustomerIdSought);
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				type		= LoginType.typeAdministrator,
-				primaryKey	= AdminIdSeeker,
-				aesIV		= Convert.FromHexString(AesIVHex),
+				type = LoginType.typeAdministrator,
+				primaryKey = AdminIdSeeker,
+				aesIV = Convert.FromHexString(AesIVHex),
 			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customer);
@@ -128,10 +128,10 @@ namespace DataIntegrityTool.Controllers
 		{
 			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
 			{
-				primaryKey		= wrapperString.primaryKey,
-				type			= wrapperString.type,
-				encryptedData	= wrapperString.encryptedData,
-				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
+				primaryKey = wrapperString.primaryKey,
+				type = wrapperString.type,
+				encryptedData = wrapperString.encryptedData,
+				aesIV = Convert.FromHexString(wrapperString.aesIVHex)
 			};
 
 			UpdateCustomerRequest request;
@@ -147,17 +147,17 @@ namespace DataIntegrityTool.Controllers
 		public void DeleteCustomer(Int32 customerId)
 		{
 			CustomersService.DeleteCustomer(customerId);
-        }
+		}
 
 		[HttpGet, Route("GetCustomerUsage")]
 		[Produces("application/json")]
-		public List<CustomerUsage> GetCustomerUsages (Int32? customerId) 
+		public List<CustomerUsage> GetCustomerUsages(Int32? customerId)
 		{
 			return CustomersService.GetCustomerUsages(customerId);
 		}
 
 		[HttpPost, Route("AddCustomerScans")]
-        public Int32 AddCustomerScans(Int32 CustomerId,
+		public Int32 AddCustomerScans(Int32 CustomerId,
 									  Int32 newScans)
 		{
 			return CustomersService.AddCustomerScans(CustomerId, newScans);
@@ -185,5 +185,30 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(subscriptions);
 		}
 
+		[HttpPut, Route("AddCustomerPayment")]
+		public Int32  AddCustomerPayment(Int32 CustomerId,
+										Int32  Amount,
+										Int32? SubscriptionType,
+										Int16? Scans)
+		{
+			Int32 ScansAfter = 0;
+
+			if (SubscriptionType != null)
+			{
+				AddSubscriptionResponse response = CustomersService.AddSubscription(CustomerId, SubscriptionType.Value, Amount);
+
+				ScansAfter = response.ScansAfter;
+			}
+
+			if (Scans != null
+			&&  Scans  > 0)
+			{
+				TopupScansResponse response = CustomersService.TopUpScans(CustomerId, Scans.Value, Amount);
+
+				ScansAfter = response.ScansAfter;
+			}
+
+			return ScansAfter;
+		}
 	}
 }
