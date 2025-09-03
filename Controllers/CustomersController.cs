@@ -210,5 +210,27 @@ namespace DataIntegrityTool.Controllers
 
 			return ScansAfter;
 		}
+
+		[HttpGet, Route("GetCustomerPayments")]
+		[Produces("application/json")]
+		public List<CustomerPayments> GetCustomerPayments(Int32? CustomerId)
+		{
+			List<CustomerPayments> payments = null;
+
+			using (DataContext context = new())
+			{
+				payments = context.CustomerPayments.ToList();
+
+				if (CustomerId! != null)
+				{
+					payments = payments.Where(p => p.CustomerId.Equals(CustomerId)).ToList();
+				}
+
+				context.Dispose();
+			}
+
+			return payments;
+		}
+
 	}
 }

@@ -371,5 +371,11 @@ namespace DataIntegrityTool.Controllers
 				context.Dispose();
 			}
 		}
+
+		[HttpGet, Route("GetAesKey")]
+		public string GetAesKey(EncryptionWrapperDIT wrapper)
+		{
+			return Convert.ToHexString(ServerCryptographyService.GetAesKey(wrapper).Key);
+		}
 	}
 }

@@ -24,14 +24,8 @@ namespace DataIntegrityTool.Controllers
             return Convert.ToBase64String(ServerCryptographyService.GetServerRSAPublicKey());
         }
         
-        [HttpGet, Route("GetAesKey")]
-        public Aes GetAesKey(EncryptionWrapperDIT wrapper)
-        {
-            return ServerCryptographyService.GetAesKey(wrapper);
-        }
-
-		[HttpGet, Route("GetAesIV")]
-		public string GetAesIV()
+		[HttpGet, Route("CreateAesIV")]
+		public string CreateAesIV()
 		{
 			return Convert.ToHexString(ServerCryptographyService.CreateAes().IV);
 		}
