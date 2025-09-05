@@ -327,8 +327,8 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(list);
 		}
 
-		[HttpGet, Route("DecryptAES")]
-		public List<Users> DecryptAES(EncryptionWrapperDITString wrapper)
+		[HttpPut, Route("DecryptAES")]
+		public List<Users> DecryptAES([FromBody] EncryptionWrapperDITString wrapper)
 		{
 			EncryptionWrapperDIT ewd = new()
 			{
