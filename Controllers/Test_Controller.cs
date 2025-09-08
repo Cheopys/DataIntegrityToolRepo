@@ -193,7 +193,7 @@ namespace DataIntegrityTool.Controllers
 
 			wrapper.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper.ToBinaryVersion(), users);
 
-			return DecryptAES<List<Users>>(wrapper);
+			return DecryptAESCustomersList(wrapper);
 		}
 
 		[HttpPost, Route("UpdateUser")]
@@ -327,8 +327,8 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(list);
 		}
 
-		[HttpPut, Route("DecryptAES")]
-		public string DecryptAES<T>([FromBody] EncryptionWrapperDITString wrapper)
+		[HttpPut, Route("DecryptAESCustomersList")]
+		public string DecryptAESCustomersList([FromBody] EncryptionWrapperDITString wrapper)
 		{
 			EncryptionWrapperDIT ewd = new()
 			{
@@ -338,8 +338,25 @@ namespace DataIntegrityTool.Controllers
 				primaryKey		= wrapper.primaryKey
 			};
 
-			T clear;
-			ServerCryptographyService.DecodeAndDecryptRequest<T>(ewd, out clear);
+			List<Customers> clear;
+			ServerCryptographyService.DecodeAndDecryptRequest(ewd, out clear);
+
+			return JsonSerializer.Serialize(clear);
+		}
+
+		[HttpPut, Route("DecryptAESCustomer")]
+		public string DecryptAESCustomer([FromBody] EncryptionWrapperDITString wrapper)
+		{
+			EncryptionWrapperDIT ewd = new()
+			{
+				aesIV			= Convert.FromHexString(wrapper.aesIVHex),
+				encryptedData	= wrapper.encryptedData,
+				type			= wrapper.type,
+				primaryKey		= wrapper.primaryKey
+			};
+
+			Customers clear;
+			ServerCryptographyService.DecodeAndDecryptRequest(ewd, out clear);
 
 			return JsonSerializer.Serialize(clear);
 		}
