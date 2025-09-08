@@ -377,5 +377,11 @@ namespace DataIntegrityTool.Controllers
 		{
 			return Convert.ToHexString(ServerCryptographyService.GetAesKey(wrapper).Key);
 		}
+
+		[HttpGet, Route("AdminGetCustomer")]
+		public string AdminGetCustomer(Int32 CustomerIdSought)
+		{
+			return JsonSerializer.Serialize(CustomersService.GetCustomer(CustomerIdSought));
+		}
 	}
 }
