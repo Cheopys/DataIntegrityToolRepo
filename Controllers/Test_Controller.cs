@@ -339,7 +339,7 @@ namespace DataIntegrityTool.Controllers
 			};
 
 			List<Customers> clear;
-			ServerCryptographyService.DecodeAndDecryptRequest(ewd, out clear);
+			ServerCryptographyService.DecodeAndDecryptRequest<List<Customers>>(ewd, out clear);
 
 			return JsonSerializer.Serialize(clear);
 		}
@@ -356,7 +356,7 @@ namespace DataIntegrityTool.Controllers
 			};
 
 			Customers clear;
-			ServerCryptographyService.DecodeAndDecryptRequest(ewd, out clear);
+			ServerCryptographyService.DecodeAndDecryptRequest<Customers>(ewd, out clear);
 
 			return JsonSerializer.Serialize(clear);
 		}
