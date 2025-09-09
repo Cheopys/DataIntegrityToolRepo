@@ -360,6 +360,7 @@ namespace DataIntegrityTool.Controllers
 
 			if (response.errorcode == ErrorCodes.errorNone)
 			{
+				response.loginType = requestDecrypted.LoginType;
 				response.errorcode = ServerCryptographyService.SetAesKey(request.LoginType, response.PrimaryKey, Convert.FromHexString(request.AesKeyHex));
 			}
 
