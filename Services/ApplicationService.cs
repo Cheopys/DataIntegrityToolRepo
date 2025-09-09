@@ -62,7 +62,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (administrator.PasswordHash.Equals(PasswordHash))
 						{
-							response.Identifier = administrator.Id;
+							response.PrimaryKey = administrator.Id;
 						}
 						else
 						{
@@ -82,7 +82,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (customer.PasswordHash.Equals(PasswordHash))
 						{
-							response.Identifier = customer.Id;
+							response.PrimaryKey = customer.Id;
 						}
 						else
 						{
@@ -95,8 +95,6 @@ namespace DataIntegrityTool.Services
 					}
 				} // end is customer
 
-				// from DIT Tool
-
 				else if (loginType == LoginType.typeUser)
 				{
 					Users? user = context.Users.Where(us => us.Email.ToLower().Equals(Email.ToLower())).FirstOrDefault();
@@ -105,7 +103,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (user.PasswordHash.Equals(PasswordHash))
 						{
-							response.Identifier = user.Id;
+							response.PrimaryKey = user.Id;
 						}
 						else
 						{

@@ -44,6 +44,7 @@ public class WebLoginRequest
 	public LoginType LoginType	{ get; set; }
 	public string    Password	{ get; set; }
 	public string    Email		{ get; set; }
+	public string	 AesKeyHex  { get; set; }
 }
 
 public class RegisterAdministratorRequest
@@ -108,7 +109,7 @@ public class UpdateCustomerRequest
 
 public class LoginResponse
 { 
-    public Int32      Identifier { get; set; }
+    public Int32      PrimaryKey { get; set; }
     public LoginType  loginType  { get; set; }
 	public ErrorCodes errorcode  { get; set; }
 }

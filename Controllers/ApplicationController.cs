@@ -35,48 +35,25 @@ namespace DataIntegrityTool.Controllers
 			return ApplicationService.LoginRolesForEmail(Email);
 		}
 
-		private static byte[] ExtractInterleavedKey(string keyInterleaved)
-		{
-			string hexOriginal = String.Empty;
-
-			for (int i = 2; i < keyInterleaved.Length; i += 4)
-			{
-				hexOriginal += keyInterleaved.Substring(i, 2);
-			}
-
-			return Convert.FromHexString(hexOriginal);
-		}
-
 		// <snippet_WebLogin>
 		/// <summary>
 		/// Login for web site
 		/// </summary>
-		[HttpPost, Route("WebLogin")]
-		public LoginResponse WebLogin(string requestB64,
-									  string keyInterleaved,
-									  string hexIV)
+		[HttpPost, Route("WebLoginRSA")]
+		[Produces("application/json")]
+		public LoginResponse WebLoginRSA(string requestB64)
 		{
-			LoginResponse response = new();
+			LoginResponse   response = new();
 
-			byte[] key = ExtractInterleavedKey(keyInterleaved);
-			Aes aes = ServerCryptographyService.CreateAes();
-			aes.Key = key;
-			aes.IV  = Convert.FromHexString(hexIV);
+			WebLoginRequest request = ServerCryptographyService.DecryptRSA<WebLoginRequest>(requestB64);
 
-			if (aes.Key.Length == 32)
+			response = ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
+
+			if (response.errorcode == ErrorCodes.errorNone)
 			{
-				WebLoginRequest request;
-				ServerCryptographyService.DecodeAndDecryptLoginRequest(aes, requestB64, out request);
-
-				response = ApplicationService.WebLogin(request.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
-
-				response.errorcode = ServerCryptographyService.SetAesKey(request.LoginType, response.Identifier, key);
+				response.errorcode = ServerCryptographyService.SetAesKey(request.LoginType, response.PrimaryKey, Convert.FromHexString(request.AesKeyHex));
 			}
-			else
-			{
-				response.errorcode = ErrorCodes.errorBadKeySize;
-			}
-				
+
 			return response;
 		}
 		// </snippet_WebLogin>

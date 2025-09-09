@@ -45,7 +45,7 @@ namespace DataIntegrityTool.Services
 				{
 					if (user.PasswordHash.Equals(PasswordHash))
 					{
-						response.Identifier = user.Id;
+						response.PrimaryKey = user.Id;
 					}
 					else
 					{

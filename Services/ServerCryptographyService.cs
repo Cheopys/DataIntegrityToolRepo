@@ -178,38 +178,6 @@ namespace DataIntegrityTool.Services
 			return JsonSerializer.Deserialize<T>(textEncoded);
         }
 
-		public static void DecodeAndDecryptLoginRequest(Aes				aes,
-			                                            string          requestB64,
-													out WebLoginRequest request)
-		{
-			byte[]? encrypted = Convert.FromBase64String(requestB64);
-
-			ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
-			// Create the streams used for encryption.
-
-			using (MemoryStream memorystream = new MemoryStream(encrypted))
-			{
-				using (CryptoStream cryptostream = new CryptoStream(memorystream, decryptor, CryptoStreamMode.Read))
-				{
-					using (StreamReader streamreader = new StreamReader(cryptostream))
-					{
-						// read data from the stream.
-						string json = streamreader.ReadToEnd();
-
-						request = JsonSerializer.Deserialize<WebLoginRequest>(json);
-
-						streamreader.Dispose();
-					}
-
-					cryptostream.Dispose();
-				}
-
-				memorystream.Dispose();
-			}
-		}
-
-
 		public static void	DecodeAndDecryptRequest<T>(EncryptionWrapperDIT wrapper, 
 													  out T?			   request)
 		{
@@ -332,7 +300,7 @@ namespace DataIntegrityTool.Services
 			return output;
 		}
 
-		public static ErrorCodes SetAesKey(LoginType loginType, Int32 id, Byte[] key)
+		public static ErrorCodes SetAesKey(LoginType loginType, Int32 id, byte[] key)
 		{
 			Users? user;
 			Customers? customer;
@@ -367,9 +335,6 @@ namespace DataIntegrityTool.Services
 
 				return errorCodes;
 			}
-
-
-
 		}
 	}
 }
