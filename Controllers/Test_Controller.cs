@@ -327,6 +327,8 @@ namespace DataIntegrityTool.Controllers
 		[Produces("application/json")]
 		public string WebLoginTest()
 		{
+			// CLIENT SIDE
+
 			Aes aes = ServerCryptographyService.CreateAes();
 			WebLoginRequest request = new WebLoginRequest()
 			{
@@ -348,20 +350,20 @@ namespace DataIntegrityTool.Controllers
 			byte[] requestEncrypted = rsa.Encrypt(requestEncoded, false);
 			string requestB64 = Convert.ToBase64String(requestEncrypted);
 
+			// SERVER SIDE
+
 			LoginResponse response = new();
 
 			WebLoginRequest requestDecrypted = ServerCryptographyService.DecryptRSA<WebLoginRequest>(requestB64);
 
-			response = ApplicationService.WebLogin(requestDecrypted.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
+			response = ApplicationService.WebLogin(requestDecrypted.Email, ServerCryptographyService.SHA256(requestDecrypted.Password), requestDecrypted.LoginType);
 
 			if (response.errorcode == ErrorCodes.errorNone)
 			{
 				response.errorcode = ServerCryptographyService.SetAesKey(request.LoginType, response.PrimaryKey, Convert.FromHexString(request.AesKeyHex));
 			}
 
-			return response;
-
-
+			return JsonSerializer.Serialize(response);
 		}
 
 	}
