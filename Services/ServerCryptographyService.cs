@@ -344,17 +344,17 @@ namespace DataIntegrityTool.Services
 				switch (loginType)
 				{
 					case LoginType.typeUser:
-						user = context.Users.Find(id);
+						user = context.Users.Where(u => u.Id.Equals(id)).FirstOrDefault();
 						user.AesKey = key;
 						break;
 
 					case LoginType.typeCustomer:
-						customer = context.Customers.Find(id);
+						customer = context.Customers.Where(u => u.Id.Equals(id)).FirstOrDefault();
 						customer.AesKey = key;
 						break;
 
 					case LoginType.typeAdministrator:
-						administrator = context.Administrators.Find(id);
+						administrator = context.Administrators.Where(u => u.Id.Equals(id)).FirstOrDefault();
 						administrator.AesKey = key;
 						break;
 
