@@ -186,7 +186,7 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDITString wrapper = new()
 			{
-				aesIVHex   = hexAesIV,
+				aesIVHex = hexAesIV,
 				primaryKey = CustomerId,
 				type = LoginType.typeCustomer,
 			};
@@ -254,10 +254,10 @@ namespace DataIntegrityTool.Controllers
 		{
 			EncryptionWrapperDIT ewd = new()
 			{
-				aesIV			= Convert.FromHexString(wrapper.aesIVHex),
-				encryptedData	= wrapper.encryptedData,
-				type			= wrapper.type,
-				primaryKey		= wrapper.primaryKey
+				aesIV = Convert.FromHexString(wrapper.aesIVHex),
+				encryptedData = wrapper.encryptedData,
+				type = wrapper.type,
+				primaryKey = wrapper.primaryKey
 			};
 
 			List<Customers> clear;
@@ -271,10 +271,10 @@ namespace DataIntegrityTool.Controllers
 		{
 			EncryptionWrapperDIT ewd = new()
 			{
-				aesIV			= Convert.FromHexString(wrapper.aesIVHex),
-				encryptedData	= wrapper.encryptedData,
-				type			= wrapper.type,
-				primaryKey		= wrapper.primaryKey
+				aesIV = Convert.FromHexString(wrapper.aesIVHex),
+				encryptedData = wrapper.encryptedData,
+				type = wrapper.type,
+				primaryKey = wrapper.primaryKey
 			};
 
 			Customers clear;
@@ -292,10 +292,10 @@ namespace DataIntegrityTool.Controllers
 																	   && us.Id != 89)
 												 .ToList();
 				List<Users> users = context.Users.Where(us => us.CustomerId > 4
-					                                       && us.CustomerId != 89)
+														   && us.CustomerId != 89)
 												 .ToList();
-				List<Session> sessions  = context.Session.Where(us => us.CustomerId > 4
-														           && us.CustomerId != 89)
+				List<Session> sessions = context.Session.Where(us => us.CustomerId > 4
+																   && us.CustomerId != 89)
 												 .ToList();
 
 				List<CustomerSubscriptions> subs = context.CustomerSubscriptions.Where(us => us.CustomerId > 4
@@ -322,5 +322,47 @@ namespace DataIntegrityTool.Controllers
 		{
 			return JsonSerializer.Serialize(CustomersService.GetCustomer(CustomerIdSought));
 		}
+
+		[HttpGet, Route("WebLoginTest")]
+		[Produces("application/json")]
+		public string WebLoginTest()
+		{
+			Aes aes = ServerCryptographyService.CreateAes();
+			WebLoginRequest request = new WebLoginRequest()
+			{
+				Email     = "cheopys@gmail.com",
+				Password  = "DIT",
+				LoginType = LoginType.typeCustomer,
+				AesKeyHex = Convert.ToHexString(aes.Key)
+			};
+
+			string serialized = JsonSerializer.Serialize(request);
+			byte[] publicKey  = ServerCryptographyService.GetServerRSAPublicKey();
+
+			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+
+			int cbRead;
+			rsa.ImportRSAPublicKey(publicKey, out cbRead);
+
+			byte[] requestEncoded = Encoding.UTF8.GetBytes(serialized);
+			byte[] requestEncrypted = rsa.Encrypt(requestEncoded, false);
+			string requestB64 = Convert.ToBase64String(requestEncrypted);
+
+			LoginResponse response = new();
+
+			WebLoginRequest requestDecrypted = ServerCryptographyService.DecryptRSA<WebLoginRequest>(requestB64);
+
+			response = ApplicationService.WebLogin(requestDecrypted.Email, ServerCryptographyService.SHA256(request.Password), request.LoginType);
+
+			if (response.errorcode == ErrorCodes.errorNone)
+			{
+				response.errorcode = ServerCryptographyService.SetAesKey(request.LoginType, response.PrimaryKey, Convert.FromHexString(request.AesKeyHex));
+			}
+
+			return response;
+
+
+		}
+
 	}
 }
