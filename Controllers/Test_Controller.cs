@@ -193,7 +193,7 @@ namespace DataIntegrityTool.Controllers
 
 			wrapper.encryptedData = await ServerCryptographyService.EncryptAndEncodeResponse(wrapper.ToBinaryVersion(), users);
 
-			return DecryptAESCustomersList(wrapper);
+			return DecryptAESUsersList(wrapper);
 		}
 
 		[HttpPost, Route("UpdateUser")]
@@ -262,6 +262,15 @@ namespace DataIntegrityTool.Controllers
 
 			List<Customers> clear;
 			ServerCryptographyService.DecodeAndDecryptRequest<List<Customers>>(ewd, out clear);
+
+			return JsonSerializer.Serialize(clear);
+		}
+
+		[HttpPut, Route("DecryptAESUsersList")]
+		public string DecryptAESUsersList([FromBody] EncryptionWrapperDITString wrapperString)
+		{
+			List<Users> clear;
+			ServerCryptographyService.DecodeAndDecryptRequest<List<Users>>(wrapperString.ToBinaryVersion(), out clear);
 
 			return JsonSerializer.Serialize(clear);
 		}
