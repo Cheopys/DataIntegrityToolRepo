@@ -116,10 +116,10 @@ namespace DataIntegrityTool.Controllers
 
 			EncryptionWrapperDIT wrapper = new()
 			{
-				aesIV		= Convert.FromHexString(AesIVHex),
-				primaryKey	= CustomerId,
-				type		= LoginType.typeCustomer
-			}
+				aesIV = Convert.FromHexString(AesIVHex),
+				primaryKey = CustomerId,
+				type = LoginType.typeCustomer
+			};
 
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
 		}
