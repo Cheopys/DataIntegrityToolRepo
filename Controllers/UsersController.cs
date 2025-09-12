@@ -110,11 +110,18 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
-		public async Task<string> GetUsers(EncryptionWrapperDITString wrapperString, Int32 CustomerId)
+		public async Task<string> GetUsers(Int32 CustomerId, string AesIVHex)
 		{
 			List<Users> users = await UsersService.GetUsersForCustomer(CustomerId);
 
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapperString.ToBinaryVersion(), users);
+			EncryptionWrapperDIT wrapper = new()
+			{
+				aesIV		= Convert.FromHexString(AesIVHex),
+				primaryKey	= CustomerId,
+				type		= LoginType.typeCustomer
+			}
+
+			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
 		}
 
 		[HttpGet, Route("GetCustomerUsage")]
