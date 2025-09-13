@@ -254,7 +254,7 @@ namespace DataIntegrityTool.Services
 			return responseB64;
 		}		
 
-		public static async Task<string> EncrypytAES(System.Security.Cryptography.Aes aes, string cleartext)
+		public static async Task<string>	EncrypytAES(System.Security.Cryptography.Aes aes, string cleartext)
 		{
 			string responseB64 = null;
 			byte[] encrypted = null;

@@ -54,62 +54,70 @@ namespace DataIntegrityTool.Services
 
 			using (DataContext context = new())
 			{
-				SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(request.SubscriptionId)).FirstOrDefault();
-                Users user = null;
-                Customers customer = new Customers()
-                {
-                    NameFirst    = request.NameFirst,
-                    NameLast     = request.NameLast,
-                    Company      = request.Company,
-                    Email        = request.Email,
-                    PasswordHash = ServerCryptographyService.SHA256(request.Password),
-                    Notes        = request.Notes,
-                    AesKey       = Convert.FromHexString(request.AesKey),
-                    DateAdded    = DateTime.UtcNow,
-                    UsageSince   = DateTime.MinValue,
-                    Tools        = request.Tools,
-                    SeatsMax     = 10,
-                    Scans        = type.scans,
-                    SubscriptionTime = TimeSpan.FromDays(type.days)
-                };
-    
-				context.Customers.Add(customer);
-
-                // need the new customer PK to continue
-
-				context.SaveChanges();
-
-				response.CustomerId = customer.Id;
-
-                context.Add(new CustomerSubscriptions()
-                {
-                    CustomerId     = customer.Id,
-					SubscriptionId = request.SubscriptionId,
-					ExpirationDate = null
-				});
-
-				if (request.InitialUser)
-                {
-                    user = new Users()
+                if (context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
+                { 
+				    SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(request.SubscriptionId)).FirstOrDefault();
+                    Users user = null;
+                    Customers customer = new Customers()
                     {
-                        AesKey       = Convert.FromHexString(request.AesKey),
-                        CustomerId   = customer.Id,
-                        Email        = request.Email,
                         NameFirst    = request.NameFirst,
                         NameLast     = request.NameLast,
+                        Company      = request.Company,
+                        Email        = request.Email,
                         PasswordHash = ServerCryptographyService.SHA256(request.Password),
+                        Notes        = request.Notes,
+                        AesKey       = Convert.FromHexString(request.AesKey),
                         DateAdded    = DateTime.UtcNow,
+                        UsageSince   = DateTime.MinValue,
                         Tools        = request.Tools,
+                        SeatsMax     = 10,
+                        Scans        = type.scans,
+                        SubscriptionTime = TimeSpan.FromDays(type.days)
                     };
 
-					context.Users.Add(user);
-				}
+				    context.Customers.Add(customer);
 
-                AddSubscription(customer.Id, 13, 0);
+                    // need the new customer PK to continue
 
-                context.SaveChanges();
+				    context.SaveChanges();
+
+				    response.CustomerId = customer.Id;
+
+                    context.Add(new CustomerSubscriptions()
+                    {
+                        CustomerId     = customer.Id,
+					    SubscriptionId = request.SubscriptionId,
+					    ExpirationDate = null
+				    });
+
+				    if (request.InitialUser)
+                    {
+                        user = new Users()
+                        {
+                            AesKey       = Convert.FromHexString(request.AesKey),
+                            CustomerId   = customer.Id,
+                            Email        = request.Email,
+                            NameFirst    = request.NameFirst,
+                            NameLast     = request.NameLast,
+                            PasswordHash = ServerCryptographyService.SHA256(request.Password),
+                            DateAdded    = DateTime.UtcNow,
+                            Tools        = request.Tools,
+                        };
+
+					    context.Users.Add(user);
+				    }
+
+                    AddSubscription(customer.Id, 13, 0);
+
+                    context.SaveChanges();
+				} // endif email is new
+                else
+                {
+                    response.ErrorCode = ErrorCodes.errorEmailAlreadyExists;
+                }
+                    
                 context.Dispose();
-            }
+            } 
 
             return response;
         }

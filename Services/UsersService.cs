@@ -47,34 +47,41 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                // check if any available seats
-
-                Int32 SeatsMax  = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault().SeatsMax;
-				Int32 seatsUsed = context.Users    .Where(us => us.CustomerId.Equals(request.CustomerId)).Count();
-
-                if (seatsUsed < SeatsMax)
+				if (context.Users.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
 				{
-                    Users user = new Users()
-                    {
-                        CustomerId               = request.CustomerId,
-                        NameFirst                = request.NameFirst,
-						NameLast				 = request.NameLast,
-						Email					 = request.Email,
-                        PasswordHash             = ServerCryptographyService.SHA256(request.Password),
-                        AesKey                   = Convert.FromHexString(request.AesKey),
-                        Tools                    = request.Tools,
-                        DateAdded                = DateTime.UtcNow
-                    };
+					// check if any available seats
 
-                    context.Users.Add(user);
+					Int32 SeatsMax  = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault().SeatsMax;
+					Int32 seatsUsed = context.Users    .Where(us => us.CustomerId.Equals(request.CustomerId)).Count();
 
-                    context.SaveChanges();
+					if (seatsUsed < SeatsMax)
+					{
+						Users user = new Users()
+						{
+							CustomerId               = request.CustomerId,
+							NameFirst                = request.NameFirst,
+							NameLast				 = request.NameLast,
+							Email					 = request.Email,
+							PasswordHash             = ServerCryptographyService.SHA256(request.Password),
+							AesKey                   = Convert.FromHexString(request.AesKey),
+							Tools                    = request.Tools,
+							DateAdded                = DateTime.UtcNow
+						};
 
-                    response.UserId = user.Id;
+						context.Users.Add(user);
+
+						context.SaveChanges();
+
+						response.UserId = user.Id;
+					}
+					else
+					{
+						response.errorCode = ErrorCodes.errorNoSeats;
+					}
 				}
 				else
 				{
-					response.errorCode = ErrorCodes.errorNoSeats;
+					response.errorCode = ErrorCodes.errorEmailAlreadyExists;
 				}
 
 					context.Dispose();

@@ -36,5 +36,6 @@ public enum ErrorCodes
 	errorInvalidCustomerId	  = 10,
 	errorInvalidAdministratorId = 11,
 	errorInvalidLoginType     = 12,
+	errorEmailAlreadyExists   = 13,
 }
 
