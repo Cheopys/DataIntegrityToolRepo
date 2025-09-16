@@ -270,6 +270,9 @@ namespace DataIntegrityTool.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<short>("price")
+                        .HasColumnType("smallint");
+
                     b.Property<int>("scans")
                         .HasColumnType("integer");
 
