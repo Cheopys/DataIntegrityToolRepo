@@ -107,8 +107,6 @@ namespace DataIntegrityTool.Services
 					    context.Users.Add(user);
 				    }
 
-                    AddSubscription(customer.Id, 13, 0);
-
                     context.SaveChanges();
 				} // endif email is new
                 else
