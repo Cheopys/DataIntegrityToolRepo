@@ -376,5 +376,12 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(response);
 		}
 
+		[HttpPut, Route("AddSubscription")]
+		public AddSubscriptionResponse AddSubscription(Int32 CustomerId,
+													   Int32 SubscriptionId,
+													   Int32 Amount)
+		{
+			return CustomersService.AddSubscription(CustomerId, SubscriptionId, Amount);
+		}
 	}
 }
