@@ -402,23 +402,39 @@ namespace DataIntegrityTool.Services
 
             using (DataContext context = new())
             {
-                Customers?         customer     = context.Customers            .Where(cu => cu.Id        .Equals(CustomerId))    .FirstOrDefault();
-                SubscriptionTypes? subscription = context.SubscriptionTypes    .Where(st => st.Id        .Equals(subscriptionId)).FirstOrDefault();
-                CustomerSubscriptions custsub   = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId))    .FirstOrDefault();
+                Customers?             customer     = context.Customers            .Where(cu => cu.Id        .Equals(CustomerId))    .FirstOrDefault();
+                SubscriptionTypes?     subscription = context.SubscriptionTypes    .Where(st => st.Id        .Equals(subscriptionId)).FirstOrDefault();
+                CustomerSubscriptions? custsub      = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId))    .FirstOrDefault();
 
                 if (customer != null)
                 {
-                    // ExpirationDate is null for a subscription that hasn't been used yet
+                    // only to repaid old entries where a customer lacks a CustomerSubscription entry.
+
+                    if (custsub == null)
+                    {
+						SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(subscriptionId)).FirstOrDefault();
+
+                        custsub = new()
+                        {
+                            CustomerId     = customer.Id,
+                            SubscriptionId = subscriptionId,
+                            ExpirationDate = null
+                        };
+
+                        context.CustomerSubscriptions.Add(custsub);
+                        context.SaveChanges();  
+					}
+
+					// ExpirationDate is null for a subscription that hasn't been used yet
 
 					if (custsub.ExpirationDate    == null
                     &&  customer.SubscriptionTime != null)
 					{
-                        custsub.ExpirationDate = DateTime.UtcNow + (TimeSpan.FromDays(subscription.days) + customer.SubscriptionTime);
-						customer.SubscriptionTime = null;
+						customer.SubscriptionTime += TimeSpan.FromDays(subscription.days);
 					}
                     else
                     {
-						custsub.ExpirationDate += TimeSpan.FromDays(subscription.days);
+						custsub.ExpirationDate = DateTime.UtcNow + (TimeSpan.FromDays(subscription.days) + customer.SubscriptionTime);
 						customer.SubscriptionTime = null;
 					}
 
