@@ -195,7 +195,7 @@ namespace DataIntegrityTool.Controllers
 
 			if (SubscriptionType != null)
 			{
-				AddSubscriptionResponse response = CustomersService.AddSubscription(CustomerId, SubscriptionType.Value, Amount);
+				AddSubscriptionResponse response = CustomersService.AddSubscription(CustomerId, SubscriptionType.Value);
 
 				ScansAfter = response.ScansAfter;
 			}

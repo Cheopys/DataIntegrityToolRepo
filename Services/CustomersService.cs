@@ -83,14 +83,17 @@ namespace DataIntegrityTool.Services
 
 				    response.CustomerId = customer.Id;
 
-                    context.Add(new CustomerSubscriptions()
-                    {
-                        CustomerId     = customer.Id,
-					    SubscriptionId = request.SubscriptionId,
-					    ExpirationDate = null
-				    });
+					context.Add(new CustomerPayments()
+					{
+						CustomerId       = customer.Id,
+						Amount           = type.price,
+						Date             = DateTime.UtcNow,
+						SubscriptionType = type.Id,
+						Scans            = type.scans
+					});
 
-				    if (request.InitialUser)
+
+					if (request.InitialUser)
                     {
                         user = new Users()
                         {
@@ -391,8 +394,7 @@ namespace DataIntegrityTool.Services
         }
 
         public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
-															  Int32 subscriptionId,
-                                                              Int32 Amount)
+															  Int32 subscriptionId)
         {
             AddSubscriptionResponse response = new()
             {
@@ -446,7 +448,7 @@ namespace DataIntegrityTool.Services
                     context.Add(new CustomerPayments()
                     {
                         CustomerId       = customer.Id,
-                        Amount           = Amount,
+                        Amount           = subscription.price,
                         Date             = DateTime.UtcNow,
                         SubscriptionType = subscriptionId,
                         Scans            = null

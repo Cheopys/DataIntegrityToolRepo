@@ -292,7 +292,7 @@ namespace DataIntegrityTool.Services
         public static ErrorCodes ChangePasswordAnswer(LoginType loginType,
 													  Int32     primaryKey,
 													  Int32     token,
-													  string    passwordNew)
+													  string    passwordNewHash)
         {
 			ErrorCodes errorCode = ErrorCodes.errorNone;
 
@@ -306,7 +306,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (user.ChangePasswordToken.Equals(token))
 						{
-							user.PasswordHash        = ServerCryptographyService.SHA256(passwordNew);
+							user.PasswordHash = passwordNewHash; //'ServerCryptographyService.SHA256(passwordNew);
 							user.ChangePasswordToken = 0;
 						}
 						else
@@ -327,7 +327,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (customer.ChangePasswordToken.Equals(token))
 						{
-							customer.PasswordHash = ServerCryptographyService.SHA256(passwordNew);
+							customer.PasswordHash = passwordNewHash; //'ServerCryptographyService.SHA256(passwordNew);
 						}
 						else
 						{
@@ -349,7 +349,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (administrator.ChangePasswordToken.Equals(token))
 						{
-							administrator.PasswordHash = ServerCryptographyService.SHA256(passwordNew);
+							administrator.PasswordHash = passwordNewHash; //'ServerCryptographyService.SHA256(passwordNew);
 						}
 						else
 						{

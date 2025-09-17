@@ -7,6 +7,6 @@
 		public DateTime Date				{ get; set; }
 		public Int32	Amount				{ get; set; }
 		public Int32?   SubscriptionType	{ get; set; }
-		public Int16?   Scans				{ get; set; }
+		public Int32?   Scans				{ get; set; }
 	}
 }

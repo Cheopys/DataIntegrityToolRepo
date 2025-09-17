@@ -341,14 +341,14 @@ namespace DataIntegrityTool.Controllers
 			Aes aes = ServerCryptographyService.CreateAes();
 			WebLoginRequest request = new WebLoginRequest()
 			{
-				Email     = "cheopys@gmail.com",
-				Password  = "DIT",
+				Email = "cheopys@gmail.com",
+				Password = "DIT",
 				LoginType = LoginType.typeCustomer,
 				AesKeyHex = Convert.ToHexString(aes.Key)
 			};
 
 			string serialized = JsonSerializer.Serialize(request);
-			byte[] publicKey  = ServerCryptographyService.GetServerRSAPublicKey();
+			byte[] publicKey = ServerCryptographyService.GetServerRSAPublicKey();
 
 			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
 
@@ -378,10 +378,18 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("AddSubscription")]
 		public AddSubscriptionResponse AddSubscription(Int32 CustomerId,
-													   Int32 SubscriptionId,
-													   Int32 Amount)
+													   Int32 SubscriptionId)
 		{
-			return CustomersService.AddSubscription(CustomerId, SubscriptionId, Amount);
+			return CustomersService.AddSubscription(CustomerId, SubscriptionId);
+		}
+
+		[HttpPost, Route("ChangePassswordAnswer")]
+		public ErrorCodes ChangePasswordAnswer(LoginType	loginType,
+											   Int32		primaryKey,
+											   Int32		token,
+											   string		passwordNew)
+		{
+			return UsersService.ChangePasswordAnswer(loginType, primaryKey, token, passwordNew);
 		}
 	}
 }
