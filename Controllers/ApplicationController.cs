@@ -232,12 +232,6 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("ChangePasswordAnswer")]
-		/*
-		public ErrorCodes ChangePasswordAnswer([FromBody] EncryptionWrapperDITString wrapperString)
-		{
-			ChangePasswordRequest? request;
-			ServerCryptographyService.DecodeAndDecryptRequest<ChangePasswordRequest>(wrapperString.ToBinaryVersion(), out request);
-*/
 		public ErrorCodes ChangePasswordAnswer(LoginType logintype, //2
 											   Int32	 PrimaryKey,    // 135
 											   Int32	 Token,         // 797478
