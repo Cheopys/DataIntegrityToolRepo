@@ -187,7 +187,7 @@ namespace DataIntegrityTool.Services
 
 			byte[]? encrypted = Convert.FromBase64String(wrapper.encryptedData);//JsonSerializer.Deserialize<byte[]>(wrapper.encryptedRequest);
 
-			ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+			ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV); // uses the wrapper IV
 
 			// Create the streams used for encryption.
 
@@ -224,7 +224,7 @@ namespace DataIntegrityTool.Services
 			{
 				string json = JsonSerializer.Serialize(response);
 
-				ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+				ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV); // uses the wrapper IV
 
 				// Create the streams used for encryption.
 

@@ -58,6 +58,8 @@ namespace DataIntegrityTool.Controllers
 		}
 		// </snippet_WebLogin>
 
+		// retrieve a lost AES key; this is only for emergencies where fetched data must be decrypted, otherwise log in again and create a new AES
+
 		[HttpGet, Route("RecoverAESKey")]
 		[Produces("application/json")]
 		public async Task<RecoverAESKeyResponse> RecoverAESKey(RecoverAESKeyRequest request)
