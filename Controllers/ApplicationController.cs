@@ -155,21 +155,22 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPost, Route("ChangePasswordAsk")]
 		[Produces("application/json")]
-		public async Task<ChangePasswordAskResponse> ChangePasswordAsk(ChangePasswordAskRequest request)
+		public async Task<ChangePasswordAskResponse> ChangePasswordAsk(LoginType loginType, 
+																	   string    email)
 		{
 			ChangePasswordAskResponse response = new()
 			{
-				LoginType = request.LoginType,
+				LoginType = loginType,
 				ErrorCode = ErrorCodes.errorNone,
-				Email	  = request.Email,
+				Email	  = email,
 			};
 
 			using (DataContext context = new())
 			{
-				switch (request.LoginType)
+				switch (loginType)
 				{
 					case LoginType.typeUser:
-						Users? user = context.Users.Where(us => us.Email.Equals(request.Email)).FirstOrDefault();
+						Users? user = context.Users.Where(us => us.Email.Equals(email)).FirstOrDefault();
 						if (user != null)
 						{
 							response.PrimaryKey = user.Id;
@@ -181,7 +182,7 @@ namespace DataIntegrityTool.Controllers
 						break;
 
 					case LoginType.typeCustomer:
-						Customers? customer = context.Customers.Where(cus => cus.Email.Equals(request.Email)).FirstOrDefault();
+						Customers? customer = context.Customers.Where(cus => cus.Email.Equals(email)).FirstOrDefault();
 						if (customer != null)
 						{
 							response.PrimaryKey = customer.Id;
@@ -193,7 +194,7 @@ namespace DataIntegrityTool.Controllers
 						break;
 
 					case LoginType.typeAdministrator:
-						Administrators? administrator = context.Administrators.Where(ad => ad.Email.Equals(request.Email)).FirstOrDefault();
+						Administrators? administrator = context.Administrators.Where(ad => ad.Email.Equals(email)).FirstOrDefault();
 						if (administrator != null)
 						{
 							response.PrimaryKey = administrator.Id;
