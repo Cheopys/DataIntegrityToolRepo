@@ -440,7 +440,7 @@ namespace DataIntegrityTool.Services
 
 					customer.Scans += subscription.scans;
 
-                    response.Expiration = custsub.ExpirationDate.Value;
+                    response.Expiration = custsub.ExpirationDate;
                     response.ScansAfter = customer.Scans;
 
                     context.Add(new CustomerPayments()
