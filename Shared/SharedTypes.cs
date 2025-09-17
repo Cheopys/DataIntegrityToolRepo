@@ -212,19 +212,15 @@ public class RecoverAESKeyRequest
 
 public class ChangePasswordAskRequest
 {
-	public string Email		   { get; set; }
+	public string	 Email	   { get; set; }
 	public LoginType LoginType { get; set; } // 1 = User, 2 = Customer, 3 = Administrator
-	public string	 AesKeyHex { get; set; }
-	public string    AesIVHex { get; set; }
 }
 
 public class ChangePasswordAskResponse
 {
-    public Int32  PrimaryKey    { get; set; }
-	public LoginType LoginType  { get; set; }
-    public string NameFirst     { get; set; }
-    public string Namelast      { get; set; }
-	public string Email			{ get; set; }
-    public Int32 ChangePasswordToken	{ get; set; }
-    public ErrorCodes ErrorCode			{ get; set; }
+    public Int32	  PrimaryKey			{ get; set; }
+	public LoginType  LoginType				{ get; set; }
+	public string	  Email					{ get; set; }
+    public Int32	  ChangePasswordToken	{ get; set; }
+    public ErrorCodes ErrorCode				{ get; set; }
 }

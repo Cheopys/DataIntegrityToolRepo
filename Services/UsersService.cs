@@ -205,90 +205,6 @@ namespace DataIntegrityTool.Services
 
         // change password
 
-        public static ChangePasswordAskResponse ChangePasswordAsk(EncryptionWrapperDITString wrapperString)
-        {
-			ChangePasswordAskResponse response = new ChangePasswordAskResponse()
-			{
-				ErrorCode = ErrorCodes.errorNone
-			};
-            using (DataContext context = new())
-            {
-				if (wrapperString.type == LoginType.typeUser)
-				{
-					Users? user = context.Users.Where(us => us.Id.Equals(wrapperString.primaryKey)).FirstOrDefault();
-
-					if (user != null)
-					{
-						response.Namelast			 = user.NameLast;
-						response.NameFirst			 = user.NameFirst;
-						response.Email				 = user.Email;
-						response.ChangePasswordToken = (new Random()).Next() % 1000000;
-						response.PrimaryKey			 = wrapperString.primaryKey;
-						response.LoginType			 = wrapperString.type;
-
-						user.ChangePasswordToken = response.ChangePasswordToken;
-						context.SaveChanges();
-					}
-					else
-					{
-						response.ErrorCode = ErrorCodes.errorInvalidUserId;
-					}
-				}
-				else if (wrapperString.type == LoginType.typeCustomer)
-				{
-					Customers? customer = context.Customers.Where(us => us.Id.Equals(wrapperString.primaryKey)).FirstOrDefault();
-
-					if (customer != null)
-					{
-						response.Namelast			 = customer.NameLast;
-						response.NameFirst			 = customer.NameFirst;
-						response.Email				 = customer.Email;
-						response.ChangePasswordToken = (new Random()).Next() % 1000000;
-						response.PrimaryKey			 = wrapperString.primaryKey;
-						response.LoginType			 = wrapperString.type;
-
-						customer.ChangePasswordToken = response.ChangePasswordToken;
-						context.SaveChanges();
-					}
-					else
-					{
-						response.ErrorCode = ErrorCodes.errorInvalidCustomerId;
-					}
-				}
-				else if (wrapperString.type == LoginType.typeAdministrator)
-				{
-					Administrators? administrator = context.Administrators.Where(us => us.Id.Equals(wrapperString.primaryKey)).FirstOrDefault();
-
-					if (administrator != null)
-					{
-						response.Namelast			 = administrator.NameLast;
-						response.NameFirst			 = administrator.NameFirst;
-						response.Email				 = administrator.Email;
-						response.ChangePasswordToken = (new Random()).Next() % 1000000;
-						response.PrimaryKey			 = wrapperString.primaryKey;
-						response.LoginType			 = wrapperString.type;
-
-						administrator.ChangePasswordToken = response.ChangePasswordToken;
-						context.SaveChanges();
-					}
-					else
-					{
-						response.ErrorCode = ErrorCodes.errorInvalidAdministratorId;
-					}
-
-				}
-
-				if (response.ErrorCode == ErrorCodes.errorNone)
-				{
-					context.SaveChanges();
-				}
-
-				context.Dispose();
-            }
-
-            return response;
-		}
-
         public static ErrorCodes ChangePasswordAnswer(LoginType loginType,
 													  Int32     primaryKey,
 													  Int32     token,
@@ -307,12 +223,13 @@ namespace DataIntegrityTool.Services
 						if (user.ChangePasswordToken.Equals(token))
 						{
 							user.PasswordHash = passwordNewHash; //'ServerCryptographyService.SHA256(passwordNew);
-							user.ChangePasswordToken = 0;
 						}
 						else
 						{
 							errorCode = ErrorCodes.errorWrongToken;
 						}
+
+						user.ChangePasswordToken = 0;
 					}
 					else
 					{
@@ -327,7 +244,7 @@ namespace DataIntegrityTool.Services
 					{
 						if (customer.ChangePasswordToken.Equals(token))
 						{
-							customer.PasswordHash = passwordNewHash; //'ServerCryptographyService.SHA256(passwordNew);
+							customer.PasswordHash        = passwordNewHash; //'ServerCryptographyService.SHA256(passwordNew);
 						}
 						else
 						{

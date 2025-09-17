@@ -155,18 +155,14 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPost, Route("ChangePasswordAsk")]
 		[Produces("application/json")]
-		public async Task<string> ChangePasswordAsk([FromBody] string requestRSA)
+		public async Task<ChangePasswordAskResponse> ChangePasswordAsk(ChangePasswordAskRequest request)
 		{
-			ChangePasswordAskRequest request = ServerCryptographyService.DecryptRSA<ChangePasswordAskRequest>(requestRSA);
-			EncryptionWrapperDITString wrapperString = new()
+			ChangePasswordAskResponse response = new()
 			{
-				aesIVHex = request.AesIVHex,
-				type	 = request.LoginType
+				LoginType = request.LoginType,
+				ErrorCode = ErrorCodes.errorNone,
+				Email	  = request.Email,
 			};
-
-			byte[] aeskey = Convert.FromHexString(request.AesKeyHex);
-
-			ErrorCodes error = ErrorCodes.errorNone;
 
 			using (DataContext context = new())
 			{
@@ -176,12 +172,11 @@ namespace DataIntegrityTool.Controllers
 						Users? user = context.Users.Where(us => us.Email.Equals(request.Email)).FirstOrDefault();
 						if (user != null)
 						{
-							user.AesKey = aeskey;
-							wrapperString.primaryKey = user.Id;
+							response.PrimaryKey = user.Id;
 						}
 						else
 						{
-							error = ErrorCodes.errorInvalidUserId;
+							response.ErrorCode = ErrorCodes.errorInvalidUserId;
 						}
 						break;
 
@@ -189,12 +184,11 @@ namespace DataIntegrityTool.Controllers
 						Customers? customer = context.Customers.Where(cus => cus.Email.Equals(request.Email)).FirstOrDefault();
 						if (customer != null)
 						{
-							customer.AesKey = aeskey;
-							wrapperString.primaryKey = customer.Id;
+							response.PrimaryKey = customer.Id;
 						}
 						else
 						{
-							error = ErrorCodes.errorInvalidCustomerId;
+							response.ErrorCode = ErrorCodes.errorInvalidCustomerId;
 						}
 						break;
 
@@ -202,17 +196,16 @@ namespace DataIntegrityTool.Controllers
 						Administrators? administrator = context.Administrators.Where(ad => ad.Email.Equals(request.Email)).FirstOrDefault();
 						if (administrator != null)
 						{
-							administrator.AesKey	 = aeskey;
-							wrapperString.primaryKey = administrator.Id;
+							response.PrimaryKey = administrator.Id;
 						}
 						else
 						{
-							error = ErrorCodes.errorInvalidUserId;
+							response.ErrorCode = ErrorCodes.errorInvalidAdministratorId;
 						}
 						break;
 
 					default:
-						error = ErrorCodes.errorInvalidLoginType;
+						response.ErrorCode = ErrorCodes.errorInvalidLoginType;
 						break;
 				}
 
@@ -220,36 +213,16 @@ namespace DataIntegrityTool.Controllers
 				context.Dispose();		
 			}
 
-			ChangePasswordAskResponse response;
-
-			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
+			if (response.ErrorCode == ErrorCodes.errorNone)
 			{
-				primaryKey	= wrapperString.primaryKey,
-				type		= wrapperString.type,
-				aesIV		= Convert.FromHexString(wrapperString.aesIVHex)
-			};
-
-			if (error == ErrorCodes.errorNone)
-			{
-				response = UsersService.ChangePasswordAsk(wrapperString);
-
-				response.ErrorCode = error;
-			}
-			else
-			{
-				response = new ChangePasswordAskResponse()
+				do
 				{
-					PrimaryKey			= 0,
-					LoginType			= request.LoginType,
-					Email				= request.Email,
-					NameFirst			= String.Empty,
-					Namelast			= String.Empty,
-					ChangePasswordToken = 0,
-					ErrorCode			= error
-				};
+					response.ChangePasswordToken = (new Random()).Next() % 1000000;
+				}
+				while (response.ChangePasswordToken.ToString().Length < 6);
 			}
 
-			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, response);
+			return response;
 		}
 
 		[HttpPost, Route("ChangePasswordAnswer")]
