@@ -165,6 +165,13 @@ namespace DataIntegrityTool.Controllers
 				Email	  = email,
 			};
 
+			do
+			{
+				response.ChangePasswordToken = (new Random()).Next() % 1000000;
+			}
+			while (response.ChangePasswordToken.ToString().Length < 6);
+
+
 			using (DataContext context = new())
 			{
 				switch (loginType)
@@ -173,6 +180,7 @@ namespace DataIntegrityTool.Controllers
 						Users? user = context.Users.Where(us => us.Email.Equals(email)).FirstOrDefault();
 						if (user != null)
 						{
+							user.ChangePasswordToken = response.ChangePasswordToken;
 							response.PrimaryKey = user.Id;
 						}
 						else
@@ -185,6 +193,7 @@ namespace DataIntegrityTool.Controllers
 						Customers? customer = context.Customers.Where(cus => cus.Email.Equals(email)).FirstOrDefault();
 						if (customer != null)
 						{
+							customer.ChangePasswordToken = response.ChangePasswordToken;
 							response.PrimaryKey = customer.Id;
 						}
 						else
@@ -197,6 +206,7 @@ namespace DataIntegrityTool.Controllers
 						Administrators? administrator = context.Administrators.Where(ad => ad.Email.Equals(email)).FirstOrDefault();
 						if (administrator != null)
 						{
+							administrator.ChangePasswordToken = response.ChangePasswordToken;
 							response.PrimaryKey = administrator.Id;
 						}
 						else
@@ -216,11 +226,6 @@ namespace DataIntegrityTool.Controllers
 
 			if (response.ErrorCode == ErrorCodes.errorNone)
 			{
-				do
-				{
-					response.ChangePasswordToken = (new Random()).Next() % 1000000;
-				}
-				while (response.ChangePasswordToken.ToString().Length < 6);
 			}
 
 			return response;
