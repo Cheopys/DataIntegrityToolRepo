@@ -287,8 +287,14 @@ namespace DataIntegrityTool.Services
                                                                   .ToList();
             usage.ScanCount = metereds.Count();
 
-            earliest = metereds.Min(lm => lm.TimeBegun.Value);
-
+            if (usage.ScanCount > 0)
+            {
+                earliest = metereds.Min(lm => lm.TimeBegun.Value);
+            }
+            else
+            {
+                earliest = DateTime.MinValue;
+            }
             return usage;
         }
 
