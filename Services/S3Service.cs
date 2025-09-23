@@ -1,9 +1,10 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using DataIntegrityTool.Schema;
+using NLog;
 using System.IO;
 using System.Net;
 using System.Text;
-using NLog;
 
 namespace DataIntegrityTool.Services
 {
@@ -29,7 +30,9 @@ namespace DataIntegrityTool.Services
 
 		// chat messages
 
-		public static async Task StoreTool(byte[] tool, string tooltype)
+		public static async Task StoreTool(OSType		 ostype,
+										   InterfaceType interfacetype,
+										   byte[]		 tool)
 		{
 			using (MemoryStream memstream = new())
 			{
@@ -38,8 +41,8 @@ namespace DataIntegrityTool.Services
 
 				PutObjectRequest request = new()
 				{
-					BucketName = "dataintegritytool",
-					Key = "tool",
+					BucketName	= "dataintegritytool",
+					Key			= $"tool{ostype}{interfacetype}",
 					InputStream = memstream
 				};
 
@@ -47,14 +50,15 @@ namespace DataIntegrityTool.Services
 			}
 		}
 
-		public static async Task<byte[]> GetTool()
+		public static async Task<byte[]> GetTool(OSType		   ostype,
+											     InterfaceType interfacetype)
 		{
 			byte[] tool = null;
 
 			GetObjectRequest request = new()
 			{
 				BucketName = "dataintegritytool",
-				Key = "tool"
+				Key		   = $"tool{ostype}{interfacetype}",
 			};
 
 			using (GetObjectResponse response = await S3client.GetObjectAsync(request))

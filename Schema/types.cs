@@ -39,3 +39,15 @@ public enum ErrorCodes
 	errorEmailAlreadyExists   = 13,
 }
 
+public enum OSType
+{
+	Windows = 1,
+	Mac		= 2,
+	Linux	= 3
+}
+
+public enum InterfaceType
+{
+	GUI = 1,
+	CLI	= 2
+}
