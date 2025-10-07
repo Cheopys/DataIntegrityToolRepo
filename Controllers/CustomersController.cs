@@ -128,10 +128,10 @@ namespace DataIntegrityTool.Controllers
 		{
 			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
 			{
-				primaryKey = wrapperString.primaryKey,
-				type = wrapperString.type,
-				encryptedData = wrapperString.encryptedData,
-				aesIV = Convert.FromHexString(wrapperString.aesIVHex)
+				primaryKey		= wrapperString.primaryKey,
+				type			= LoginType.typeCustomer,
+				encryptedData	= wrapperString.encryptedData,
+				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
 			};
 
 			UpdateCustomerRequest request;

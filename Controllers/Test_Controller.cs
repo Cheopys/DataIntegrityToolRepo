@@ -202,7 +202,7 @@ namespace DataIntegrityTool.Controllers
 			EncryptionWrapperDIT wrapper = new()
 			{
 				type = LoginType.typeUser,
-				primaryKey = 99,
+				primaryKey = request.UserId,
 				aesIV = ServerCryptographyService.CreateAes().IV,
 			};
 

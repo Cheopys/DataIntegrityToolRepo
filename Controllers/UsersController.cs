@@ -97,7 +97,7 @@ namespace DataIntegrityTool.Controllers
 			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
 			{
 				primaryKey		= wrapperString.primaryKey,
-				type			= wrapperString.type,
+				type			= LoginType.typeUser,
 				encryptedData	= wrapperString.encryptedData,
 				aesIV			= Convert.FromHexString(wrapperString.aesIVHex)
 			};
