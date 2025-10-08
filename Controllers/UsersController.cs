@@ -108,7 +108,9 @@ namespace DataIntegrityTool.Controllers
 
 			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
 
-			ret += $"decrypted request PK = {request.UserId}; ";
+			ret += $"decrypted request PK = {request.UserId}, first name = {request.NameFirst}; ";
+
+			request.UserId = wrapper.primaryKey;
 
 			return ret + UsersService.UpdateUser(request);
 		}
