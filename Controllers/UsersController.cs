@@ -92,8 +92,10 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("UpdateUser")]
-		public string UpdateUser([FromBody] EncryptionWrapperDITString wrapperString)
+		public string UpdateUser(EncryptionWrapperDITString wrapperString)
 		{
+			string ret = $"incoming primary key is {wrapperString.primaryKey}; ";
+
 			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
 			{
 				primaryKey		= wrapperString.primaryKey,
@@ -106,7 +108,9 @@ namespace DataIntegrityTool.Controllers
 
 			ServerCryptographyService.DecodeAndDecryptRequest<UpdateUserRequest>(wrapper, out request);
 
-			return UsersService.UpdateUser(request);
+			ret += $"decrypted request PK = {request.UserId}; ";
+
+			return ret + UsersService.UpdateUser(request);
 		}
 
 		[HttpGet, Route("GetUsersForCustomer")]
