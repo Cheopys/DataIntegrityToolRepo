@@ -34,6 +34,7 @@ namespace DataIntegrityTool.Services
 		{
 			LoginResponse response = new()
 			{
+				loginType = LoginType.typeUser,
 				errorcode = ErrorCodes.errorNone
 			};
 
