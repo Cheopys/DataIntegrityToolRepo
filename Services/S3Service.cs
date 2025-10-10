@@ -28,7 +28,7 @@ namespace DataIntegrityTool.Services
 		
 		static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.USWest1);
 
-		// chat messages
+		/*
 
 		public static async Task StoreTool(OSType		 ostype,
 										   InterfaceType interfacetype,
@@ -49,16 +49,16 @@ namespace DataIntegrityTool.Services
 				PutObjectResponse response = await S3client.PutObjectAsync(request);
 			}
 		}
-
-		public static async Task<byte[]> GetTool(OSType		   ostype,
-											     InterfaceType interfacetype)
+*/
+		public static async Task<byte[]> GetTool(InterfaceType interfacetype,
+												 OSType        ostype)
 		{
 			byte[] tool = null;
 
 			GetObjectRequest request = new()
 			{
 				BucketName = "dataintegritytool",
-				Key		   = $"tool{ostype}{interfacetype}",
+				Key		   = $"{ostype.ToString()}/{interfacetype.ToString()}",
 			};
 
 			using (GetObjectResponse response = await S3client.GetObjectAsync(request))

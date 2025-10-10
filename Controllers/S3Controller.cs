@@ -7,10 +7,10 @@ namespace DataIntegrityTool.Controllers
 	public class S3Controller : ControllerBase
 	{
 		[HttpGet, Route("DownloadTool")]
-		public async Task<byte[]> DownloadTool(OSType		 ostype, 
-											   InterfaceType interfacetype)
+		public async Task<byte[]> DownloadTool(InterfaceType interfacetype,
+											   OSType		 ostype)
 		{
-			return await S3Service.GetTool(ostype, interfacetype);
+			return await S3Service.GetTool(interfacetype, ostype);
 		}
 
 		/*
