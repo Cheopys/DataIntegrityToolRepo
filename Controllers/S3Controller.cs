@@ -10,7 +10,7 @@ namespace DataIntegrityTool.Controllers
 		public async Task<byte[]> DownloadTool(InterfaceType interfacetype,
 											   OSType		 ostype)
 		{
-			return await S3Service.GetTool(interfacetype, ostype);
+			return await S3Service.GetTool("GUI", "Windows");
 		}
 
 		/*

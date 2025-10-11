@@ -50,15 +50,15 @@ namespace DataIntegrityTool.Services
 			}
 		}
 */
-		public static async Task<byte[]> GetTool(InterfaceType interfacetype,
-												 OSType        ostype)
+		public static async Task<byte[]> GetTool(string interfacetype,
+												 string ostype)
 		{
 			byte[] tool = null;
 
 			GetObjectRequest request = new()
 			{
 				BucketName = "dataintegritytool",
-				Key		   = $"{ostype.ToString()}/{interfacetype.ToString()}",
+				Key		   = $"{interfacetype}/{ostype}",
 			};
 
 			using (GetObjectResponse response = await S3client.GetObjectAsync(request))
