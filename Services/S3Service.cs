@@ -58,7 +58,7 @@ namespace DataIntegrityTool.Services
 			GetObjectRequest request = new()
 			{
 				BucketName = "dataintegritytool",
-				Key		   = $"{interfacetype}/{ostype}",
+				Key		   = "katchano_gui_win.exe",
 			};
 
 			using (GetObjectResponse response = await S3client.GetObjectAsync(request))
