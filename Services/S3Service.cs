@@ -70,7 +70,7 @@ namespace DataIntegrityTool.Services
 						// there is no client method to fetch from S3 directly to binary
 						// the entry must be written to a file and then loaded
 
-						string filepath = $"/home/ec2-user/tool/";
+						string filepath = $"/home/ec2-user/tool/{request.Key}";
 
 						response.WriteResponseStreamToFileAsync(filepath, false, CancellationToken.None);
 
