@@ -26,7 +26,7 @@ namespace DataIntegrityTool.Services
 			logger = LogManager.GetCurrentClassLogger();
 		}
 		
-		static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.USWest1);
+		static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1);
 
 		/*
 
