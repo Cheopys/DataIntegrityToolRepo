@@ -31,7 +31,7 @@ namespace DataIntegrityTool.Controllers
 			{
 				UserId      = UserId,
 				Licensetype = LicenseType,
-				Tooltype    = ToolType
+				Tooltype    = 0
 			};
 
             return await SessionService.BeginSession(request);

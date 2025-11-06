@@ -47,7 +47,12 @@ namespace DataIntegrityTool.Services
 
         public static RegisterCustomerResponse RegisterCustomer(RegisterCustomerRequest request)
         {
-            RegisterCustomerResponse response = new()
+            request.Tools = new List<ToolTypes>()
+            {
+                0
+            };
+
+			RegisterCustomerResponse response = new()
             {
                 ErrorCode = ErrorCodes.errorNone
             };
