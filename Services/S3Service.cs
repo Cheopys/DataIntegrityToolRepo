@@ -93,7 +93,6 @@ namespace DataIntegrityTool.Services
 
 			return Convert.ToBase64String(tool);
 		}
-		
-		private  static string
+
 	}
 }
