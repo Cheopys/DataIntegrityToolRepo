@@ -77,8 +77,8 @@ namespace DataIntegrityTool.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<short?>("Scans")
-                        .HasColumnType("smallint");
+                    b.Property<int?>("Scans")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("SubscriptionType")
                         .HasColumnType("integer");
@@ -340,9 +340,6 @@ namespace DataIntegrityTool.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.PrimitiveCollection<int[]>("Tools")
-                        .HasColumnType("integer[]");
 
                     b.HasKey("Id");
 

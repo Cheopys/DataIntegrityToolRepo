@@ -88,6 +88,8 @@ namespace DataIntegrityTool.Services
 
 				    response.CustomerId = customer.Id;
 
+                    AddSubscription(customer.Id, request.SubscriptionId);
+                    /*
 					context.CustomerPayments.Add(new CustomerPayments()
 					{
 						CustomerId       = customer.Id,
@@ -96,7 +98,7 @@ namespace DataIntegrityTool.Services
 						SubscriptionType = type.Id,
 						Scans            = type.scans
 					});
-
+                    */
 
 					if (request.InitialUser)
                     {
@@ -444,7 +446,7 @@ namespace DataIntegrityTool.Services
                         if (subscriptionId == 13)
                         {
                             continueOK = false;
-                            response.Error = ErrorCodes.errorAlreadyOnTrial;
+                            response.Error = ErrorCodes.errorAlreadySubscribed;
                         }
                     }
 
