@@ -50,16 +50,42 @@ namespace DataIntegrityTool.Services
 			}
 		}
 */
-		public static async Task<string> GetTool(string interfacetype,
-												 string ostype)
+		public static async Task<string> GetTool(InterfaceType interfacetype,
+											     OSType		   ostype)
 		{
 			byte[] tool = null;
+			string os = null;
+			string key = null;
+
+			switch(ostype)
+			{
+				case OSType.Windows:
+					os = "win";
+					break;
+
+				case OSType.Mac:
+					os = "mac";
+					break;
+
+				case OSType.Linux:
+					os = "linux";
+					break;
+			}
+
+			if (interfacetype == InterfaceType.GUI)
+			{
+				key = $"katchano_{os}_gui.zip";
+			}
+			else
+			{
+				key = $"katchano_{os}_api.zip";
+			}
 
 			GetObjectRequest request = new()
-			{
-				BucketName = "dataintegritytool",
-				Key		   = "gui_win.exe"
-			};
+				{
+					BucketName	= "dataintegritytool",
+					Key			= key
+				};
 
 			using (GetObjectResponse response = await S3client.GetObjectAsync(request))
 			{

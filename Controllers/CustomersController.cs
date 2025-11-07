@@ -186,29 +186,31 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("AddCustomerPayment")]
-		public Int32  AddCustomerPayment(Int32 CustomerId,
-										Int32  Amount,
-										Int32? SubscriptionType,
-										Int16? Scans)
+		public AddSubscriptionResponse AddCustomerPayment(Int32 CustomerId,
+														  Int32  Amount,
+														  Int32? SubscriptionType,
+														  Int16? Scans)
 		{
-			Int32 ScansAfter = 0;
+			AddSubscriptionResponse response = new()
+			{
+				CustomerId = CustomerId,
+				Error      = ErrorCodes.errorNone,
+			};
 
 			if (SubscriptionType != null)
 			{
-				AddSubscriptionResponse response = CustomersService.AddSubscription(CustomerId, SubscriptionType.Value);
-
-				ScansAfter = response.ScansAfter;
+				response = CustomersService.AddSubscription(CustomerId, SubscriptionType.Value);
 			}
 
 			if (Scans != null
 			&&  Scans  > 0)
 			{
-				TopupScansResponse response = CustomersService.TopUpScans(CustomerId, Scans.Value, Amount);
+				TopupScansResponse responseTU = CustomersService.TopUpScans(CustomerId, Scans.Value, Amount);
 
-				ScansAfter = response.ScansAfter;
+				response.ScansAfter = responseTU.ScansAfter;
 			}
 
-			return ScansAfter;
+			return response;
 		}
 
 		[HttpGet, Route("GetCustomerPayments")]
