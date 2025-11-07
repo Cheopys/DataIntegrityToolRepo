@@ -88,7 +88,7 @@ namespace DataIntegrityTool.Services
 
 				    response.CustomerId = customer.Id;
 
-					context.Add(new CustomerPayments()
+					context.CustomerPayments.Add(new CustomerPayments()
 					{
 						CustomerId       = customer.Id,
 						Amount           = type.price,
@@ -109,7 +109,7 @@ namespace DataIntegrityTool.Services
                             NameLast     = request.NameLast,
                             PasswordHash = ServerCryptographyService.SHA256(request.Password),
                             DateAdded    = DateTime.UtcNow,
-                            Tools        = request.Tools,
+                            //Tools        = request.Tools,
                         };
 
 					    context.Users.Add(user);

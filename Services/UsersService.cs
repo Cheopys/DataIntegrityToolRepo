@@ -64,7 +64,7 @@ namespace DataIntegrityTool.Services
 							Email					 = request.Email,
 							PasswordHash             = ServerCryptographyService.SHA256(request.Password),
 							AesKey                   = Convert.FromHexString(request.AesKey),
-							Tools                    = request.Tools,
+							//Tools                    = request.Tools,
 							DateAdded                = DateTime.UtcNow
 						};
 
@@ -118,11 +118,12 @@ namespace DataIntegrityTool.Services
 
 				if (user != null)
 				{
+					/*
 					if (request.Tools != null)
 					{
 						user.Tools = request.Tools;
 					}
-
+					*/
 					if (request.NameFirst != null)
 					{
 						user.NameFirst = request.NameFirst;

@@ -96,7 +96,7 @@ namespace DataIntegrityTool.Services
 				{
 					logger.Info($"userId = {user.Id}");
 
-					if (user.Tools.Contains(request.Tooltype))
+					if (customer.Tools.Contains(request.Tooltype))
 					{
 						if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
 						{

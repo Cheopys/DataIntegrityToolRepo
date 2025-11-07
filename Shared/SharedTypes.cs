@@ -169,7 +169,7 @@ public class UpdateUserRequest
 	public string? NameLast          { get; set; }
 	public string? Email             { get; set; }
 	public string? Password          { get; set; }
-	public List<ToolTypes>? Tools    { get; set; }
+	//public List<ToolTypes>? Tools    { get; set; }
 }
 
 public class ChangePasswordRequest
