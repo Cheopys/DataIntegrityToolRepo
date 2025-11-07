@@ -87,36 +87,42 @@ namespace DataIntegrityTool.Services
 					Key			= key
 				};
 
-			using (GetObjectResponse response = await S3client.GetObjectAsync(request))
-			{
-				if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-				{
-					try
-					{
-						// there is no client method to fetch from S3 directly to binary
-						// the entry must be written to a file and then loaded
+			string filepath = $"/home/ec2-user/tool/{request.Key}";
+			await S3client.DownloadToFilePathAsync(request.BucketName, request.Key, filepath, new Dictionary<string, Object>());
+			tool = File.ReadAllBytes(filepath);
 
-						string filepath = $"/home/ec2-user/tool/{request.Key}";
+			File.Delete(filepath);
+			/*
+						using (GetObjectResponse response = await S3client.GetObjectAsync(request))
+						{
+							if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+							{
+								try
+								{
+									// there is no client method to fetch from S3 directly to binary
+									// the entry must be written to a file and then loaded
 
-						await response.WriteResponseStreamToFileAsync(filepath, false, CancellationToken.None);
+									string filepath = $"/home/ec2-user/tool/{request.Key}";
 
-						tool = File.ReadAllBytes(filepath);
+									await response.WriteResponseStreamToFileAsync(filepath, false, CancellationToken.None);
 
-						File.Delete(filepath);
-					}
-					catch (AmazonS3Exception exception)
-					{
-						logger.ForExceptionEvent(exception);
-					}
-				}
-				else
-				{
-					logger.Error($"HTTP Status {response.HttpStatusCode}");
-				}
+									tool = File.ReadAllBytes(filepath);
 
-				response.Dispose();
-			}
+									File.Delete(filepath);
+								}
+								catch (AmazonS3Exception exception)
+								{
+									logger.ForExceptionEvent(exception);
+								}
+							}
+							else
+							{
+								logger.Error($"HTTP Status {response.HttpStatusCode}");
+							}
 
+							response.Dispose();
+						}
+			*/
 			return Convert.ToBase64String(tool);
 		}
 
