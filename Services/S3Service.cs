@@ -98,7 +98,7 @@ namespace DataIntegrityTool.Services
 
 						string filepath = $"/home/ec2-user/tool/{request.Key}";
 
-						response.WriteResponseStreamToFileAsync(filepath, false, CancellationToken.None);
+						await response.WriteResponseStreamToFileAsync(filepath, false, CancellationToken.None);
 
 						tool = File.ReadAllBytes(filepath);
 
