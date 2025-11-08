@@ -52,12 +52,13 @@ namespace DataIntegrityTool.Services
 			}
 		}
 */
-		public static async Task GetTool(InterfaceType interfacetype,
+		public static async Task<string> GetTool(InterfaceType interfacetype,
 										OSType		   ostype)
 		{
 			byte[] tool = null;
 			string os = null;
 			string key = null;
+			string ret = String.Empty;
 
 
 			switch(ostype)
@@ -107,7 +108,17 @@ namespace DataIntegrityTool.Services
 			{
 				TransferUtility fileTransferUtility = new TransferUtility(S3client);
 
-				fileTransferUtility.Download($"C:\\{key}", "dataintegritytool", key);
+				try
+				{
+					fileTransferUtility.Download($"C:\\{key}", "dataintegritytool", key);
+
+					ret = $"file {key} downloaded";
+
+				}
+				catch (Exception ex)
+				{
+					ret = $"file {key} download failed: {ex.Message}";
+				}
 
 				S3client.Dispose();
 			}
@@ -156,6 +167,8 @@ namespace DataIntegrityTool.Services
 						}
 			*/
 			//return Convert.ToBase64String(tool);
+
+			return ret;
 		}
 
 	}
