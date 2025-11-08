@@ -7,6 +7,7 @@ namespace DataIntegrityTool.Controllers
 	public class S3Controller : ControllerBase
 	{
 		[HttpGet, Route("DownloadTool")]
+		[Produces("application/octet-stream")]
 		public async Task<byte[]> DownloadTool(InterfaceType interfacetype,
 											   OSType		 ostype)
 		{
