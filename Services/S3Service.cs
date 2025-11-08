@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using Amazon.Runtime.Internal;
+using Amazon.S3;
 using Amazon.S3.Model;
 using DataIntegrityTool.Schema;
 using NLog;
@@ -82,24 +83,28 @@ namespace DataIntegrityTool.Services
 				key = $"katchano_{os}_api.zip";
 			}
 
-			GetObjectRequest request = new()
+			string filepath = $"/home/ec2-user/tool/{key}";
+
+			if (File.Exists(filepath) == false)
+			{
+				GetObjectRequest request = new()
 				{
-					BucketName	= "dataintegritytool",
-					Key			= key
+					BucketName = "dataintegritytool",
+					Key = key
 				};
 
-			string filepath = $"/home/ec2-user/tool/{request.Key}";
 
-			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
-			{
-				await S3client.DownloadToFilePathAsync(request.BucketName, request.Key, filepath, new Dictionary<string, Object>());
+				using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
+				{
+					await S3client.DownloadToFilePathAsync(request.BucketName, request.Key, filepath, new Dictionary<string, Object>());
 
-				S3client.Dispose();
+					S3client.Dispose();
+				}
 			}
 
 			tool = await File.ReadAllBytesAsync(filepath);
 
-			File.Delete(filepath);
+			//File.Delete(filepath);
 
 			/*
 						using (GetObjectResponse response = await S3client.GetObjectAsync(request))
