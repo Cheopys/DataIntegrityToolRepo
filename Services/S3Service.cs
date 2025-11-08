@@ -51,7 +51,7 @@ namespace DataIntegrityTool.Services
 			}
 		}
 */
-		public static async Task<string> GetTool(InterfaceType interfacetype,
+		public static async Task<byte[]> GetTool(InterfaceType interfacetype,
 											     OSType		   ostype)
 		{
 			byte[] tool = null;
@@ -137,7 +137,7 @@ namespace DataIntegrityTool.Services
 							response.Dispose();
 						}
 			*/
-			return Convert.ToBase64String(tool);
+			return tool; // Convert.ToBase64String(tool);
 		}
 
 	}
