@@ -51,7 +51,7 @@ namespace DataIntegrityTool.Services
 			}
 		}
 */
-		public static async Task<byte[]> GetTool(InterfaceType interfacetype,
+		public static async Task<string> GetTool(InterfaceType interfacetype,
 											     OSType		   ostype)
 		{
 			byte[] tool = null;
@@ -102,7 +102,15 @@ namespace DataIntegrityTool.Services
 				}
 			}
 
-			tool = await File.ReadAllBytesAsync(filepath);
+			using (FileStream file = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous))
+			{
+				tool = new byte[file.Length];
+				await file.ReadAsync(tool, 0, (int)file.Length);
+
+				file.Dispose();
+			}
+
+			//tool = await File.ReadAllBytesAsync(filepath);
 
 			//File.Delete(filepath);
 
@@ -137,7 +145,7 @@ namespace DataIntegrityTool.Services
 							response.Dispose();
 						}
 			*/
-			return tool; // Convert.ToBase64String(tool);
+			return Convert.ToBase64String(tool);
 		}
 
 	}

@@ -8,7 +8,7 @@ namespace DataIntegrityTool.Controllers
 	{
 		[HttpGet, Route("DownloadTool")]
 		[Produces("application/octet-stream")]
-		public async Task<byte[]> DownloadTool(InterfaceType interfacetype,
+		public async Task<string> DownloadTool(InterfaceType interfacetype,
 											   OSType		 ostype)
 		{
 			return await S3Service.GetTool(interfacetype, ostype);
