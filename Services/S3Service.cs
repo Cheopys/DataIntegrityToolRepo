@@ -26,7 +26,7 @@ namespace DataIntegrityTool.Services
 			logger = LogManager.GetCurrentClassLogger();
 		}
 		
-		static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1);
+		//static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1);
 
 		/*
 
@@ -56,6 +56,7 @@ namespace DataIntegrityTool.Services
 			byte[] tool = null;
 			string os = null;
 			string key = null;
+
 
 			switch(ostype)
 			{
@@ -88,10 +89,18 @@ namespace DataIntegrityTool.Services
 				};
 
 			string filepath = $"/home/ec2-user/tool/{request.Key}";
-			await S3client.DownloadToFilePathAsync(request.BucketName, request.Key, filepath, new Dictionary<string, Object>());
-			tool = File.ReadAllBytes(filepath);
+
+			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
+			{
+				await S3client.DownloadToFilePathAsync(request.BucketName, request.Key, filepath, new Dictionary<string, Object>());
+
+				S3client.Dispose();
+			}
+
+			tool = await File.ReadAllBytesAsync(filepath);
 
 			File.Delete(filepath);
+
 			/*
 						using (GetObjectResponse response = await S3client.GetObjectAsync(request))
 						{
