@@ -107,7 +107,7 @@ namespace DataIntegrityTool.Services
 			{
 				TransferUtility fileTransferUtility = new TransferUtility(S3client);
 
-				fileTransferUtility.Download($"G:\\Downloads\\{key}", "dataintegritytool", filepath);
+				fileTransferUtility.Download($"G:\\Downloads\\{key}", "dataintegritytool", key);
 
 				S3client.Dispose();
 			}
