@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime.Internal;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Transfer;
 using DataIntegrityTool.Schema;
 using NLog;
 using System.IO;
@@ -51,8 +52,8 @@ namespace DataIntegrityTool.Services
 			}
 		}
 */
-		public static async Task<string> GetTool(InterfaceType interfacetype,
-											     OSType		   ostype)
+		public static async Task GetTool(InterfaceType interfacetype,
+										OSType		   ostype)
 		{
 			byte[] tool = null;
 			string os = null;
@@ -102,6 +103,15 @@ namespace DataIntegrityTool.Services
 				}
 			}
 
+			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
+			{
+				TransferUtility fileTransferUtility = new TransferUtility(S3client);
+
+				fileTransferUtility.Download($"G:\\Downloads\\{key}", "dataintegritytool", filepath);
+
+				S3client.Dispose();
+			}
+			/*
 			using (FileStream file = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous))
 			{
 				tool = new byte[file.Length];
@@ -145,7 +155,7 @@ namespace DataIntegrityTool.Services
 							response.Dispose();
 						}
 			*/
-			return Convert.ToBase64String(tool);
+			//return Convert.ToBase64String(tool);
 		}
 
 	}
