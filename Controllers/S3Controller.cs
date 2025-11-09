@@ -15,11 +15,11 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("UploadTool")]
-		public async Task UploadTool(OSType			ostype,
+		public async Task<string> UploadTool(OSType	ostype,
 									 InterfaceType	interfacetype, 
-									 string			toolB64)
+									 string			pathSource)
 		{
-			await S3Service.StoreTool(ostype, interfacetype, toolB64);
+			return await S3Service.StoreTool(ostype, interfacetype, pathSource);
 		}
 	}
 }

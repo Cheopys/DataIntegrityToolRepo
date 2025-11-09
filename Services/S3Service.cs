@@ -1,10 +1,11 @@
-﻿using System;
-using Amazon.Runtime.Internal;
+﻿using Amazon.Runtime.Internal;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using DataIntegrityTool.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -13,43 +14,34 @@ namespace DataIntegrityTool.Services
 {
 	public static class S3Service
 	{
-		public static async Task StoreTool(OSType		 ostype,
+		public static async Task<string> StoreTool(OSType		 ostype,
 										   InterfaceType interfacetype,
-										   string		 toolB64)
+										   string		 pathSource)
 		{
-			byte[] tool = Convert.FromBase64String(toolB64);
+			string key = CreateToolKey(interfacetype, ostype);
+			string ret = String.Empty;
 
-			using (MemoryStream memstream = new())
+			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
 			{
-				memstream.Write(tool, 0, tool.Length);
-				memstream.Position = 0;
-
-				PutObjectRequest request = new()
-				{
-					BucketName	= "dataintegritytool",
-					Key			= CreateToolKey(interfacetype, ostype),
-					InputStream = memstream
-				};
-
-				using (AmazonS3Client S3client = new())
+				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
 				{
 					try
 					{
-						DeleteObjectRequest requestDelete = new()
-						{
-							BucketName	= request.BucketName,
-							Key			= request.Key,
-						};
-
-						await S3client.DeleteObjectAsync(requestDelete);
+						fileTransferUtility.Upload(Path.Combine(pathSource, key), "dataintegritytool", key);
+						ret = $"file {key} uploaded";
 					}
 					catch (Exception ex)
 					{
+						ret = $"file {key} upload failed: {ex.Message}";
 					}
 
-					PutObjectResponse response = await S3client.PutObjectAsync(request);
+					fileTransferUtility.Dispose();
 				}
+					
+				S3client.Dispose();
 			}
+
+			return ret;
 		}
 
 		public static async Task<string> GetTool(InterfaceType	interfacetype,
@@ -60,40 +52,23 @@ namespace DataIntegrityTool.Services
 			string key  = CreateToolKey(interfacetype, ostype);
 			string ret = String.Empty;
 
-			string filepath = $"/home/ec2-user/tool/{key}";
-
-			if (File.Exists(filepath) == false)
-			{
-				GetObjectRequest request = new()
-				{
-					BucketName = "dataintegritytool",
-					Key = key
-				};
-
-				using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
-				{
-					await S3client.DownloadToFilePathAsync(request.BucketName, request.Key, filepath, new Dictionary<string, Object>());
-
-					S3client.Dispose();
-				}
-			}
-
 			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
 			{
-				TransferUtility fileTransferUtility = new TransferUtility(S3client);
-
-				try
+				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
 				{
-					fileTransferUtility.Download(Path.Combine(pathDestination, key), "dataintegritytool", key);
 
-					ret = $"file {key} downloaded";
+					try
+					{
+						fileTransferUtility.Download(Path.Combine(pathDestination, key), "dataintegritytool", key);
+						ret = $"file {key} downloaded";
+					}
+					catch (Exception ex)
+					{
+						ret = $"file {key} download failed: {ex.Message}";
+					}
 
+					fileTransferUtility.Dispose();
 				}
-				catch (Exception ex)
-				{
-					ret = $"file {key} download failed: {ex.Message}";
-				}
-
 				S3client.Dispose();
 			}
 			/*
