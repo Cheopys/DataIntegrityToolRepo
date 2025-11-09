@@ -60,7 +60,7 @@ namespace DataIntegrityTool.Services
 
 					try
 					{
-						fileTransferUtility.Download(Path.Combine(pathDestination, key), "dataintegritytool", key);
+						fileTransferUtility.Download(pathDestination, "dataintegritytool", key);
 						ret = $"file {key} downloaded";
 					}
 					catch (Exception ex)
