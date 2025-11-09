@@ -25,15 +25,15 @@ namespace DataIntegrityTool.Services
 			{
 				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
 				{
-					string pathFull = Path.Combine(pathSource, key);
+//					string pathFull = Path.Combine(pathSource, key);
 					try
 					{
-						fileTransferUtility.Upload(pathFull, "dataintegritytool", key);
-						ret = $"file {key} uploaded";
+						fileTransferUtility.Upload(pathSource, "dataintegritytool", key);
+						ret = $"file {pathSource} uploaded";
 					}
 					catch (Exception ex)
 					{
-						ret = $"file {pathFull} upload failed: {ex.Message}";
+						ret = $"file {pathSource} upload failed: {ex.Message}";
 					}
 
 					fileTransferUtility.Dispose();
