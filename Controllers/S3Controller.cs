@@ -8,19 +8,18 @@ namespace DataIntegrityTool.Controllers
 	{
 		[HttpGet, Route("DownloadTool")]
 		public async Task<string> DownloadTool(InterfaceType interfacetype,
-											   OSType		 ostype)
+											   OSType		 ostype,
+											   string        pathDestination)
 		{
-			return await S3Service.GetTool(interfacetype, ostype);
+			return await S3Service.GetTool(interfacetype, ostype, pathDestination);
 		}
 
-		/*
 		[HttpPut, Route("UploadTool")]
 		public async Task UploadTool(OSType			ostype,
 									 InterfaceType	interfacetype, 
-									 byte[]			tool)
+									 string			toolB64)
 		{
-			await S3Service.StoreTool(ostype, interfacetype, tool);
+			await S3Service.StoreTool(ostype, interfacetype, toolB64);
 		}
-		*/
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Amazon.Runtime.Internal;
+﻿using System;
+using Amazon.Runtime.Internal;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
@@ -12,30 +13,12 @@ namespace DataIntegrityTool.Services
 {
 	public static class S3Service
 	{
-		static Logger logger;
-		static S3Service()
-		{
-			var config = new NLog.Config.LoggingConfiguration();
-
-			// Targets where to log to: File and Console
-			var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
-
-			// Rules for mapping loggers to targets            
-			config.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, logconsole);
-
-			// Apply config           
-			NLog.LogManager.Configuration = config;
-			logger = LogManager.GetCurrentClassLogger();
-		}
-		
-		//static IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1);
-
-		/*
-
 		public static async Task StoreTool(OSType		 ostype,
 										   InterfaceType interfacetype,
-										   byte[]		 tool)
+										   string		 toolB64)
 		{
+			byte[] tool = Convert.FromBase64String(toolB64);
+
 			using (MemoryStream memstream = new())
 			{
 				memstream.Write(tool, 0, tool.Length);
@@ -44,46 +27,38 @@ namespace DataIntegrityTool.Services
 				PutObjectRequest request = new()
 				{
 					BucketName	= "dataintegritytool",
-					Key			= $"tool{ostype}{interfacetype}",
+					Key			= CreateToolKey(interfacetype, ostype),
 					InputStream = memstream
 				};
 
-				PutObjectResponse response = await S3client.PutObjectAsync(request);
+				using (AmazonS3Client S3client = new())
+				{
+					try
+					{
+						DeleteObjectRequest requestDelete = new()
+						{
+							BucketName	= request.BucketName,
+							Key			= request.Key,
+						};
+
+						await S3client.DeleteObjectAsync(requestDelete);
+					}
+					catch (Exception ex)
+					{
+					}
+
+					PutObjectResponse response = await S3client.PutObjectAsync(request);
+				}
 			}
 		}
-*/
-		public static async Task<string> GetTool(InterfaceType interfacetype,
-										OSType		   ostype)
+
+		public static async Task<string> GetTool(InterfaceType	interfacetype,
+										OSType					ostype,
+									    string					pathDestination)
 		{
 			byte[] tool = null;
-			string os = null;
-			string key = null;
+			string key  = CreateToolKey(interfacetype, ostype);
 			string ret = String.Empty;
-
-
-			switch(ostype)
-			{
-				case OSType.Windows:
-					os = "win";
-					break;
-
-				case OSType.Mac:
-					os = "mac";
-					break;
-
-				case OSType.Linux:
-					os = "linux";
-					break;
-			}
-
-			if (interfacetype == InterfaceType.GUI)
-			{
-				key = $"katchano_{os}_gui.zip";
-			}
-			else
-			{
-				key = $"katchano_{os}_api.zip";
-			}
 
 			string filepath = $"/home/ec2-user/tool/{key}";
 
@@ -94,7 +69,6 @@ namespace DataIntegrityTool.Services
 					BucketName = "dataintegritytool",
 					Key = key
 				};
-
 
 				using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
 				{
@@ -110,7 +84,7 @@ namespace DataIntegrityTool.Services
 
 				try
 				{
-					fileTransferUtility.Download($"C:\\{key}", "dataintegritytool", key);
+					fileTransferUtility.Download(Path.Combine(pathDestination, key), "dataintegritytool", key);
 
 					ret = $"file {key} downloaded";
 
@@ -169,6 +143,41 @@ namespace DataIntegrityTool.Services
 			//return Convert.ToBase64String(tool);
 
 			return ret;
+		}
+
+		private static string CreateToolKey(InterfaceType	interfacetype,
+										    OSType			ostype)
+		{
+			string key = String.Empty;
+			string os = null;
+			string ret = String.Empty;
+
+
+			switch (ostype)
+			{
+				case OSType.Windows:
+					os = "win";
+					break;
+
+				case OSType.Mac:
+					os = "mac";
+					break;
+
+				case OSType.Linux:
+					os = "linux";
+					break;
+			}
+
+			if (interfacetype == InterfaceType.GUI)
+			{
+				key = $"katchano_{os}_gui.zip";
+			}
+			else
+			{
+				key = $"katchano_{os}_api.zip";
+			}
+
+			return key;
 		}
 
 	}
