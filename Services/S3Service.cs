@@ -133,8 +133,8 @@ namespace DataIntegrityTool.Services
 			//return ret;
 		}
 
-		private static string CreateToolKey(InterfaceType	interfacetype,
-										    OSType			ostype)
+		public static string CreateToolKey(InterfaceType	interfacetype,
+									       OSType			ostype)
 		{
 			string key = String.Empty;
 			string os = null;
