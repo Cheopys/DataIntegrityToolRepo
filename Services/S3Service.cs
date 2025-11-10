@@ -52,7 +52,17 @@ namespace DataIntegrityTool.Services
 
 			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
 
-			return await File.ReadAllBytesAsync(filepath);
+			byte[] tool = null;
+
+			using (FileStream file = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous))
+			{
+				tool = new byte[file.Length];
+				await file.ReadAsync(tool, 0, (int)file.Length);
+
+				file.Dispose();
+			}
+
+			return tool;
 
 			/*
 			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
