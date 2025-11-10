@@ -28,7 +28,7 @@ namespace DataIntegrityTool.Services
 //					string pathFull = Path.Combine(pathSource, key);
 					try
 					{
-						fileTransferUtility.Upload(pathSource, "dataintegritytool", key);
+						await fileTransferUtility.UploadAsync(pathSource, "dataintegritytool", key);
 						ret = $"file {pathSource} uploaded";
 					}
 					catch (Exception ex)
@@ -45,14 +45,18 @@ namespace DataIntegrityTool.Services
 			return ret;
 		}
 
-		public static async Task<string> GetTool(InterfaceType	interfacetype,
-										OSType					ostype,
-									    string					pathDestination)
+		public static async Task<byte[]>	GetTool(InterfaceType	interfacetype,
+										OSType					ostype)
 		{
 			byte[] tool = null;
 			string key  = CreateToolKey(interfacetype, ostype);
 			string ret = String.Empty;
 
+			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
+
+			return File.ReadAllBytes(filepath);
+
+			/*
 			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
 			{
 				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
@@ -60,18 +64,18 @@ namespace DataIntegrityTool.Services
 
 					try
 					{
-						fileTransferUtility.Download(pathDestination, "dataintegritytool", key);
-						ret = $"file {key} downloaded";
+						await fileTransferUtility.DownloadAsync(pathDestination, "dataintegritytool", key);
+						ret = $"file {pathDestination} downloaded";
 					}
 					catch (Exception ex)
 					{
-						ret = $"file {key} download failed: {ex.Message}";
+						ret = $"file {pathDestination} download failed: {ex.Message}";
 					}
 
 					fileTransferUtility.Dispose();
 				}
 				S3client.Dispose();
-			}
+			}*/
 			/*
 			using (FileStream file = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous))
 			{
@@ -118,7 +122,7 @@ namespace DataIntegrityTool.Services
 			*/
 			//return Convert.ToBase64String(tool);
 
-			return ret;
+			//return ret;
 		}
 
 		private static string CreateToolKey(InterfaceType	interfacetype,
