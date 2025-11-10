@@ -48,13 +48,11 @@ namespace DataIntegrityTool.Services
 		public static async Task<byte[]>	GetTool(InterfaceType	interfacetype,
 										OSType					ostype)
 		{
-			byte[] tool = null;
 			string key  = CreateToolKey(interfacetype, ostype);
-			string ret = String.Empty;
 
 			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
 
-			return File.ReadAllBytes(filepath);
+			return await File.ReadAllBytesAsync(filepath);
 
 			/*
 			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
