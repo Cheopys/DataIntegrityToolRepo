@@ -9,7 +9,7 @@ namespace DataIntegrityTool.Controllers
 	{
 		[HttpGet, Route("DownloadTool")]
 		public async Task<IActionResult> DownloadTool(InterfaceType interfacetype,
-											   OSType		 ostype)
+											          OSType		ostype)
 		{
 			string key = S3Service.CreateToolKey(interfacetype, ostype);
 
@@ -18,7 +18,7 @@ namespace DataIntegrityTool.Controllers
 			Response.Headers.Add("Content-Length", new FileInfo(filepath).Length.ToString());
 
 			// Stream the file directly to the response body
-			using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+			using (FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read))
 			{
 				await stream.CopyToAsync(Response.Body);
 			}

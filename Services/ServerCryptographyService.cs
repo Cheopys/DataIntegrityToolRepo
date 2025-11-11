@@ -106,9 +106,8 @@ namespace DataIntegrityTool.Services
 			return aes;
         }
 
-        public static Aes GetAesKey(EncryptionWrapperDIT wrapper)  
+        public static byte[] GetAesKey(EncryptionWrapperDIT wrapper)  
         {
-			Aes     aes = CreateAes();
 			byte[]? key = null;
 
 			using (DataContext context = new())
@@ -132,19 +131,10 @@ namespace DataIntegrityTool.Services
                                        .FirstOrDefault();
                 }
 
-                if (key != null)
-				{
-					aes.KeySize = 256;
-					aes.Key		= key;
-					aes.IV		= wrapper.aesIV;
-                    aes.Mode	= CipherMode.CBC; 
-			        aes.Padding = PaddingMode.PKCS7;
-                }
-
                 context.Dispose();
             }
 
-            return aes;
+            return key;
         }
 
 		public static string EncryptRSA(byte[] cleartext)
@@ -183,11 +173,13 @@ namespace DataIntegrityTool.Services
 		{
 			request = default(T);
 
-			Aes aes = ServerCryptographyService.GetAesKey(wrapper);
+			byte[] key = ServerCryptographyService.GetAesKey(wrapper);
 
 			byte[]? encrypted = Convert.FromBase64String(wrapper.encryptedData);//JsonSerializer.Deserialize<byte[]>(wrapper.encryptedRequest);
 
-			ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV); // uses the wrapper IV
+			Aes aes = Aes.Create();
+
+			ICryptoTransform decryptor = aes.CreateDecryptor(key, wrapper.aesIV); // uses the wrapper IV
 
 			// Create the streams used for encryption.
 
@@ -218,13 +210,15 @@ namespace DataIntegrityTool.Services
 			string responseB64 = null;
 			byte[] encrypted   = null;
 
-			Aes aes = ServerCryptographyService.GetAesKey(wrapper);
+			byte[] key = ServerCryptographyService.GetAesKey(wrapper);
 
-			if (aes != null)
+			if (key != null)
 			{
 				string json = JsonSerializer.Serialize(response);
 
-				ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV); // uses the wrapper IV
+				Aes aes = Aes.Create();
+
+				ICryptoTransform encryptor = aes.CreateEncryptor(key, wrapper.aesIV); // uses the wrapper IV
 
 				// Create the streams used for encryption.
 
