@@ -46,7 +46,7 @@ namespace DataIntegrityTool.Services
 																				   T					request)
 		{
 			string json = JsonSerializer.Serialize(request);
-			Aes aes		= ServerCryptographyService.GetAesKey(wrapperIn);
+			byte[] key  = ServerCryptographyService.GetAesKey(wrapperIn);
 
 			EncryptionWrapperDIT wrapper = new()
 			{
@@ -55,7 +55,9 @@ namespace DataIntegrityTool.Services
 				aesIV		= wrapperIn.aesIV
 			};
 
-			ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+			Aes aes = Aes.Create();
+
+			ICryptoTransform encryptor = aes.CreateEncryptor(key, wrapperIn.aesIV);
 
 			// Create the streams used for encryption.
 
