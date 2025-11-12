@@ -275,6 +275,34 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(clear);
 		}
 
+		public async Task<string>  EncryptCustomer(Int32  customerId, 
+												   string AesIVHex)
+		{
+			string encrypted = String.Empty;
+
+			using (DataContext context = new())
+			{
+				Customers? customer = context.Customers.Find(customerId);
+
+				if (customer != null)
+				{
+					byte[] key = customer.AesKey;
+
+					EncryptionWrapperDIT wrappewr = new()
+					{
+						aesIV = Convert.FromHexString(AesIVHex),
+						primaryKey = customerId,
+						type = LoginType.typeCustomer,
+						encryptedData = null 
+					};
+
+					encrypted = await ServerCryptographyService.EncryptAndEncodeResponse<Customers>(wrappewr, customer);
+				}
+			}
+
+			return encrypted;
+		}
+
 		[HttpPut, Route("DecryptAESCustomer")]
 		public string DecryptAESCustomer([FromBody] EncryptionWrapperDITString wrapper)
 		{
