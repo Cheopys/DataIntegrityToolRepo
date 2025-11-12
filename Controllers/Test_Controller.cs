@@ -275,6 +275,7 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(clear);
 		}
 
+		[HttpPut, Route("EncryptCustomer")]
 		public async Task<string>  EncryptCustomer(Int32  customerId, 
 												   string AesIVHex)
 		{
