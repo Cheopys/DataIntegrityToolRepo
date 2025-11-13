@@ -426,7 +426,7 @@ namespace DataIntegrityTool.Services
                 if (customer != null)
                 {
                     // only to repaid old entries where a customer lacks a CustomerSubscription entry.
-
+                    /*
                     if (custsub == null)
                     {
 						SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(subscriptionId)).FirstOrDefault();
@@ -449,7 +449,7 @@ namespace DataIntegrityTool.Services
                             response.Error = ErrorCodes.errorAlreadySubscribed;
                         }
                     }
-
+                    */
                     if (continueOK)
                     {
                         // ExpirationDate is null for a subscription that hasn't been used yet
