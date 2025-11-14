@@ -73,7 +73,6 @@ public class RegisterCustomerRequest
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
 	public bool   InitialUser   { get; set; }
-	public Int32  SubscriptionId   { get; set; }
 }
 
 public class RegisterCustomerResponse 

@@ -58,7 +58,6 @@ namespace DataIntegrityTool.Controllers
 					ToolTypes.tooltypeProduction
 				},
 				InitialUser = false,
-				SubscriptionId = 20
 			};
 
 			string requestSerialized = JsonSerializer.Serialize(request);

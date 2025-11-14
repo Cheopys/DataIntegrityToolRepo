@@ -61,7 +61,7 @@ namespace DataIntegrityTool.Services
 			{
                 if (context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
                 { 
-				    SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(request.SubscriptionId)).FirstOrDefault();
+				    //SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(13)).FirstOrDefault();
                     Users user = null;
                     Customers customer = new Customers()
                     {
@@ -76,8 +76,8 @@ namespace DataIntegrityTool.Services
                         UsageSince   = DateTime.MinValue,
                         Tools        = request.Tools,
                         SeatsMax     = 10,
-                        Scans        = type.scans,
-                        SubscriptionTime = TimeSpan.FromDays(type.days)
+                        Scans        = 0, //type.scans,
+                        SubscriptionTime = null//TimeSpan.FromDays(type.days)
                     };
 
 				    context.Customers.Add(customer);
@@ -88,17 +88,7 @@ namespace DataIntegrityTool.Services
 
 				    response.CustomerId = customer.Id;
 
-                    AddSubscription(customer.Id, request.SubscriptionId);
-                    /*
-					context.CustomerPayments.Add(new CustomerPayments()
-					{
-						CustomerId       = customer.Id,
-						Amount           = type.price,
-						Date             = DateTime.UtcNow,
-						SubscriptionType = type.Id,
-						Scans            = type.scans
-					});
-                    */
+                    AddSubscription(customer.Id, 13);
 
 					if (request.InitialUser)
                     {
@@ -111,7 +101,6 @@ namespace DataIntegrityTool.Services
                             NameLast     = request.NameLast,
                             PasswordHash = ServerCryptographyService.SHA256(request.Password),
                             DateAdded    = DateTime.UtcNow,
-                            //Tools        = request.Tools,
                         };
 
 					    context.Users.Add(user);
@@ -421,64 +410,34 @@ namespace DataIntegrityTool.Services
                 SubscriptionTypes?     subscription = context.SubscriptionTypes    .Where(st => st.Id        .Equals(subscriptionId)).FirstOrDefault();
                 CustomerSubscriptions? custsub      = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId))    .FirstOrDefault();
 
-                bool continueOK = true;
-
                 if (customer != null)
                 {
-                    // only to repaid old entries where a customer lacks a CustomerSubscription entry.
-                    /*
-                    if (custsub == null)
+                    // ExpirationDate is null for a subscription that hasn't been used yet
+
+                    if (custsub.ExpirationDate == null
+                    && customer.SubscriptionTime != null)
                     {
-						SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(subscriptionId)).FirstOrDefault();
-
-                        custsub = new()
-                        {
-                            CustomerId     = customer.Id,
-                            SubscriptionId = subscriptionId,
-                            ExpirationDate = null
-                        };
-
-                        context.CustomerSubscriptions.Add(custsub);
-                        context.SaveChanges();  
-					}
+                        customer.SubscriptionTime += TimeSpan.FromDays(subscription.days);
+                    }
                     else
                     {
-                        if (subscriptionId == 13)
-                        {
-                            continueOK = false;
-                            response.Error = ErrorCodes.errorAlreadySubscribed;
-                        }
+                        custsub.ExpirationDate = DateTime.UtcNow + (TimeSpan.FromDays(subscription.days) + customer.SubscriptionTime);
+                        customer.SubscriptionTime = null;
                     }
-                    */
-                    if (continueOK)
+
+					customer.Scans += subscription.scans;
+
+                    response.Expiration = custsub.ExpirationDate;
+                    response.ScansAfter = customer.Scans;
+
+                    context.Add(new CustomerPayments()
                     {
-                        // ExpirationDate is null for a subscription that hasn't been used yet
-
-                        if (custsub.ExpirationDate == null
-                        && customer.SubscriptionTime != null)
-                        {
-                            customer.SubscriptionTime += TimeSpan.FromDays(subscription.days);
-                        }
-                        else
-                        {
-                            custsub.ExpirationDate = DateTime.UtcNow + (TimeSpan.FromDays(subscription.days) + customer.SubscriptionTime);
-                            customer.SubscriptionTime = null;
-                        }
-
-					    customer.Scans += subscription.scans;
-
-                        response.Expiration = custsub.ExpirationDate;
-                        response.ScansAfter = customer.Scans;
-
-                        context.Add(new CustomerPayments()
-                        {
-                            CustomerId       = customer.Id,
-                            Amount           = subscription.price,
-                            Date             = DateTime.UtcNow,
-                            SubscriptionType = subscriptionId,
-                            Scans            = null
-                        });
-					}
+                        CustomerId       = customer.Id,
+                        Amount           = subscription.price,
+                        Date             = DateTime.UtcNow,
+                        SubscriptionType = subscriptionId,
+                        Scans            = subscription.scans
+                    });
 
 					context.SaveChanges();
 				}

@@ -186,9 +186,9 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("AddCustomerPayment")]
-		public AddSubscriptionResponse AddCustomerPayment(Int32 CustomerId,
+		public AddSubscriptionResponse AddCustomerPayment(Int32  CustomerId,
 														  Int32  Amount,
-														  Int32? SubscriptionType,
+														  Int32  SubscriptionType,
 														  Int16? Scans)
 		{
 			AddSubscriptionResponse response = new()
@@ -197,10 +197,7 @@ namespace DataIntegrityTool.Controllers
 				Error      = ErrorCodes.errorNone,
 			};
 
-			if (SubscriptionType != null)
-			{
-				response = CustomersService.AddSubscription(CustomerId, SubscriptionType.Value);
-			}
+			response = CustomersService.AddSubscription(CustomerId, SubscriptionType);
 
 			if (Scans != null
 			&&  Scans  > 0)
