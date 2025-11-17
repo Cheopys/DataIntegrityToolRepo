@@ -175,40 +175,59 @@ namespace DataIntegrityTool.Services
             return customer;
         }
 
-        public static void UpdateCustomer(UpdateCustomerRequest request)
+        public static ErrorCodes UpdateCustomer(UpdateCustomerRequest request)
         {
+            ErrorCodes error = ErrorCodes.errorNone;
+
             using (DataContext context = new())
             {
                 Customers? customer = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault();
 
-                if (request.NameFirst != null)
+                if (customer != null)
                 {
-                    customer.NameFirst = request.NameFirst;
+                    if (request.NameFirst != null)
+                    {
+                        customer.NameFirst = request.NameFirst;
+                    }
+
+                    if (request.NameLast != null)
+                    {
+                        customer.NameLast = request.NameLast;
+                    }
+
+                    if (request.Email != null)
+                    {
+                        if (CustomersService.IsValidEmail(request.Email))
+                        {
+                            customer.Email = request.Email;
+                        }
+                        else
+                        {
+                            error = ErrorCodes.errorInvalidEmailFormat;
+                        }
+                    }
+
+                    if (request.Password != null)
+                    {
+                        customer.PasswordHash = ServerCryptographyService.SHA256(request.Password);
+                    }
+
+                    if (request.Notes != null)
+                    {
+                        customer.Notes = request.Notes;
+                    }
+
+                    context.SaveChanges();
+				}
+                else
+                {
+                    error = ErrorCodes.errorInvalidCustomerId;
                 }
 
-                if (request.NameLast != null)
-                {
-                    customer.NameLast = request.NameLast;
-                }
-
-                if (request.Email != null)
-                {
-                    customer.Email = request.Email;
-                }
-
-                if (request.Password != null)
-                {
-                    customer.PasswordHash = ServerCryptographyService.SHA256(request.Password);
-                }
-
-                if (request.Notes != null)
-                {
-                    customer.Notes = request.Notes;
-                }
-
-                context.SaveChanges();
                 context.Dispose();
             }
+
+            return error;
         }
 
         public static void DeleteCustomer(Int32 CustomerId)

@@ -125,12 +125,6 @@ namespace DataIntegrityTool.Services
 
 				if (user != null)
 				{
-					/*
-					if (request.Tools != null)
-					{
-						user.Tools = request.Tools;
-					}
-					*/
 					if (request.NameFirst != null)
 					{
 						user.NameFirst = request.NameFirst;
@@ -143,7 +137,14 @@ namespace DataIntegrityTool.Services
 
 					if (request.Email != null)
 					{
-						user.Email = request.Email;
+						if (CustomersService.IsValidEmail(request.Email))
+						{
+							user.Email = request.Email;
+						}
+						else
+						{
+							ret = $"Invalid email format {request.Email}";
+						}
 					}
 
 					if (request.Password != null)

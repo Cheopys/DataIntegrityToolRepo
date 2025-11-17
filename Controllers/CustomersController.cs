@@ -124,7 +124,7 @@ namespace DataIntegrityTool.Controllers
 		//  U
 
 		[HttpPost, Route("UpdateCustomer")]
-		public void UpdateCustomer(EncryptionWrapperDITString wrapperString)
+		public ErrorCodes UpdateCustomer(EncryptionWrapperDITString wrapperString)
 		{
 			EncryptionWrapperDIT wrapper = new EncryptionWrapperDIT()
 			{
@@ -138,7 +138,7 @@ namespace DataIntegrityTool.Controllers
 
 			ServerCryptographyService.DecodeAndDecryptRequest<UpdateCustomerRequest>(wrapper, out request);
 
-			CustomersService.UpdateCustomer(request);
+			return CustomersService.UpdateCustomer(request);
 		}
 
 		//  D
