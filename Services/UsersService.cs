@@ -45,47 +45,54 @@ namespace DataIntegrityTool.Services
                 errorCode = ErrorCodes.errorNone
             };
 
-            using (DataContext context = new())
-            {
-				if (context.Users.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
+			if (CustomersService.IsValidEmail(request.Email))
+			{ 
+				using (DataContext context = new())
 				{
-					// check if any available seats
-
-					Int32 SeatsMax  = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault().SeatsMax;
-					Int32 seatsUsed = context.Users    .Where(us => us.CustomerId.Equals(request.CustomerId)).Count();
-
-					if (seatsUsed < SeatsMax)
+					if (context.Users.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
 					{
-						Users user = new Users()
+						// check if any available seats
+
+						Int32 SeatsMax  = context.Customers.Where(cu => cu.Id.Equals(request.CustomerId)).FirstOrDefault().SeatsMax;
+						Int32 seatsUsed = context.Users    .Where(us => us.CustomerId.Equals(request.CustomerId)).Count();
+
+						if (seatsUsed < SeatsMax)
 						{
-							CustomerId               = request.CustomerId,
-							NameFirst                = request.NameFirst,
-							NameLast				 = request.NameLast,
-							Email					 = request.Email,
-							PasswordHash             = ServerCryptographyService.SHA256(request.Password),
-							AesKey                   = Convert.FromHexString(request.AesKey),
-							//Tools                    = request.Tools,
-							DateAdded                = DateTime.UtcNow
-						};
+							Users user = new Users()
+							{
+								CustomerId               = request.CustomerId,
+								NameFirst                = request.NameFirst,
+								NameLast				 = request.NameLast,
+								Email					 = request.Email,
+								PasswordHash             = ServerCryptographyService.SHA256(request.Password),
+								AesKey                   = Convert.FromHexString(request.AesKey),
+								//Tools                    = request.Tools,
+								DateAdded                = DateTime.UtcNow
+							};
 
-						context.Users.Add(user);
+							context.Users.Add(user);
 
-						context.SaveChanges();
+							context.SaveChanges();
 
-						response.UserId = user.Id;
+							response.UserId = user.Id;
+						}
+						else
+						{
+							response.errorCode = ErrorCodes.errorNoSeats;
+						}
 					}
 					else
 					{
-						response.errorCode = ErrorCodes.errorNoSeats;
+						response.errorCode = ErrorCodes.errorEmailAlreadyExists;
 					}
-				}
-				else
-				{
-					response.errorCode = ErrorCodes.errorEmailAlreadyExists;
-				}
 
 					context.Dispose();
-            }
+				}
+			}
+			else
+			{
+				response.errorCode = ErrorCodes.errorInvalidEmailFormat;
+			}
 
 			return response;
         }

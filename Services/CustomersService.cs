@@ -24,6 +24,7 @@ using System.Net;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace DataIntegrityTool.Services
 {
@@ -57,64 +58,71 @@ namespace DataIntegrityTool.Services
                 ErrorCode = ErrorCodes.errorNone
             };
 
-			using (DataContext context = new())
-			{
-                if (context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
-                { 
-				    //SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(13)).FirstOrDefault();
-                    Users user = null;
-                    Customers customer = new Customers()
+            if (CustomersService.IsValidEmail(request.Email))
+            {
+                using (DataContext context = new())
+                {
+                    if (context.Customers.Where(cu => cu.Email.ToLower().Equals(request.Email.ToLower())).FirstOrDefault() == null)
                     {
-                        NameFirst    = request.NameFirst,
-                        NameLast     = request.NameLast,
-                        Company      = request.Company,
-                        Email        = request.Email,
-                        PasswordHash = ServerCryptographyService.SHA256(request.Password),
-                        Notes        = request.Notes,
-                        AesKey       = Convert.FromHexString(request.AesKey),
-                        DateAdded    = DateTime.UtcNow,
-                        UsageSince   = DateTime.MinValue,
-                        Tools        = request.Tools,
-                        SeatsMax     = 10,
-                        Scans        = 0, //type.scans,
-                        SubscriptionTime = null//TimeSpan.FromDays(type.days)
-                    };
-
-				    context.Customers.Add(customer);
-
-                    // need the new customer PK to continue
-
-				    context.SaveChanges();
-
-				    response.CustomerId = customer.Id;
-
-                    AddSubscription(customer.Id, 13);
-
-					if (request.InitialUser)
-                    {
-                        user = new Users()
+                        //SubscriptionTypes type = context.SubscriptionTypes.Where(st => st.Id.Equals(13)).FirstOrDefault();
+                        Users user = null;
+                        Customers customer = new Customers()
                         {
-                            AesKey       = Convert.FromHexString(request.AesKey),
-                            CustomerId   = customer.Id,
-                            Email        = request.Email,
-                            NameFirst    = request.NameFirst,
-                            NameLast     = request.NameLast,
+                            NameFirst = request.NameFirst,
+                            NameLast = request.NameLast,
+                            Company = request.Company,
+                            Email = request.Email,
                             PasswordHash = ServerCryptographyService.SHA256(request.Password),
-                            DateAdded    = DateTime.UtcNow,
+                            Notes = request.Notes,
+                            AesKey = Convert.FromHexString(request.AesKey),
+                            DateAdded = DateTime.UtcNow,
+                            UsageSince = DateTime.MinValue,
+                            Tools = request.Tools,
+                            SeatsMax = 10,
+                            Scans = 0, //type.scans,
+                            SubscriptionTime = null//TimeSpan.FromDays(type.days)
                         };
 
-					    context.Users.Add(user);
-				    }
+                        context.Customers.Add(customer);
 
-                    context.SaveChanges();
-				} // endif email is new
-                else
-                {
-                    response.ErrorCode = ErrorCodes.errorEmailAlreadyExists;
+                        // need the new customer PK to continue
+
+                        context.SaveChanges();
+
+                        response.CustomerId = customer.Id;
+
+                        AddSubscription(customer.Id, 13);
+
+                        if (request.InitialUser)
+                        {
+                            user = new Users()
+                            {
+                                AesKey = Convert.FromHexString(request.AesKey),
+                                CustomerId = customer.Id,
+                                Email = request.Email,
+                                NameFirst = request.NameFirst,
+                                NameLast = request.NameLast,
+                                PasswordHash = ServerCryptographyService.SHA256(request.Password),
+                                DateAdded = DateTime.UtcNow,
+                            };
+
+                            context.Users.Add(user);
+                        }
+
+                        context.SaveChanges();
+                    } // endif email is new
+                    else
+                    {
+                        response.ErrorCode = ErrorCodes.errorEmailAlreadyExists;
+                    }
+
+                    context.Dispose();
                 }
-                    
-                context.Dispose();
-            } 
+            }
+            else
+            {
+                response.ErrorCode = ErrorCodes.errorInvalidEmailFormat;
+            }
 
             return response;
         }
@@ -461,6 +469,50 @@ namespace DataIntegrityTool.Services
 
             return response;
         }
-    }
+
+		public static bool IsValidEmail(string email)
+		{
+			if (string.IsNullOrWhiteSpace(email))
+				return false;
+
+			try
+			{
+				// Normalize the domain
+				email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+									  RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+				// Examines the domain part of the email and normalizes it.
+				string DomainMapper(Match match)
+				{
+					// Use IdnMapping class to convert Unicode domain names.
+					var idn = new IdnMapping();
+
+					// Pull out and process domain name (throws ArgumentException on invalid)
+					string domainName = idn.GetAscii(match.Groups[2].Value);
+
+					return match.Groups[1].Value + domainName;
+				}
+			}
+			catch (RegexMatchTimeoutException e)
+			{
+				return false;
+			}
+			catch (ArgumentException e)
+			{
+				return false;
+			}
+
+			try
+			{
+				return Regex.IsMatch(email,
+					@"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+					RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				return false;
+			}
+		}
+	}
 }
 

@@ -37,7 +37,8 @@ public enum ErrorCodes
 	errorInvalidAdministratorId = 11,
 	errorInvalidLoginType     = 12,
 	errorEmailAlreadyExists   = 13,
-	errorAlreadySubscribed	      = 14,
+	errorAlreadySubscribed	  = 14,
+	errorInvalidEmailFormat	  = 15,
 }
 
 public enum OSType
