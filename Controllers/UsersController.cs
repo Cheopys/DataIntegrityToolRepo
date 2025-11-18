@@ -45,6 +45,8 @@ namespace DataIntegrityTool.Controllers
 		{
 			RegisterUserRequest request = ServerCryptographyService.DecryptRSA<RegisterUserRequest>(registerUserB64);
 
+			request.PhoneNumber = (request.PhoneNumber == null ? "0" : request.PhoneNumber);
+
 			RegisterUserResponse response = UsersService.RegisterUser(request);
 
 			return JsonSerializer.Serialize(response);
