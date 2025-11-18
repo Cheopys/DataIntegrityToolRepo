@@ -14,7 +14,8 @@ namespace DataIntegrityTool.Schema
 		public string   NameLast      { get; set; }
 		public string   Company       { get; set; }
 		public string   Email         { get; set; }
-        public string   PasswordHash  { get; set; }
+		public string   PhoneNumber   { get; set; }
+		public string   PasswordHash  { get; set; }
         public DateTime DateAdded     { get; set; }
         public string   Notes         { get; set; }
         public List<ToolTypes>? Tools { get; set; }

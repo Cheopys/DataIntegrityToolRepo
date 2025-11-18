@@ -72,6 +72,7 @@ namespace DataIntegrityTool.Services
                             NameLast = request.NameLast,
                             Company = request.Company,
                             Email = request.Email,
+                            PhoneNumber = request.PhoneNumber,
                             PasswordHash = ServerCryptographyService.SHA256(request.Password),
                             Notes = request.Notes,
                             AesKey = Convert.FromHexString(request.AesKey),
@@ -207,7 +208,12 @@ namespace DataIntegrityTool.Services
                         }
                     }
 
-                    if (request.Password != null)
+					if (request.PhoneNumber != null)
+					{
+						customer.PhoneNumber = request.PhoneNumber;
+					}
+
+					if (request.Password != null)
                     {
                         customer.PasswordHash = ServerCryptographyService.SHA256(request.Password);
                     }

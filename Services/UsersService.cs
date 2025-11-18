@@ -152,7 +152,12 @@ namespace DataIntegrityTool.Services
 					{
 						user.PasswordHash = ServerCryptographyService.SHA256(request.Password);
 					}
-					
+
+					if (request.PhoneNumber != null)
+					{
+						user.PhoneNumber = request.PhoneNumber;
+					}
+
 					context.SaveChanges();
 				}
 				else
