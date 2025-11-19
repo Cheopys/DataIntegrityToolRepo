@@ -2,6 +2,7 @@
 using DataIntegrityTool.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -9,7 +10,7 @@ namespace DataIntegrityTool.Controllers
 	{
 		[HttpGet, Route("DownloadTool")]
 		public async Task<IActionResult> DownloadTool(InterfaceType interfacetype,
-											          OSType		ostype)
+													  OSType ostype)
 		{
 			string key = S3Service.CreateToolKey(interfacetype, ostype);
 
@@ -24,16 +25,16 @@ namespace DataIntegrityTool.Controllers
 			}
 
 			// Return an empty result as the response has already been written to
-			return new EmptyResult(); 
+			return new EmptyResult();
 			//return await S3Service.GetTool(interfacetype, ostype);
 		}
 
 		[HttpPut, Route("UploadTool")]
-		public async Task<string> UploadTool(OSType	ostype,
-									 InterfaceType	interfacetype, 
-									 string			pathSource)
+		public async Task UploadTool(OSType ostype,
+											 InterfaceType interfacetype,
+											 string toolB64)
 		{
-			return await S3Service.StoreTool(ostype, interfacetype, pathSource);
+			S3Service.StoreTool(ostype, interfacetype, toolB64);
 		}
 	}
 }

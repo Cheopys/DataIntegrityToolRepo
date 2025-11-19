@@ -14,38 +14,30 @@ namespace DataIntegrityTool.Services
 {
 	public static class S3Service
 	{
-		public static async Task<string> StoreTool(OSType		 ostype,
-										   InterfaceType interfacetype,
-										   string		 pathSource)
+		public static async Task StoreTool(OSType			ostype,
+										   InterfaceType	interfacetype,
+										   string			toolB64)
 		{
-			string key = CreateToolKey(interfacetype, ostype);
-			string ret = String.Empty;
+			byte[] tool = Convert.FromBase64String(toolB64);
 
-			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
+			string key = S3Service.CreateToolKey(interfacetype, ostype);
+
+			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
+
+			using (FileStream fs = new FileStream(filepath, FileMode.Create, FileAccess.Write))
 			{
-				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
+				using (BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8)) // Specify encoding for strings
 				{
-//					string pathFull = Path.Combine(pathSource, key);
-					try
-					{
-						await fileTransferUtility.UploadAsync(pathSource, "dataintegritytool", key);
-						ret = $"file {pathSource} uploaded";
-					}
-					catch (Exception ex)
-					{
-						ret = $"file {pathSource} upload failed: {ex.Message}";
-					}
+					bw.Write(tool);
 
-					fileTransferUtility.Dispose();
+					bw.Dispose();
 				}
-					
-				S3client.Dispose();
-			}
 
-			return ret;
+				fs.Dispose();
+			}
 		}
 
-		public static async Task<byte[]>	GetTool(InterfaceType	interfacetype,
+		public static async Task<byte[]>GetTool(InterfaceType	interfacetype,
 										OSType					ostype)
 		{
 			string key  = CreateToolKey(interfacetype, ostype);

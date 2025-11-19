@@ -64,7 +64,7 @@ namespace DataIntegrityTool.Services
 								NameFirst                = request.NameFirst,
 								NameLast				 = request.NameLast,
 								Email					 = request.Email,
-								PhoneNumber				 = request.PhoneNumber == null ? "temp" : request.PhoneNumber,
+								PhoneNumber				 =(request.PhoneNumber == null ? "temp" : request.PhoneNumber),
 								PasswordHash             = ServerCryptographyService.SHA256(request.Password),
 								AesKey                   = Convert.FromHexString(request.AesKey),
 								//Tools                    = request.Tools,
