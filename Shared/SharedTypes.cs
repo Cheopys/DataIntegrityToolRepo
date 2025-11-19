@@ -227,3 +227,10 @@ public class ChangePasswordAskResponse
     public Int32	  ChangePasswordToken	{ get; set; }
     public ErrorCodes ErrorCode				{ get; set; }
 }
+
+public class UploadToolRequest
+{
+	public InterfaceType InterfaceType { get; set; }
+	public OSType OSType { get; set; }
+	public string base64 { get; set; }
+}

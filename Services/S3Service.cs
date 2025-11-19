@@ -14,7 +14,7 @@ namespace DataIntegrityTool.Services
 {
 	public static class S3Service
 	{
-		public static async Task StoreTool(OSType			ostype,
+		public static string StoreTool(OSType			ostype,
 										   InterfaceType	interfacetype,
 										   string			toolB64)
 		{
@@ -24,17 +24,28 @@ namespace DataIntegrityTool.Services
 
 			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
 
-			using (FileStream fs = new FileStream(filepath, FileMode.Create, FileAccess.Write))
+			string ret = $"{tool.Length} bytes for {filepath}\r\n";
+
+			try
 			{
-				using (BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8)) // Specify encoding for strings
+				using (FileStream fs = new FileStream(filepath, FileMode.Create, FileAccess.Write))
 				{
-					bw.Write(tool);
+					using (BinaryWriter bw = new BinaryWriter(fs, Encoding.UTF8)) // Specify encoding for strings
+					{
+						bw.Write(tool);
 
-					bw.Dispose();
+						bw.Dispose();
+					}
+
+					fs.Dispose();
 				}
-
-				fs.Dispose();
 			}
+			catch (Exception ex)
+			{
+				ret += ex.Message;
+			}
+
+			return ret;
 		}
 
 		public static async Task<byte[]>GetTool(InterfaceType	interfacetype,
