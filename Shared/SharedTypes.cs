@@ -155,7 +155,6 @@ public class RegisterUserRequest
 //	public string PhoneNumber	 { get; set; }
 	public string Password       { get; set; }
     public string AesKey         { get; set; }
-    public List<ToolTypes> Tools { get; set; }
 }
 
 public class RegisterUserResponse
