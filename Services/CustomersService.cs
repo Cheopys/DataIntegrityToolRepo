@@ -68,19 +68,19 @@ namespace DataIntegrityTool.Services
                         Users user = null;
                         Customers customer = new Customers()
                         {
-                            NameFirst = request.NameFirst,
-                            NameLast = request.NameLast,
-                            Company = request.Company,
-                            Email = request.Email,
-                            PhoneNumber = request.PhoneNumber == null ? "0" : request.PhoneNumber,
-                            PasswordHash = ServerCryptographyService.SHA256(request.Password),
-                            Notes = request.Notes,
-                            AesKey = Convert.FromHexString(request.AesKey),
-                            DateAdded = DateTime.UtcNow,
-                            UsageSince = DateTime.MinValue,
-                            Tools = request.Tools,
-                            SeatsMax = 10,
-                            Scans = 0, //type.scans,
+                            NameFirst        = request.NameFirst,
+                            NameLast         = request.NameLast,
+                            Company          = request.Company,
+                            Email            = request.Email,
+//                            PhoneNumber      = request.PhoneNumber == null ? "0" : request.PhoneNumber,
+                            PasswordHash     = ServerCryptographyService.SHA256(request.Password),
+                            Notes            = request.Notes,
+                            AesKey           = Convert.FromHexString(request.AesKey),
+                            DateAdded        = DateTime.UtcNow,
+                            UsageSince       = DateTime.MinValue,
+                            Tools            = request.Tools,
+                            SeatsMax         = 10,
+                            Scans            = 0, //type.scans,
                             SubscriptionTime = null//TimeSpan.FromDays(type.days)
                         };
 
@@ -98,13 +98,14 @@ namespace DataIntegrityTool.Services
                         {
                             user = new Users()
                             {
-                                AesKey = Convert.FromHexString(request.AesKey),
-                                CustomerId = customer.Id,
-                                Email = request.Email,
-                                NameFirst = request.NameFirst,
-                                NameLast = request.NameLast,
-                                PasswordHash = ServerCryptographyService.SHA256(request.Password),
-                                DateAdded = DateTime.UtcNow,
+                                AesKey          = Convert.FromHexString(request.AesKey),
+                                CustomerId      = customer.Id,
+                                Email           = request.Email,
+                                NameFirst       = request.NameFirst,
+                                NameLast        = request.NameLast,
+//                                PhoneNumber     = customer.PhoneNumber,
+                                PasswordHash    = ServerCryptographyService.SHA256(request.Password),
+                                DateAdded       = DateTime.UtcNow,
                             };
 
                             context.Users.Add(user);
@@ -207,11 +208,11 @@ namespace DataIntegrityTool.Services
                             error = ErrorCodes.errorInvalidEmailFormat;
                         }
                     }
-
+                    /*
 					if (request.PhoneNumber != null)
 					{
 						customer.PhoneNumber = request.PhoneNumber;
-					}
+					}*/
 
 					if (request.Password != null)
                     {
