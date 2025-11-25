@@ -1,4 +1,6 @@
-﻿using DataIntegrityTool.Schema;
+﻿using Amazon.S3;
+using Amazon.S3.Transfer;
+using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
@@ -15,6 +17,26 @@ namespace DataIntegrityTool.Controllers
 			string key = S3Service.CreateToolKey(interfacetype, ostype);
 
 			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
+
+			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
+			{
+				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
+				{
+					try
+					{
+						await fileTransferUtility.DownloadAsync(".", "dataintegritytool", key);
+						//					ret = $"file {pathDestination} downloaded";
+					}
+					catch (Exception ex)
+					{
+						string ret = $"file download failed: {ex.Message}";
+					}
+
+					fileTransferUtility.Dispose();
+				}
+
+				S3client.Dispose();
+			}
 			Response.Headers.Add("Content-Disposition", new ContentDispositionHeaderValue("attachment") { FileName = key }.ToString());
 			Response.Headers.Add("Content-Length", new FileInfo(filepath).Length.ToString());
 
