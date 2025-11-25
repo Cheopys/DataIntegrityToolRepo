@@ -11,29 +11,28 @@ namespace DataIntegrityTool.Controllers
 {
 	public class S3Controller : ControllerBase
 	{
-		[HttpPut, Route("RefresahTool")]
-
+		[HttpPut, Route("RefreshTool")]
 		public async Task<string> RefreshTool(InterfaceType interfacetype,
 											  OSType		ostype)
 		{
+			string _ret = String.Empty;
 			string key = S3Service.CreateToolKey(interfacetype, ostype);
 
 			string filepath = $"/home/ec2-user/DataIntegrityToolRepo/{key}";
 
 			using (IAmazonS3 S3client = new AmazonS3Client(Amazon.RegionEndpoint.CACentral1))
 			{
-				string ret = String.Empty;
 
 				using (TransferUtility fileTransferUtility = new TransferUtility(S3client))
 				{
 					try
 					{
 						await fileTransferUtility.DownloadAsync(filepath, "dataintegritytool", key);
-						ret = $"file {filepath} downloaded";
+						_ret = $"file {filepath} downloaded";
 					}
 					catch (Exception ex)
 					{
-						ret = $"file download failed: {ex.Message}";
+						_ret = $"file download failed: {ex.Message}";
 					}
 
 					fileTransferUtility.Dispose();
@@ -41,6 +40,8 @@ namespace DataIntegrityTool.Controllers
 
 				S3client.Dispose();
 			}
+
+			return _ret;
 		}
 
 		[HttpGet, Route("DownloadTool")]
