@@ -24,7 +24,7 @@ namespace DataIntegrityTool.Controllers
 				{
 					try
 					{
-						await fileTransferUtility.DownloadAsync(".", "dataintegritytool", key);
+						await fileTransferUtility.DownloadAsync(filepath, "dataintegritytool", key);
 						//					ret = $"file {pathDestination} downloaded";
 					}
 					catch (Exception ex)
