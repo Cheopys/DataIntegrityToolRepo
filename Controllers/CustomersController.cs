@@ -220,7 +220,7 @@ namespace DataIntegrityTool.Controllers
 			{
 				payments = context.CustomerPayments.ToList();
 
-				if (CustomerId! != null)
+				if (CustomerId != null)
 				{
 					payments = payments.Where(p => p.CustomerId.Equals(CustomerId)).ToList();
 				}
@@ -231,5 +231,10 @@ namespace DataIntegrityTool.Controllers
 			return payments;
 		}
 
+		[HttpGet, Route("CustomerRemainingScans")]
+		public Int32 CustomerRemainingScans(Int32 customerId)
+		{
+			return CustomersService.CustomerRemainingScans(customerId);
+		}
 	}
 }

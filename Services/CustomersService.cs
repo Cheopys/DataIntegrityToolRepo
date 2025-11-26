@@ -539,6 +539,25 @@ namespace DataIntegrityTool.Services
 				return false;
 			}
 		}
+
+        public static Int32 CustomerRemainingScans(Int32 customerId)
+        {
+            Int32 scans = 0;
+
+            using (DataContext context = new())
+            {
+                Customers? customer = context.Customers.Find(customerId);
+
+                if (customer != null)
+                {
+                    scans = customer.Scans;
+                }
+
+                context.Dispose();
+            }
+
+                return scans;
+        }
 	}
 }
 
