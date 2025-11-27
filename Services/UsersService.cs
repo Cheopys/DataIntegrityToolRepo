@@ -305,6 +305,29 @@ namespace DataIntegrityTool.Services
 
 			return errorCode;
 		}
+
+		public static Int32 UserRemainingScans(Int32 userId)
+		{
+			Int32 scans = 0;
+
+			using (DataContext context = new())
+			{
+				Users? user = context.Users.Find(userId);
+
+				if (user != null)
+				{
+					Customers? customer = context.Customers.Find(user.CustomerId);
+
+					if (customer != null)
+					{
+						scans = customer.Scans;
+					}
+				}
+				context.Dispose();
+			}
+
+			return scans;
+		}
 	}
 }
 
