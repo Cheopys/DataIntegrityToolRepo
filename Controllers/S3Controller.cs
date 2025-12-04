@@ -27,7 +27,7 @@ namespace DataIntegrityTool.Controllers
 				{
 					try
 					{
-						await fileTransferUtility.DownloadAsync(filepath, "dataintegritytool", key);
+						await fileTransferUtility.DownloadAsync(filepath, "katchanosigned", key);
 						_ret = $"file {filepath} downloaded";
 					}
 					catch (Exception ex)
