@@ -163,7 +163,7 @@ namespace DataIntegrityTool.Controllers
 		{
 			System.Security.Cryptography.Aes aes = ServerCryptographyService.CreateAes();
 
-//			request.PhoneNumber = (request.PhoneNumber == null ? "0" : request.PhoneNumber);
+			request.PhoneNumber = (request.PhoneNumber == null ? "0" : request.PhoneNumber);
 			request.AesKey = Convert.ToHexString(aes.Key);
 
 			return UsersService.RegisterUser(request);

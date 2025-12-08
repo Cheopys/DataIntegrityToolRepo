@@ -69,7 +69,7 @@ public class RegisterCustomerRequest
 	public string NameLast      { get; set; }
     public string Company       { get; set; }
     public string Email         { get; set; }
-//	public string PhoneNumber   { get; set; }
+	public string PhoneNumber   { get; set; }
     public string Password      { get; set; }
     public List<ToolTypes> Tools{ get; set; }
     public string Notes         { get; set; }
@@ -102,7 +102,7 @@ public class UpdateCustomerRequest
 	public string NameFirst     { get; set; }
 	public string NameLast      { get; set; }
 	public string Email         { get; set; }
-//	public string PhoneNumber   { get; set; }
+	public string PhoneNumber   { get; set; }
 	public string Password      { get; set; }
 	public List<ToolTypes> Tools{ get; set; }
 	public string Notes         { get; set; }
@@ -152,7 +152,7 @@ public class RegisterUserRequest
     public string NameFirst      { get; set; }
 	public string NameLast       { get; set; }
 	public string Email          { get; set; }
-//	public string PhoneNumber	 { get; set; }
+	public string PhoneNumber	 { get; set; }
 	public string Password       { get; set; }
     public string AesKey         { get; set; }
 }
@@ -169,7 +169,7 @@ public class UpdateUserRequest
 	public string? NameFirst         { get; set; }
 	public string? NameLast          { get; set; }
 	public string? Email             { get; set; }
-//	public string  PhoneNumber		 { get; set; }
+	public string  PhoneNumber		 { get; set; }
 	public string? Password          { get; set; }
 	//public List<ToolTypes>? Tools    { get; set; }
 }

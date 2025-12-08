@@ -72,7 +72,7 @@ namespace DataIntegrityTool.Services
                             NameLast         = request.NameLast,
                             Company          = request.Company,
                             Email            = request.Email,
-//                            PhoneNumber      = request.PhoneNumber == null ? "0" : request.PhoneNumber,
+                            PhoneNumber      = request.PhoneNumber == null ? "0" : request.PhoneNumber,
                             PasswordHash     = ServerCryptographyService.SHA256(request.Password),
                             Notes            = request.Notes,
                             AesKey           = Convert.FromHexString(request.AesKey),
@@ -103,7 +103,7 @@ namespace DataIntegrityTool.Services
                                 Email           = request.Email,
                                 NameFirst       = request.NameFirst,
                                 NameLast        = request.NameLast,
-//                                PhoneNumber     = customer.PhoneNumber,
+                                PhoneNumber     = customer.PhoneNumber,
                                 PasswordHash    = ServerCryptographyService.SHA256(request.Password),
                                 DateAdded       = DateTime.UtcNow,
                             };
@@ -208,11 +208,11 @@ namespace DataIntegrityTool.Services
                             error = ErrorCodes.errorInvalidEmailFormat;
                         }
                     }
-                    /*
+                    
 					if (request.PhoneNumber != null)
 					{
 						customer.PhoneNumber = request.PhoneNumber;
-					}*/
+					}
 
 					if (request.Password != null)
                     {
