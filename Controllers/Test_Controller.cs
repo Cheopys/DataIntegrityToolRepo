@@ -420,5 +420,26 @@ namespace DataIntegrityTool.Controllers
 		{
 			return UsersService.ChangePasswordAnswer(loginType, primaryKey, token, passwordNew);
 		}
+
+		[HttpPut, Route("AddAdministrator")]
+		public async Task AddAdministrator([FromBody] AddQAdminisrtatorRequest request)
+		{
+			using (DataContext context = new())
+			{
+				Administrators administrator = new()
+				{
+					AesKey			= ServerCryptographyService.CreateAes().Key,
+					DateAdded		= DateTime.UtcNow,
+					Email			= request.Email,
+					NameFirst		= request.NameFirst,
+					NameLast		= request.NameLast,
+					PasswordHash	= ServerCryptographyService.SHA256(request.Password)
+				};
+
+				context.Administrators.Add(administrator);
+				context.SaveChanges();
+				context.Dispose();
+			}
+		}
 	}
 }

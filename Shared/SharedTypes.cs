@@ -227,6 +227,14 @@ public class ChangePasswordAskResponse
     public ErrorCodes ErrorCode				{ get; set; }
 }
 
+public class AddQAdminisrtatorRequest
+{
+	public string NameFirst { get; set; }
+	public string NameLast	{ get; set; }
+	public string Email 	{ get; set; }
+	public string Password	{ get; set; }
+};
+
 public class UploadToolRequest
 {
 	public InterfaceType InterfaceType { get; set; }
