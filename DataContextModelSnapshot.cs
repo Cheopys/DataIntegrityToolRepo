@@ -151,6 +151,9 @@ namespace DataIntegrityTool.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
                     b.Property<int>("Scans")
                         .HasColumnType("integer");
 
@@ -339,6 +342,9 @@ namespace DataIntegrityTool.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
