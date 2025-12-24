@@ -124,5 +124,34 @@ namespace DataIntegrityTool.Services
 
 			return response;
 		}
+
+		public static Int32 AdminRefundSubscription(Int32 CustomerId, 
+													Int32 SubscriptionId)
+		{
+			Int32 scansRemaining = 0;
+			using (DataContext context = new())
+			{
+				Customers? customer = context.Customers.Find(CustomerId);
+
+				if (customer != null)
+				{
+					SubscriptionTypes? subscription = context.SubscriptionTypes.Find(SubscriptionId);
+
+					if (customer.Scans >= subscription.scans)
+					{
+						customer.Scans -= subscription.scans;
+
+						scansRemaining = customer.Scans;
+					}
+
+					context.SaveChangesAsync();
+				}
+
+				context.DisposeAsync();
+			}
+
+			return scansRemaining;
+		}
+
 	}
 }

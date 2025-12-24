@@ -242,6 +242,12 @@ namespace DataIntegrityTool.Controllers
 													 Token,
 													 PasswordNewHASHED);
 		}
+
+		[HttpPost, Route("AdminRefundSubscription")]
+		public Int32 AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
+		{
+			return ApplicationService.AdminRefundSubscription(CustomerId, SubscriptionId);
+		}
 	}
 }
 
