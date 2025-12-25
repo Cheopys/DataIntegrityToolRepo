@@ -143,6 +143,10 @@ namespace DataIntegrityTool.Services
 
 						scansRemaining = customer.Scans;
 					}
+					else
+					{
+						customer.Scans = 0;
+					}
 
 					context.SaveChangesAsync();
 				}
@@ -153,5 +157,35 @@ namespace DataIntegrityTool.Services
 			return scansRemaining;
 		}
 
+		public static Int32 AdminRefundTopUp(Int32 CustomerId,
+											 Int32 scansRefunded)
+		{
+			Int32 scansRemaining = 0;
+
+			using (DataContext context = new())
+			{
+				Customers? customer = context.Customers.Find(CustomerId);
+
+				if (customer != null)
+				{
+					if (customer.Scans >= scansRefunded)
+					{
+						customer.Scans -= scansRefunded;
+
+						scansRemaining = customer.Scans;
+					}
+					else
+					{
+						customer.Scans = 0;
+					}
+
+					context.SaveChangesAsync();
+				}
+
+				context.DisposeAsync();
+			}
+
+			return scansRemaining;
+		}
 	}
 }
