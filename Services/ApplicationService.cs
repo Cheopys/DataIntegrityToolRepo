@@ -135,7 +135,10 @@ namespace DataIntegrityTool.Services
 
 				if (customer != null)
 				{
-					SubscriptionTypes? subscription = context.SubscriptionTypes.Find(SubscriptionId);
+					SubscriptionTypes? subscription				 = context.SubscriptionTypes.Find(SubscriptionId);
+					CustomerSubscriptions? customerSubscriptions = context.CustomerSubscriptions.Where(cs => cs.CustomerId    .Equals(CustomerId)
+					                                                                                      && cs.SubscriptionId.Equals(SubscriptionId))
+																							    .LastOrDefault();
 
 					if (customer.Scans >= subscription.scans)
 					{
@@ -146,6 +149,11 @@ namespace DataIntegrityTool.Services
 					else
 					{
 						customer.Scans = 0;
+					}
+
+					if (customerSubscriptions != null)
+					{
+						context.CustomerSubscriptions.Remove(customerSubscriptions);
 					}
 
 					context.SaveChangesAsync();
