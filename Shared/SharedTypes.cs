@@ -108,6 +108,14 @@ public class UpdateCustomerRequest
 	public string Notes         { get; set; }
 }
 
+public class SubscriptionRefundResponse
+{
+	public Int32 CustomerId     { get; set; }
+	public Int32 SubscriptionId { get; set; }
+	public Int32 scansRemaining { get; set; }
+	public ErrorCodes ErrorCode { get; set; }	
+}
+
 public class LoginResponse
 { 
     public Int32      PrimaryKey { get; set; }

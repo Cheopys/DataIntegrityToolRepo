@@ -39,6 +39,7 @@ public enum ErrorCodes
 	errorEmailAlreadyExists   = 13,
 	errorAlreadySubscribed	  = 14,
 	errorInvalidEmailFormat	  = 15,
+	errorCustomerSubscriptionNotFound = 16,
 }
 
 public enum OSType
