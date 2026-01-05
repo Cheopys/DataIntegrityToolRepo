@@ -446,20 +446,18 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 {
-                    if (custsub == null)
+                    custsub = new CustomerSubscriptions()
                     {
-                        custsub = new CustomerSubscriptions()
-                        {
-                            CustomerId = CustomerId,
-                            SubscriptionId = subscriptionId,
-                        };
+                        CustomerId = CustomerId,
+                        SubscriptionId = subscriptionId,
+                    };
 
-						context.CustomerSubscriptions .Add(custsub);
-                    }
+					context.CustomerSubscriptions .Add(custsub);
+
                     // ExpirationDate is null for a subscription that hasn't been used yet
 
                     if (custsub.ExpirationDate == null
-                    && customer.SubscriptionTime != null)
+                    &&  customer.SubscriptionTime != null)
                     {
                         customer.SubscriptionTime += TimeSpan.FromDays(subscription.days);
                     }
