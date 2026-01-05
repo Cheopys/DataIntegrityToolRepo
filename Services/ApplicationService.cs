@@ -130,7 +130,10 @@ namespace DataIntegrityTool.Services
 		{
 			SubscriptionRefundResponse response = new()
 			{
-				scansRemaining = 0
+				CustomerId		= CustomerId,
+				SubscriptionId	= SubscriptionId,
+				scansRemaining	= 0,
+				ErrorCode		= ErrorCodes.errorNone
 			};
 
 			using (DataContext context = new())
