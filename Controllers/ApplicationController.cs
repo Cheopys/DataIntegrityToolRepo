@@ -244,7 +244,7 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("AdminRefundSubscription")]
-		public Int32 AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
+		public SubscriptionRefundResponse AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
 		{
 			return ApplicationService.AdminRefundSubscription(CustomerId, SubscriptionId);
 		}
