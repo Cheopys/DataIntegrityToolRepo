@@ -145,6 +145,7 @@ namespace DataIntegrityTool.Services
 					SubscriptionTypes? subscription				 = context.SubscriptionTypes.Find(SubscriptionId);
 					CustomerSubscriptions? customerSubscriptions = context.CustomerSubscriptions.Where(cs => cs.CustomerId    .Equals(CustomerId)
 					                                                                                      && cs.SubscriptionId.Equals(SubscriptionId))
+																								.OrderBy(cs => cs.Id)
 																							    .LastOrDefault();
 
 					if (customerSubscriptions != null)
