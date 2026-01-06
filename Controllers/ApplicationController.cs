@@ -244,9 +244,9 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPost, Route("AdminRefundSubscription")]
-		public SubscriptionRefundResponse AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
+		public async Task<SubscriptionRefundResponse> AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
 		{
-			return ApplicationService.AdminRefundSubscription(CustomerId, SubscriptionId);
+			return await ApplicationService.AdminRefundSubscription(CustomerId, SubscriptionId);
 		}
 
 		[HttpPost, Route("AdminRefundTopUp")]

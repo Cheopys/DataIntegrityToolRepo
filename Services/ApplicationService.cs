@@ -125,7 +125,7 @@ namespace DataIntegrityTool.Services
 			return response;
 		}
 
-		public static SubscriptionRefundResponse AdminRefundSubscription(Int32 CustomerId, 
+		public static async Task<SubscriptionRefundResponse> AdminRefundSubscription(Int32 CustomerId, 
 																		 Int32 SubscriptionId)
 		{
 			SubscriptionRefundResponse response = new()
@@ -147,10 +147,10 @@ namespace DataIntegrityTool.Services
 					                                                                                      && cs.SubscriptionId.Equals(SubscriptionId))
 																								.OrderBy(cs => cs.Id)
 																							    .LastOrDefault();
+					response.scansRemaining = customer.Scans;
 
 					if (customerSubscriptions != null)
 					{
-						if (customer.Scans >= subscription.scans)
 						if (customer.Scans >= subscription.scans)
 						{
 							customer.Scans -= subscription.scans;
@@ -169,14 +169,14 @@ namespace DataIntegrityTool.Services
 						response.ErrorCode = ErrorCodes.errorCustomerSubscriptionNotFound;
 					}
 
-					context.SaveChangesAsync();
+					await context.SaveChangesAsync();
 				}
 				else
 				{
 					response.ErrorCode = ErrorCodes.errorInvalidCustomerId;
 				}
 
-				context.DisposeAsync();
+				await context.DisposeAsync();
 			}
 
 			return response;
