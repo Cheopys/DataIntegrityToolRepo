@@ -243,8 +243,8 @@ namespace DataIntegrityTool.Controllers
 													 PasswordNewHASHED);
 		}
 
-		[HttpPost, Route("AdminRefundSubscription")]
-		public async Task<SubscriptionRefundResponse> AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
+			[HttpPost, Route("AdminRefundSubscription")]
+			public async Task<SubscriptionRefundResponse> AdminRefundSubscription (Int32 CustomerId, Int32 SubscriptionId)
 		{
 			return await ApplicationService.AdminRefundSubscription(CustomerId, SubscriptionId);
 		}

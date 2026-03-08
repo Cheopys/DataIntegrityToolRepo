@@ -79,6 +79,8 @@ namespace DataIntegrityTool.Controllers
 			using (FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read))
 			{
 				await stream.CopyToAsync(Response.Body);
+
+				stream.Dispose();
 			}
 
 			// Return an empty result as the response has already been written to
