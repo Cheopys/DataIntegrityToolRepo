@@ -74,22 +74,15 @@ namespace DataIntegrityTool.Services
 				Customers?     customer		= context.Customers	   .Where(cu => cu.Id.Equals(user.CustomerId)).FirstOrDefault();
 				CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(su => su.CustomerId.Equals(user.CustomerId)).FirstOrDefault();
 
-				if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
-				{
-					// subscription begins with first use
+				// subscription begins with first use
 
-					if (subscription.ExpirationDate   == null
-					&&  customer    .SubscriptionTime != null)
-					{
-						subscription.ExpirationDate   = DateTime.UtcNow + customer.SubscriptionTime;
-						customer    .SubscriptionTime = null;
-
-						await context.SaveChangesAsync();
-					}
-				}
-				else if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
+				if (subscription.ExpirationDate   == null
+				&&  customer    .SubscriptionTime != null)
 				{
-					response.RemainingScans = customer.Scans;
+					subscription.ExpirationDate   = DateTime.UtcNow + customer.SubscriptionTime;
+					customer    .SubscriptionTime = null;
+
+					await context.SaveChangesAsync();
 				}
 
 				if (user != null)
@@ -98,36 +91,16 @@ namespace DataIntegrityTool.Services
 
 					if (customer.Tools.Contains(request.Tooltype))
 					{
-						if (request.Licensetype.Equals(LicenseTypes.licenseTypeMetered))
+						logger.Info("LicenseType.Subscription");
+
+						if (subscription.ExpirationDate > DateTime.UtcNow)
 						{
-							logger.Info("LicenseType.Metered");
-
-							if (customer.Scans > 0)
-							{
-								logger.Info($"user has {customer.Scans} of license type 0");
-
-								OK = true;
-							}
-							else
-							{
-								response.Error = ErrorCodes.errorNoLicense;
-							}
-
-							await context.SaveChangesAsync();
-						} // end metered
-						else if (request.Licensetype.Equals(LicenseTypes.licenseTypeSubscription))
+							OK = true; 
+						}
+						else
 						{
-							logger.Info("LicenseType.Subscription");
-
-							if (subscription.ExpirationDate > DateTime.UtcNow)
-							{
-								OK = true; 
-							}
-							else
-							{
-								response.Error = ErrorCodes.errorNoLicense;
-							}
-						} // end interval
+							response.Error = ErrorCodes.errorNoLicense;
+						}
 					}
 					else
 					{
@@ -139,7 +112,7 @@ namespace DataIntegrityTool.Services
 						Session session = new()
 						{
 							UserId		= request.UserId,
-							Licensetype = request.Licensetype,
+//							Licensetype = request.Licensetype,
 							ToolType	= request.Tooltype,
 							TimeBegin	= DateTime.UtcNow,
 							TimeEnd		= DateTime.UtcNow,
@@ -176,14 +149,11 @@ namespace DataIntegrityTool.Services
 
 				session.TimeEnd = DateTime.UtcNow;
 
-				if (session?.Licensetype == LicenseTypes.licenseTypeSubscription)
-				{
-					CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
+				CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
 
-					if (subscription.ExpirationDate < DateTime.Now)
-					{
-						subscription.ExpirationDate = null;
-					}
+				if (subscription.ExpirationDate < DateTime.Now)
+				{
+					subscription.ExpirationDate = null;
 				}
 
 				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.TimeBegin).ToList();
@@ -250,11 +220,6 @@ namespace DataIntegrityTool.Services
 				Session?   session  = context.Session  .Where(se => se.Id == sessionId)      .FirstOrDefault();
 				Users?     user     = context.Users    .Where(us => us.Id == session.UserId) .FirstOrDefault();
 				Customers? customer = context.Customers.Where(cu => cu.Id == user.CustomerId).FirstOrDefault();
-
-				if (session.Licensetype == LicenseTypes.licenseTypeMetered)
-				{
-					customer.Scans--;					
-				}
 
 				context.SessionTransition.Add(new SessionTransition()
 				{

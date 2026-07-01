@@ -132,7 +132,7 @@ namespace DataIntegrityTool.Services
 			{
 				CustomerId		= CustomerId,
 				SubscriptionId	= SubscriptionId,
-				scansRemaining	= 0,
+//				scansRemaining	= 0,
 				ErrorCode		= ErrorCodes.errorNone
 			};
 
@@ -147,7 +147,7 @@ namespace DataIntegrityTool.Services
 					                                                                                      && cs.SubscriptionId.Equals(SubscriptionId))
 																								.OrderBy(cs => cs.Id)
 																							    .LastOrDefault();
-					response.scansRemaining = customer.Scans;
+/*			response.scansRemaining = customer.Scans;
 
 					if (customerSubscriptions != null)
 					{
@@ -168,7 +168,7 @@ namespace DataIntegrityTool.Services
 					{
 						response.ErrorCode = ErrorCodes.errorCustomerSubscriptionNotFound;
 					}
-
+*/
 					await context.SaveChangesAsync();
 				}
 				else
@@ -180,37 +180,6 @@ namespace DataIntegrityTool.Services
 			}
 
 			return response;
-		}
-
-		public static Int32 AdminRefundTopUp(Int32 CustomerId,
-											 Int32 scansRefunded)
-		{
-			Int32 scansRemaining = 0;
-
-			using (DataContext context = new())
-			{
-				Customers? customer = context.Customers.Find(CustomerId);
-
-				if (customer != null)
-				{
-					if (customer.Scans >= scansRefunded)
-					{
-						customer.Scans -= scansRefunded;
-
-						scansRemaining = customer.Scans;
-					}
-					else
-					{
-						customer.Scans = 0;
-					}
-
-					context.SaveChangesAsync();
-				}
-
-				context.DisposeAsync();
-			}
-
-			return scansRemaining;
 		}
 	}
 }

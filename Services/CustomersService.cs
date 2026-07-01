@@ -80,7 +80,7 @@ namespace DataIntegrityTool.Services
                             UsageSince       = DateTime.MinValue,
                             Tools            = request.Tools,
                             SeatsMax         = 10,
-                            Scans            = 0, //type.scans,
+//                            Scans            = 0, //type.scans,
                             SubscriptionTime = null//TimeSpan.FromDays(type.days)
                         };
 
@@ -92,7 +92,7 @@ namespace DataIntegrityTool.Services
 
                         response.CustomerId = customer.Id;
 
-                        AddSubscription(customer.Id, 13);
+                        AddSubscription(customer.Id, 13, 0);
 
                         if (request.InitialUser)
                         {
@@ -275,7 +275,7 @@ namespace DataIntegrityTool.Services
 
             return customers;
         }
-
+        /*
         public static Int32 AddCustomerScans(Int32 CustomerId, 
                                              Int32 newScans)
         {
@@ -295,7 +295,7 @@ namespace DataIntegrityTool.Services
 
             return scans;
         }
-
+        */
         private static CustomerUsage UsageByCustomer(Int32 customerId,
                                               DataContext context)
         {
@@ -383,7 +383,7 @@ namespace DataIntegrityTool.Services
 
             return type;
         }
-
+        /*
         public static TopupScansResponse TopUpScans(Int32 CustomerId,
                                                     Int16 Count,
                                                     Int32 Amount)
@@ -428,9 +428,10 @@ namespace DataIntegrityTool.Services
 
             return response;
         }
-
+        */
         public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
-															  Int32 subscriptionId)
+															  Int32 subscriptionId,
+                                                              Int16 quarters)
         {
             AddSubscriptionResponse response = new()
             {
@@ -448,29 +449,36 @@ namespace DataIntegrityTool.Services
                 {
                     custsub = new CustomerSubscriptions()
                     {
-                        CustomerId = CustomerId,
+                        CustomerId     = CustomerId,
                         SubscriptionId = subscriptionId,
+                        Quarters       = quarters,
                     };
 
-					context.CustomerSubscriptions .Add(custsub);
+					context.CustomerSubscriptions.Add(custsub);
 
                     // ExpirationDate is null for a subscription that hasn't been used yet
 
-                    if (custsub.ExpirationDate == null
-                    &&  customer.SubscriptionTime != null)
+                    if (custsub.ExpirationDate == null)
                     {
-                        customer.SubscriptionTime += TimeSpan.FromDays(subscription.days);
-                    }
+                        if (customer.SubscriptionTime == null)
+                        { 
+                            customer.SubscriptionTime = TimeSpan.FromDays(quarters * 92);
+						}
+                        else
+                        {
+							customer.SubscriptionTime += TimeSpan.FromDays(quarters * 92);
+						}
+					}
                     else
                     {
-                        custsub.ExpirationDate = DateTime.UtcNow + (TimeSpan.FromDays(subscription.days) + customer.SubscriptionTime);
-                        customer.SubscriptionTime = null;
+						customer.SubscriptionTime = (TimeSpan.FromDays(quarters * 92) + customer.SubscriptionTime);
+						custsub.ExpirationDate    = DateTime.UtcNow + customer.SubscriptionTime;
                     }
 
-					customer.Scans += subscription.scans;
+//					customer.Scans += subscription.scans;
 
                     response.Expiration = custsub.ExpirationDate;
-                    response.ScansAfter = customer.Scans;
+                    //response.ScansAfter = customer.Scans;
 
                     context.Add(new CustomerPayments()
                     {
@@ -478,7 +486,7 @@ namespace DataIntegrityTool.Services
                         Amount           = subscription.price,
                         Date             = DateTime.UtcNow,
                         SubscriptionType = subscriptionId,
-                        Scans            = subscription.scans
+                        Quarters         = quarters
                     });
 
 					context.SaveChanges();
@@ -538,6 +546,7 @@ namespace DataIntegrityTool.Services
 			}
 		}
 
+		/*
         public static Int32 CustomerRemainingScans(Int32 customerId)
         {
             Int32 scans = 0;
@@ -556,6 +565,31 @@ namespace DataIntegrityTool.Services
 
                 return scans;
         }
+        */
+
+		public static DateTime? CustomerExpirationDate(Int32 customerId)
+		{
+			DateTime? expiration = null;
+
+			using (DataContext context = new())
+			{
+				CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(s => s.CustomerId.Equals(customerId)).LastOrDefault();
+
+				if (subscription != null)
+				{
+					expiration = subscription.ExpirationDate;
+				}
+                else
+                {
+					expiration = DateTime.MinValue;
+				}
+
+				context.Dispose();
+			}
+
+			return expiration;
+		}
+
 	}
 }
 

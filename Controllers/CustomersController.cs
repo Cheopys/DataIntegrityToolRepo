@@ -155,14 +155,13 @@ namespace DataIntegrityTool.Controllers
 		{
 			return CustomersService.GetCustomerUsages(customerId);
 		}
-
+		/*
 		[HttpPost, Route("AddCustomerScans")]
 		public Int32 AddCustomerScans(Int32 CustomerId,
 									  Int32 newScans)
 		{
 			return CustomersService.AddCustomerScans(CustomerId, newScans);
-		}
-
+		}*/
 		[HttpGet, Route("CheckEmail")]
 		public LoginType CheckEmail(string Email)
 		{
@@ -189,7 +188,7 @@ namespace DataIntegrityTool.Controllers
 		public AddSubscriptionResponse AddCustomerPayment(Int32  CustomerId,
 														  Int32  Amount,
 														  Int32  SubscriptionType,
-														  Int16? Scans)
+														  Int16  Quarters)
 		{
 			AddSubscriptionResponse response = new()
 			{
@@ -197,15 +196,7 @@ namespace DataIntegrityTool.Controllers
 				Error      = ErrorCodes.errorNone,
 			};
 
-			response = CustomersService.AddSubscription(CustomerId, SubscriptionType);
-
-			if (Scans != null
-			&&  Scans  > 0)
-			{
-				TopupScansResponse responseTU = CustomersService.TopUpScans(CustomerId, Scans.Value, Amount);
-
-				response.ScansAfter = responseTU.ScansAfter;
-			}
+			response = CustomersService.AddSubscription(CustomerId, SubscriptionType,Quarters);
 
 			return response;
 		}
@@ -231,10 +222,10 @@ namespace DataIntegrityTool.Controllers
 			return payments;
 		}
 
-		[HttpGet, Route("CustomerRemainingScans")]
-		public Int32 CustomerRemainingScans(Int32 customerId)
+		[HttpGet, Route("CustomerExpirationDate")]
+		public DateTime? CustomerExpirationDate(Int32 customerId)
 		{
-			return CustomersService.CustomerRemainingScans(customerId);
+			return CustomersService.CustomerExpirationDate(customerId);
 		}
 	}
 }

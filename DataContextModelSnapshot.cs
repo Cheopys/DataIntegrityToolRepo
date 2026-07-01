@@ -77,7 +77,7 @@ namespace DataIntegrityTool.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("Scans")
+                    b.Property<int?>("Quarters")
                         .HasColumnType("integer");
 
                     b.Property<int?>("SubscriptionType")
@@ -101,6 +101,9 @@ namespace DataIntegrityTool.Migrations
 
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<short>("Quarters")
+                        .HasColumnType("smallint");
 
                     b.Property<int>("SubscriptionId")
                         .HasColumnType("integer");
@@ -154,9 +157,6 @@ namespace DataIntegrityTool.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.Property<int>("Scans")
-                        .HasColumnType("integer");
-
                     b.Property<short>("SeatsMax")
                         .HasColumnType("smallint");
 
@@ -208,9 +208,6 @@ namespace DataIntegrityTool.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Licensetype")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("TimeBegin")
@@ -266,18 +263,11 @@ namespace DataIntegrityTool.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<short>("days")
-                        .HasColumnType("smallint");
-
-                    b.Property<string>("level")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<short>("price")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("scans")
-                        .HasColumnType("integer");
+                    b.Property<short>("seats")
+                        .HasColumnType("smallint");
 
                     b.HasKey("Id");
 

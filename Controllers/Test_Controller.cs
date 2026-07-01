@@ -407,9 +407,10 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("AddSubscription")]
 		public AddSubscriptionResponse AddSubscription(Int32 CustomerId,
-													   Int32 SubscriptionId)
+													   Int32 SubscriptionId,
+													   Int16 Quarters)
 		{
-			return CustomersService.AddSubscription(CustomerId, SubscriptionId);
+			return CustomersService.AddSubscription(CustomerId, SubscriptionId, Quarters);
 		}
 
 		[HttpPost, Route("ChangePassswordAnswer")]

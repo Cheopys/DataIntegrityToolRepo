@@ -306,9 +306,9 @@ namespace DataIntegrityTool.Services
 			return errorCode;
 		}
 
-		public static Int32 UserRemainingScans(Int32 userId)
+		public static DateTime? UserExpirationDate(Int32 userId)
 		{
-			Int32 scans = 0;
+			DateTime? ExprationDate = null;
 
 			using (DataContext context = new())
 			{
@@ -316,17 +316,13 @@ namespace DataIntegrityTool.Services
 
 				if (user != null)
 				{
-					Customers? customer = context.Customers.Find(user.CustomerId);
-
-					if (customer != null)
-					{
-						scans = customer.Scans;
-					}
+					ExprationDate = CustomersService.CustomerExpirationDate(user.CustomerId);
 				}
+
 				context.Dispose();
 			}
 
-			return scans;
+			return ExprationDate;
 		}
 	}
 }

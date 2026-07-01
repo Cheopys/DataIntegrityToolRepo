@@ -146,10 +146,10 @@ namespace DataIntegrityTool.Controllers
 			return UsersService.DeleteUser(CustomerId, UserId);
 		}
 
-		[HttpGet, Route("UserRemainingScans")]
-		public Int32 UserRemainingScans(Int32 userId)
+		[HttpGet, Route("UserExpirationDate")]
+		public DateTime? UserExpirationDate(Int32 userId)
 		{
-			return UsersService.UserRemainingScans(userId);
+			return UsersService.UserExpirationDate(userId);
 		}
 	}
 }

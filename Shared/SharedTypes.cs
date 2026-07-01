@@ -112,7 +112,7 @@ public class SubscriptionRefundResponse
 {
 	public Int32 CustomerId     { get; set; }
 	public Int32 SubscriptionId { get; set; }
-	public Int32 scansRemaining { get; set; }
+//	public Int32 scansRemaining { get; set; }
 	public ErrorCodes ErrorCode { get; set; }	
 }
 
@@ -125,7 +125,7 @@ public class LoginResponse
 public class BeginSessionRequest
 {
     public Int32        UserId      { get; set; }
-    public LicenseTypes Licensetype { get; set; }
+//    public LicenseTypes Licensetype { get; set; }
     public ToolTypes    Tooltype    { get; set; }
 }
 
@@ -202,7 +202,7 @@ public class AddSubscriptionResponse
 {
 	public Int32      CustomerId    { get; set; }
     public DateTime?  Expiration    { get; set; }
-	public Int32      ScansAfter    { get; set; }
+//	public Int32      ScansAfter    { get; set; }
 	public ErrorCodes Error         { get; set; }
 }
 

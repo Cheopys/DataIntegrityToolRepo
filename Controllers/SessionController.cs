@@ -24,13 +24,11 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpPut, Route("BeginSession")]
 		public async Task<BeginSessionResponse> BeginSession(Int32		  UserId, 
-															 LicenseTypes LicenseType, 
 															 ToolTypes    ToolType)
 		{
 			BeginSessionRequest request = new()
 			{
 				UserId      = UserId,
-				Licensetype = LicenseType,
 				Tooltype    = 0
 			};
 
