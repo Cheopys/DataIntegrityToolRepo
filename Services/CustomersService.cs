@@ -81,7 +81,7 @@ namespace DataIntegrityTool.Services
                             Tools            = request.Tools,
                             SeatsMax         = 10,
 //                            Scans            = 0, //type.scans,
-                            SubscriptionTime = null//TimeSpan.FromDays(type.days)
+//                            SubscriptionTime = null//TimeSpan.FromDays(type.days)
                         };
 
                         context.Customers.Add(customer);
@@ -92,7 +92,7 @@ namespace DataIntegrityTool.Services
 
                         response.CustomerId = customer.Id;
 
-                        AddSubscription(customer.Id, 13, 0);
+                        CustomersService.AddSubscription(customer.Id, 13, 0, DateTime.MinValue);
 
                         if (request.InitialUser)
                         {
@@ -244,16 +244,12 @@ namespace DataIntegrityTool.Services
                 Customers?                  customer        = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
                 List<Users>                 users           = context.Users.Where(us => us.CustomerId.Equals(CustomerId)).ToList();
                 List<Session>               sessions        = context.Session.Where(s => s.CustomerId.Equals(CustomerId)).ToList();
-                List<LicenseMetered>        licensesetered  = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(CustomerId)).ToList();
                 List<CustomerSubscriptions> subscriptions   = context.CustomerSubscriptions.Where(s => s.CustomerId == CustomerId).ToList();
 
                 List<Int32> sessionIds = sessions.Select(s => s.Id).ToList();
-                List<SessionTransition> transitions = context.SessionTransition.Where(s => sessionIds.Contains(s.SessionId)).ToList();
 
                 context.RemoveRange(users);
                 context.RemoveRange(sessions);
-				context.RemoveRange(transitions);
-				context.RemoveRange(licensesetered);
 				context.RemoveRange(subscriptions);
 				context.Remove     (customer);
 
@@ -275,87 +271,7 @@ namespace DataIntegrityTool.Services
 
             return customers;
         }
-        /*
-        public static Int32 AddCustomerScans(Int32 CustomerId, 
-                                             Int32 newScans)
-        {
-            Int32 scans = 0;
-
-            using (DataContext context = new())
-            {
-                Customers? customer = context.Customers.Where(cu => cu.Id.Equals(CustomerId)).FirstOrDefault();
-
-                customer.Scans += newScans;
-
-                scans = customer.Scans;
-
-                context.SaveChanges();
-                context.Dispose();
-            }
-
-            return scans;
-        }
-        */
-        private static CustomerUsage UsageByCustomer(Int32 customerId,
-                                              DataContext context)
-        {
-            DateTime earliest = DateTime.MaxValue;
-
-            CustomerUsage usage = new()
-            {
-                CustomerId = customerId,
-            };
-
-            // last time customer was billed
-            DateTime? customerUsage = context.Customers.Where(cu => cu.Id.Equals(customerId))
-                                                       .Select(cu => cu.UsageSince)
-                                                       .FirstOrDefault();
-            // metered licenses
-
-            List<LicenseMetered> metereds = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(customerId)
-                                                                            && lm.TimeBegun > customerUsage)
-                                                                  .ToList();
-            usage.ScanCount = metereds.Count();
-
-            if (usage.ScanCount > 0)
-            {
-                earliest = metereds.Min(lm => lm.TimeBegun.Value);
-            }
-            else
-            {
-                earliest = DateTime.MinValue;
-            }
-            return usage;
-        }
-
-        public static List<CustomerUsage> GetCustomerUsages(Int32? customerId)
-        {
-            List<CustomerUsage> usages = new();
-
-            using (DataContext context = new())
-            {
-                DateTime lastUsage = context.ToolParameters.Select(tp => tp.usageSince).FirstOrDefault();
-
-                if (customerId != null)
-                {
-                    usages.Add(UsageByCustomer(customerId.Value, context));
-                }
-                else
-                {
-                    List<Int32> customerIds = context.Customers.Select(cu => cu.Id).ToList();
-
-                    foreach (Int32 id in customerIds)
-                    {
-                        usages.Add(UsageByCustomer(id, context));
-                    }
-                }
-
-                context.Dispose();
-            }
-
-            return usages;
-        }
-
+        
         public static LoginType CheckEmail(string Email)
         {
             LoginType type = LoginType.typeUser;
@@ -431,11 +347,13 @@ namespace DataIntegrityTool.Services
         */
         public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
 															  Int32 subscriptionId,
-                                                              Int16 quarters)
+                                                              Int32 Amount,
+                                                              DateTime ExpirationDate)
         {
             AddSubscriptionResponse response = new()
             {
                 CustomerId = CustomerId,
+                Expiration = ExpirationDate,
                 Error = ErrorCodes.errorNone
             };
 
@@ -447,46 +365,27 @@ namespace DataIntegrityTool.Services
 
                 if (customer != null)
                 {
+                    List<CustomerSubscriptions> custsubs = context.CustomerSubscriptions.Where(cs => cs.CustomerId.Equals(CustomerId)).ToList();
+
+                    customer.SeatsMax = subscription.seats;
+
                     custsub = new CustomerSubscriptions()
                     {
                         CustomerId     = CustomerId,
                         SubscriptionId = subscriptionId,
-                        Quarters       = quarters,
+                        ExpirationDate = ExpirationDate
                     };
 
+                    context.CustomerSubscriptions.RemoveRange(custsubs);
+
 					context.CustomerSubscriptions.Add(custsub);
-
-                    // ExpirationDate is null for a subscription that hasn't been used yet
-
-                    if (custsub.ExpirationDate == null)
-                    {
-                        if (customer.SubscriptionTime == null)
-                        { 
-                            customer.SubscriptionTime = TimeSpan.FromDays(quarters * 92);
-						}
-                        else
-                        {
-							customer.SubscriptionTime += TimeSpan.FromDays(quarters * 92);
-						}
-					}
-                    else
-                    {
-						customer.SubscriptionTime = (TimeSpan.FromDays(quarters * 92) + customer.SubscriptionTime);
-						custsub.ExpirationDate    = DateTime.UtcNow + customer.SubscriptionTime;
-                    }
-
-//					customer.Scans += subscription.scans;
-
-                    response.Expiration = custsub.ExpirationDate;
-                    //response.ScansAfter = customer.Scans;
 
                     context.Add(new CustomerPayments()
                     {
                         CustomerId       = customer.Id,
-                        Amount           = subscription.price,
+                        Amount           = Amount,
                         Date             = DateTime.UtcNow,
                         SubscriptionType = subscriptionId,
-                        Quarters         = quarters
                     });
 
 					context.SaveChanges();

@@ -132,13 +132,6 @@ namespace DataIntegrityTool.Controllers
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, users);
 		}
 
-		[HttpGet, Route("GetCustomerUsage")]
-		[Produces("application/json")]
-		public List<CustomerUsage> GetCustomerUsages (Int32? customerId) 
-		{
-			return CustomersService.GetCustomerUsages(customerId);
-		}
-
 		[HttpDelete, Route("DeleteUser")]
 		public string DeleteUser(Int32 CustomerId, 
 							     Int32 UserId)

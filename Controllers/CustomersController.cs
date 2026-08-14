@@ -149,19 +149,6 @@ namespace DataIntegrityTool.Controllers
 			CustomersService.DeleteCustomer(customerId);
 		}
 
-		[HttpGet, Route("GetCustomerUsage")]
-		[Produces("application/json")]
-		public List<CustomerUsage> GetCustomerUsages(Int32? customerId)
-		{
-			return CustomersService.GetCustomerUsages(customerId);
-		}
-		/*
-		[HttpPost, Route("AddCustomerScans")]
-		public Int32 AddCustomerScans(Int32 CustomerId,
-									  Int32 newScans)
-		{
-			return CustomersService.AddCustomerScans(CustomerId, newScans);
-		}*/
 		[HttpGet, Route("CheckEmail")]
 		public LoginType CheckEmail(string Email)
 		{
@@ -188,7 +175,7 @@ namespace DataIntegrityTool.Controllers
 		public AddSubscriptionResponse AddCustomerPayment(Int32  CustomerId,
 														  Int32  Amount,
 														  Int32  SubscriptionType,
-														  Int16  Quarters)
+														  Int64  ExpirationDateUNIX)
 		{
 			AddSubscriptionResponse response = new()
 			{
@@ -196,7 +183,9 @@ namespace DataIntegrityTool.Controllers
 				Error      = ErrorCodes.errorNone,
 			};
 
-			response = CustomersService.AddSubscription(CustomerId, SubscriptionType,Quarters);
+			DateTime ExpirationDate = DateTimeOffset.FromUnixTimeSeconds(ExpirationDateUNIX).UtcDateTime;
+
+			response = CustomersService.AddSubscription(CustomerId, SubscriptionType, Amount, ExpirationDate);
 
 			return response;
 		}

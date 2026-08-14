@@ -76,23 +76,12 @@ namespace DataIntegrityTool.Services
 
 				// subscription begins with first use
 
-				if (subscription.ExpirationDate   == null
-				&&  customer    .SubscriptionTime != null)
-				{
-					subscription.ExpirationDate   = DateTime.UtcNow + customer.SubscriptionTime;
-					customer    .SubscriptionTime = null;
-
-					await context.SaveChangesAsync();
-				}
-
 				if (user != null)
 				{
 					logger.Info($"userId = {user.Id}");
 
 					if (customer.Tools.Contains(request.Tooltype))
 					{
-						logger.Info("LicenseType.Subscription");
-
 						if (subscription.ExpirationDate > DateTime.UtcNow)
 						{
 							OK = true; 
@@ -112,10 +101,9 @@ namespace DataIntegrityTool.Services
 						Session session = new()
 						{
 							UserId		= request.UserId,
-//							Licensetype = request.Licensetype,
 							ToolType	= request.Tooltype,
 							TimeBegin	= DateTime.UtcNow,
-							TimeEnd		= DateTime.UtcNow,
+							TimeEnd		= DateTime.MaxValue,
 							CustomerId  = user.CustomerId
 						};
 
@@ -139,8 +127,6 @@ namespace DataIntegrityTool.Services
 
 		public static async Task<List<EndSessionResponse>> EndSession(Int32 sessionId)
 		{
-			List<SessionTransition> transitions = new();
-
 			using (DataContext context = new())
 			{
 				Session? session	= context.Session.Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
@@ -156,25 +142,11 @@ namespace DataIntegrityTool.Services
 					subscription.ExpirationDate = null;
 				}
 
-				transitions = context.SessionTransition.Where(st => st.SessionId.Equals(sessionId)).OrderBy(st => st.TimeBegin).ToList();
-
 				context.SaveChanges();
 				context.Dispose();
 			}
 
 			List<EndSessionResponse> response = new();
-
-			foreach (SessionTransition transition in transitions)
-			{
-				response.Add(new EndSessionResponse()
-				{
-					SessionId		= transition.SessionId,
-					TimeBegin		= transition.TimeBegin,
-					FrameOrdinal	= transition.FrameOrdinal,
-					LayerOrdinal	= transition.LayerOrdinal,
-					ErrorCode		= transition.ErrorCode
-				});
-			};
 
 			return response;
 		}
@@ -209,7 +181,6 @@ namespace DataIntegrityTool.Services
 
             return path;
         }
-*/
 		public static void SessionTransition(Int32 sessionId,
 											 Int16 Frame,
 											 Int16 Layer,
@@ -234,5 +205,6 @@ namespace DataIntegrityTool.Services
 				context.Dispose();
 			}
 		}
+*/
     } // end class
 } // end namespace

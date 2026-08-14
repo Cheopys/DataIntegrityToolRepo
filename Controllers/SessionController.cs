@@ -43,15 +43,5 @@ namespace DataIntegrityTool.Controllers
 
 			return JsonSerializer.Serialize(transitions);
 		}
-
-		[HttpPut, Route("SessionTransition")]
-		[Produces("application/json")]
-		public void SessionTransition(Int32			SessionId,
-									  Int16			Frame,
-									  Int16			Layer,
-									  ErrorCodes Error = ErrorCodes.errorNone)
-		{
-			SessionService.SessionTransition(SessionId, Frame, Layer, Error);
-		}
     }
 }

@@ -146,13 +146,6 @@ public class EndSessionResponse
 	public ErrorCodes ErrorCode     { get; set; } = ErrorCodes.errorNone;
 }
 
-public class CustomerUsage
-{
-    public Int32 CustomerId         { get; set; }
-    public Int32 ScanCount      { get; set; }
-    public DateTime EarliestUse     { get; set; }
-}
-
 public class RegisterUserRequest
 {
     Int32        Id              { get; set; }

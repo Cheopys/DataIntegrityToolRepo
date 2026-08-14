@@ -181,13 +181,11 @@ namespace DataIntegrityTool.Services
 			{
 				Users?        user     = context.Users  .Where(us => us.Id.Equals(UserId)).FirstOrDefault();
 				List<Session> sessions = context.Session.Where(s => s.UserId.Equals(UserId)).ToList();
-				List<LicenseMetered> licensesetered = context.LicenseMetered.Where(lm => lm.CustomerId.Equals(UserId)).ToList();
 
 				if (user.CustomerId == CustomerId)
 				{
 					context.Remove(user);
 					context.RemoveRange(sessions);
-					context.RemoveRange(licensesetered);
 
 					context.SaveChanges();
 				}

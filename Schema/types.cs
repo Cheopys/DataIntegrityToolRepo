@@ -6,13 +6,7 @@ public enum LoginType
 	typeCustomer = 2,
 	typeAdministrator		 = 3
 }
-/*
-public enum LicenseTypes
-{
-	licenseTypeMetered      = 1,
-	licenseTypeSubscription = 2
-}
-*/
+
 public enum ToolTypes
 { 
 	tooltypeVFX,

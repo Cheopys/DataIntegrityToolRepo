@@ -30,9 +30,7 @@ namespace DataIntegrityTool.Db
 		public DbSet<SubscriptionTypes> SubscriptionTypes   { get; set; }
 		public DbSet<CustomerSubscriptions>  CustomerSubscriptions          { get; set; }
         public DbSet<CustomerPayments>      CustomerPayments { get; set; }
-		public DbSet<LicenseMetered> LicenseMetered         { get; set; }
-        public DbSet<Session>        Session                { get; set; }
-        public DbSet<SessionTransition>  SessionTransition  { get; set; }
+		public DbSet<Session>        Session                { get; set; }
         public DbSet<Users>          Users                  { get; set; }
         public DbSet<ToolParameters> ToolParameters         { get; set; }
         public DbSet<UsersAwaitingMFA> UsersAwaitingMFA     { get; set; }
@@ -44,9 +42,7 @@ namespace DataIntegrityTool.Db
 			modelBuilder.Entity<CustomerSubscriptions>    ().ToTable("CustomerSubscriptions");
             modelBuilder.Entity<CustomerPayments> ().ToTable("CustomerPayments");
 			modelBuilder.Entity<SubscriptionTypes>().ToTable("SubscriptionTypes");
-			modelBuilder.Entity<LicenseMetered>   ().ToTable("LicenseMetered");
 			modelBuilder.Entity<Session>          ().ToTable("Session");
-            modelBuilder.Entity<SessionTransition>().ToTable("SessionTransition");
             modelBuilder.Entity<Users>            ().ToTable("Users");
             modelBuilder.Entity<ToolParameters>   ().ToTable("ToolParameters");
             modelBuilder.Entity<UsersAwaitingMFA> ().ToTable("UsersAwaitingMFA");

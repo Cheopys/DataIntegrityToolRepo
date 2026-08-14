@@ -24,6 +24,6 @@ namespace DataIntegrityTool.Schema
         public Int16    SeatsMax      { get; set; }
 //		public Int32    Scans         { get; set; }
         public Int32     ChangePasswordToken { get; set; }
-		public TimeSpan? SubscriptionTime    { get; set; }
+//	    public TimeSpan? SubscriptionTime    { get; set; }
     }
 }
