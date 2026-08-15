@@ -92,7 +92,9 @@ namespace DataIntegrityTool.Services
 
                         response.CustomerId = customer.Id;
 
-                        CustomersService.AddSubscription(customer.Id, 13, 0, DateTime.MinValue);
+                        SubscriptionTypes subscription = context.SubscriptionTypes.Find(SubscriptionType.subscriptionTrial);
+
+                        CustomersService.AddSubscription(customer.Id, (int) SubscriptionType.subscriptionTrial, 0, DateTime.UtcNow + TimeSpan.FromDays(subscription.days));
 
                         if (request.InitialUser)
                         {

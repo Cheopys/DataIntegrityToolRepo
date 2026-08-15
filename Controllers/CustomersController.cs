@@ -177,17 +177,9 @@ namespace DataIntegrityTool.Controllers
 														  Int32  SubscriptionType,
 														  Int64  ExpirationDateUNIX)
 		{
-			AddSubscriptionResponse response = new()
-			{
-				CustomerId = CustomerId,
-				Error      = ErrorCodes.errorNone,
-			};
-
 			DateTime ExpirationDate = DateTimeOffset.FromUnixTimeSeconds(ExpirationDateUNIX).UtcDateTime;
 
-			response = CustomersService.AddSubscription(CustomerId, SubscriptionType, Amount, ExpirationDate);
-
-			return response;
+			return CustomersService.AddSubscription(CustomerId, SubscriptionType, Amount, ExpirationDate);
 		}
 
 		[HttpGet, Route("GetCustomerPayments")]

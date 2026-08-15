@@ -49,3 +49,14 @@ public enum InterfaceType
 	GUI = 1,
 	CLI	= 2
 }
+
+public enum SubscriptionType
+{
+	subscriptionTrial			= 13,
+	subscriptionBronzeMonthly	= 17,
+	subscriptionSilverMonthly	= 18,
+	subscriptionGoldMonthly		= 19,
+	subscriptionBronzeAnnual	= 20,
+	subscriptionSilverAnnual	= 21,
+	subscriptionGoldAnnual		= 22
+}
