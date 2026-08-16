@@ -85,9 +85,9 @@ namespace DataIntegrityTool.Controllers
 */
 		[HttpPut, Route("RegisterAdministratorRSA")]
 		[Produces("application/json")]
-		public async Task<string> RegisterAdministratorRSA([FromBody] string registerAdminisrtatorB64)
+		public async Task<string> RegisterAdministratorRSA([FromBody] string registerAdministratorB64)
 		{
-			RegisterAdministratorRequest request = ServerCryptographyService.DecryptRSA<RegisterAdministratorRequest>(registerAdminisrtatorB64);
+			RegisterAdministratorRequest request = ServerCryptographyService.DecryptRSA<RegisterAdministratorRequest>(registerAdministratorB64);
 
 			RegisterAdministratorResponse response = new()
 			{
