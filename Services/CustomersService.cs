@@ -80,8 +80,6 @@ namespace DataIntegrityTool.Services
                             UsageSince       = DateTime.MinValue,
                             Tools            = request.Tools,
                             SeatsMax         = 10,
-//                            Scans            = 0, //type.scans,
-//                            SubscriptionTime = null//TimeSpan.FromDays(type.days)
                         };
 
                         context.Customers.Add(customer);

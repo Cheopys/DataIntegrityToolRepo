@@ -168,6 +168,12 @@ namespace DataIntegrityTool.Controllers
 				context.Dispose();
 			}
 
+			// remove trial
+
+			SubscriptionTypes? trial = subscriptions.Where(s => s.Id.Equals(SubscriptionType.subscriptionTrial)).FirstOrDefault();
+
+			subscriptions.Remove(trial);
+
 			return JsonSerializer.Serialize(subscriptions);
 		}
 
