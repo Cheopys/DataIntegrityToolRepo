@@ -178,14 +178,35 @@ namespace DataIntegrityTool.Controllers
 		}
 
 		[HttpPut, Route("AddCustomerPayment")]
-		public AddSubscriptionResponse AddCustomerPayment(Int32  CustomerId,
+		public AddSubscriptionResponse AddCustomerPayment([FromHeader(Name = "X-DIT-Internal-Key")] string? ApiKey,
+														  Int32  CustomerId, 
 														  Int32  Amount,
 														  Int32  SubscriptionType,
 														  Int64  ExpirationDateUNIX)
 		{
-			DateTime ExpirationDate = DateTimeOffset.FromUnixTimeSeconds(ExpirationDateUNIX).UtcDateTime;
+			AddSubscriptionResponse response = new()
+			{
+				CustomerId = CustomerId,
+				Error      = ErrorCodes.errorNone
+			};
 
-			return CustomersService.AddSubscription(CustomerId, SubscriptionType, Amount, ExpirationDate);
+			string expectedKey = Environment.GetEnvironmentVariable("DIT_INTERNAL_API_KEY") ?? "";
+			bool   keyMatches = string.IsNullOrEmpty(expectedKey) == false 
+						     && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? ""),
+																	    Encoding.UTF8.GetBytes(expectedKey));
+
+			if (keyMatches)
+			{
+				DateTime ExpirationDate = DateTimeOffset.FromUnixTimeSeconds(ExpirationDateUNIX).UtcDateTime;
+
+				response = CustomersService.AddSubscription(CustomerId, SubscriptionType, Amount, ExpirationDate);
+			}
+			else
+			{
+				response.Error = ErrorCodes.errorNotAuthenticated;
+			}
+
+			return response;
 		}
 
 		[HttpGet, Route("GetCustomerPayments")]

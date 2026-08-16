@@ -195,7 +195,6 @@ public class AddSubscriptionResponse
 {
 	public Int32      CustomerId    { get; set; }
     public DateTime?  Expiration    { get; set; }
-//	public Int32      ScansAfter    { get; set; }
 	public ErrorCodes Error         { get; set; }
 }
 
