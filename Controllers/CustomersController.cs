@@ -1,4 +1,7 @@
 ﻿using Amazon.Runtime.Internal;
+using Amazon;
+using Amazon.SecretsManager;
+using Amazon.SecretsManager.Model;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
@@ -177,12 +180,40 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(subscriptions);
 		}
 
+		static async Task<string> GetAuthSecret()
+		{
+			string secretName = "DITAuthorizationkey";
+			string region     = "ca-central-1";
+
+			IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
+
+			GetSecretValueRequest request = new GetSecretValueRequest
+			{
+				SecretId     = secretName,
+				VersionStage = "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified.
+			};
+
+			GetSecretValueResponse response = new();
+
+			try
+			{
+				response = await client.GetSecretValueAsync(request);
+			}
+			catch (Exception excxeption)
+			{
+				response.SecretString = String.Empty;
+			}
+
+			return response.SecretString;
+		}
+
+
 		[HttpPut, Route("AddCustomerPayment")]
-		public AddSubscriptionResponse AddCustomerPayment([FromHeader(Name = "X-DIT-Internal-Key")] string? ApiKey,
-														  Int32  CustomerId, 
-														  Int32  Amount,
-														  Int32  SubscriptionType,
-														  Int64  ExpirationDateUNIX)
+		public async Task<AddSubscriptionResponse> AddCustomerPayment([FromHeader(Name = "X-DIT-Internal-Key")] string? ApiKey,
+																	  Int32  CustomerId, 
+																	  Int32  Amount,
+																	  Int32  SubscriptionType,
+																	  Int64  ExpirationDateUNIX)
 		{
 			AddSubscriptionResponse response = new()
 			{
@@ -190,9 +221,9 @@ namespace DataIntegrityTool.Controllers
 				Error      = ErrorCodes.errorNone
 			};
 
-			string expectedKey = Environment.GetEnvironmentVariable("DIT_INTERNAL_API_KEY") ?? "";
+			string expectedKey = await GetAuthSecret(); // Environment.GetEnvironmentVariable("DIT_INTERNAL_API_KEY") ?? "";
 			bool   keyMatches = string.IsNullOrEmpty(expectedKey) == false 
-						     && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? ""),
+						     && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? String.Empty),
 																	    Encoding.UTF8.GetBytes(expectedKey));
 
 			if (keyMatches)
