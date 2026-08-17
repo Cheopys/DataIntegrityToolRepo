@@ -182,7 +182,7 @@ namespace DataIntegrityTool.Controllers
 
 		static async Task<string> GetAuthSecret()
 		{
-			string secretName = "DITAuthorizationkey";
+			string secretName = "DITAuthorizationKey";
 			string region     = "ca-central-1";
 
 			IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
@@ -190,7 +190,7 @@ namespace DataIntegrityTool.Controllers
 			GetSecretValueRequest request = new GetSecretValueRequest
 			{
 				SecretId     = secretName,
-				VersionStage = "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified.
+				VersionStage = "AWSCURRENT" 
 			};
 
 			GetSecretValueResponse response = new();
@@ -207,7 +207,6 @@ namespace DataIntegrityTool.Controllers
 			return response.SecretString;
 		}
 
-
 		[HttpPut, Route("AddCustomerPayment")]
 		public async Task<AddSubscriptionResponse> AddCustomerPayment([FromHeader(Name = "X-DIT-Internal-Key")] string? ApiKey,
 																	  Int32  CustomerId, 
@@ -221,7 +220,7 @@ namespace DataIntegrityTool.Controllers
 				Error      = ErrorCodes.errorNone
 			};
 
-			string expectedKey = await GetAuthSecret(); // Environment.GetEnvironmentVariable("DIT_INTERNAL_API_KEY") ?? "";
+			string expectedKey = await GetAuthSecret(); 
 			bool   keyMatches = string.IsNullOrEmpty(expectedKey) == false 
 						     && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? String.Empty),
 																	    Encoding.UTF8.GetBytes(expectedKey));
