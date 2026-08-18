@@ -129,19 +129,12 @@ namespace DataIntegrityTool.Services
 		{
 			using (DataContext context = new())
 			{
-				Session? session	= context.Session.Where(se => se.Id.Equals(sessionId)).FirstOrDefault();
+				Session? session	= context.Session  .Where(se => se.Id.Equals(sessionId))         .FirstOrDefault();
 				Customers? customer = context.Customers.Where(cu => cu.Id.Equals(session.CustomerId)).FirstOrDefault();
-				Users? user		    = context.Users.Where(us => us.Id.Equals(session.UserId)).FirstOrDefault();
+				Users? user		    = context.Users    .Where(us => us.Id.Equals(session.UserId))    .FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
-
-				CustomerSubscriptions? subscription = context.CustomerSubscriptions.Where(su => su.CustomerId.Equals(session.CustomerId)).FirstOrDefault();
-
-				if (subscription.ExpirationDate < DateTime.Now)
-				{
-					subscription.ExpirationDate = null;
-				}
-
+S
 				context.SaveChanges();
 				context.Dispose();
 			}

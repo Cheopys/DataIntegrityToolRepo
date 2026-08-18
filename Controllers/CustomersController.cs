@@ -29,6 +29,7 @@ namespace DataIntegrityTool.Controllers
 	public class CustomersController : ControllerBase
 	{
 		static Logger logger;
+		
 		public CustomersController()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
@@ -42,18 +43,6 @@ namespace DataIntegrityTool.Controllers
 			// Apply config           
 			LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
-		}
-
-		//  C
-
-		private static Aes CreateAes()
-		{
-			Aes aes = Aes.Create();
-			aes.KeySize = 256;
-			aes.Mode = CipherMode.CBC;
-			aes.Padding = PaddingMode.PKCS7;
-
-			return aes;
 		}
 
 		private static string EncryptRSA(byte[] cleartext)
@@ -173,7 +162,7 @@ namespace DataIntegrityTool.Controllers
 
 			// remove trial
 
-			SubscriptionTypes? trial = subscriptions.Where(s => s.Id.Equals(SubscriptionType.subscriptionTrial)).FirstOrDefault();
+			SubscriptionTypes? trial = subscriptions.Where(s => s.Id.Equals((int) SubscriptionType.subscriptionTrial)).FirstOrDefault();
 
 			subscriptions.Remove(trial);
 
@@ -204,6 +193,8 @@ namespace DataIntegrityTool.Controllers
 				response.SecretString = String.Empty;
 			}
 
+			client.Dispose();
+
 			return response.SecretString;
 		}
 
@@ -214,11 +205,7 @@ namespace DataIntegrityTool.Controllers
 																	  Int32  SubscriptionType,
 																	  Int64  ExpirationDateUNIX)
 		{
-			AddSubscriptionResponse response = new()
-			{
-				CustomerId = CustomerId,
-				Error      = ErrorCodes.errorNone
-			};
+			AddSubscriptionResponse response;
 
 			string expectedKey = await GetAuthSecret(); 
 			bool   keyMatches = string.IsNullOrEmpty(expectedKey) == false 
@@ -233,7 +220,17 @@ namespace DataIntegrityTool.Controllers
 			}
 			else
 			{
-				response.Error = ErrorCodes.errorNotAuthenticated;
+				string logMessage = string.IsNullOrEmpty(expectedKey)
+									? "AddCustomerPayment authentication key not found in Secrets Manager"
+									: "AddCustomerPayment authentication key invalid";
+
+				logger.Error(logMessage);
+
+				response = new()
+				{
+					CustomerId = CustomerId,
+					Error      = ErrorCodes.errorNotAuthenticated
+				};
 			}
 
 			return response;
@@ -248,6 +245,8 @@ namespace DataIntegrityTool.Controllers
 			using (DataContext context = new())
 			{
 				payments = context.CustomerPayments.ToList();
+
+				// id ID is null, return all payments
 
 				if (CustomerId != null)
 				{
