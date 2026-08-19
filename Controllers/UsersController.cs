@@ -16,7 +16,7 @@ namespace DataIntegrityTool.Controllers
 	public class UsersController : ControllerBase
 	{
 		static Logger logger;
-		public UsersController()
+		static UsersController()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 
