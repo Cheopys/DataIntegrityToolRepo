@@ -1,29 +1,7 @@
-﻿using Amazon.Runtime.Internal;
-using Amazon.S3.Model;
-using Amazon.SimpleNotificationService.Model;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using DataIntegrityTool.Db;
-using DataIntegrityTool.Migrations;
+﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
-using DataIntegrityTool.Services;
-using Humanizer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NLog;
-using NLog.LayoutRenderers;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
-using NuGet.Packaging;
-using NuGet.Versioning;
-using System.Drawing;
 using System.Globalization;
-using System.Net;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace DataIntegrityTool.Services
@@ -90,7 +68,10 @@ namespace DataIntegrityTool.Services
 
                         response.CustomerId = customer.Id;
 
-                        SubscriptionTypes subscription = context.SubscriptionTypes.Find(SubscriptionType.subscriptionTrial);
+						// the int cast is required because the enum is boxed and
+						// without the cast the comparison will silently fail.
+
+						SubscriptionTypes subscription = context.SubscriptionTypes.Find((int) SubscriptionType.subscriptionTrial);
 
                         CustomersService.AddSubscription(customer.Id, subscription.Id, 0, DateTime.UtcNow + TimeSpan.FromDays(subscription.days));
 

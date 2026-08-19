@@ -3,9 +3,7 @@ using Amazon.S3.Transfer;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace DataIntegrityTool.Controllers
 {

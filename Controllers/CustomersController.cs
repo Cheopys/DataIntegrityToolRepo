@@ -1,26 +1,15 @@
-﻿using Amazon.Runtime.Internal;
-using Amazon;
+﻿using Amazon;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NLog;
-using System.Collections.Generic;
-using System.Net;
 using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-
-/*
-	This controller is for use of DIT 
- */
 
 namespace DataIntegrityTool.Controllers
 {
@@ -28,9 +17,10 @@ namespace DataIntegrityTool.Controllers
 	[Route("[controller]")]
 	public class CustomersController : ControllerBase
 	{
-		static Logger logger;
-		
-		public CustomersController()
+		static Logger				 logger;
+		static IAmazonSecretsManager secretsClient;
+
+		static CustomersController()
 		{
 			var config = new NLog.Config.LoggingConfiguration();
 
@@ -43,6 +33,10 @@ namespace DataIntegrityTool.Controllers
 			// Apply config           
 			LogManager.Configuration = config;
 			logger = LogManager.GetCurrentClassLogger();
+
+			// singleton client
+
+			secretsClient = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName("ca-central-1"));
 		}
 
 		private static string EncryptRSA(byte[] cleartext)
@@ -110,11 +104,6 @@ namespace DataIntegrityTool.Controllers
 			return await ServerCryptographyService.EncryptAndEncodeResponse(wrapper, customer);
 		}
 
-		//  R
-		// N/A
-
-		//  U
-
 		[HttpPost, Route("UpdateCustomer")]
 		public ErrorCodes UpdateCustomer(EncryptionWrapperDITString wrapperString)
 		{
@@ -160,7 +149,8 @@ namespace DataIntegrityTool.Controllers
 				context.Dispose();
 			}
 
-			// remove trial
+			// remove trial from list; the int cast is required because the enum is boxed and
+			// without the cast the comparison will silently fail.
 
 			SubscriptionTypes? trial = subscriptions.Where(s => s.Id.Equals((int) SubscriptionType.subscriptionTrial)).FirstOrDefault();
 
@@ -171,29 +161,27 @@ namespace DataIntegrityTool.Controllers
 
 		static async Task<string> GetAuthSecret()
 		{
-			string secretName = "DITAuthorizationKey";
-			string region     = "ca-central-1";
-
-			IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
-
-			GetSecretValueRequest request = new GetSecretValueRequest
+			GetSecretValueRequest request = new()
 			{
-				SecretId     = secretName,
+				SecretId     = "DITAuthorizationKey",
 				VersionStage = "AWSCURRENT" 
 			};
 
-			GetSecretValueResponse response = new();
+			GetSecretValueResponse response;
 
 			try
 			{
-				response = await client.GetSecretValueAsync(request);
+				response = await secretsClient.GetSecretValueAsync(request);
 			}
 			catch (Exception excxeption)
 			{
-				response.SecretString = String.Empty;
-			}
+				logger.ForExceptionEvent(excxeption).Log();
 
-			client.Dispose();
+				response = new()
+				{
+					SecretString = String.Empty
+				};
+			}
 
 			return response.SecretString;
 		}
@@ -238,20 +226,29 @@ namespace DataIntegrityTool.Controllers
 
 		[HttpGet, Route("GetCustomerPayments")]
 		[Produces("application/json")]
-		public List<CustomerPayments> GetCustomerPayments(Int32? CustomerId)
+		public List<CustomerPayments> GetCustomerPayments(Int32 CustomerId)
 		{
-			List<CustomerPayments> payments = null;
+			List<CustomerPayments> payments;
+
+			using (DataContext context = new())
+			{
+				payments = context.CustomerPayments.Where(p => p.CustomerId.Equals(CustomerId)).ToList();
+
+				context.Dispose();
+			}
+
+			return payments;
+		}
+
+		[HttpGet, Route("GetAllCustomerPayments")]
+		[Produces("application/json")]
+		public List<CustomerPayments> GetAllCustomerPayments()
+		{
+			List<CustomerPayments> payments;
 
 			using (DataContext context = new())
 			{
 				payments = context.CustomerPayments.ToList();
-
-				// id ID is null, return all payments
-
-				if (CustomerId != null)
-				{
-					payments = payments.Where(p => p.CustomerId.Equals(CustomerId)).ToList();
-				}
 
 				context.Dispose();
 			}

@@ -2,15 +2,8 @@
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NLog;
-using System.Collections.Generic;
-using System.Net;
-using System.Reflection.Metadata;
 using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
 using static System.Net.Mime.MediaTypeNames;

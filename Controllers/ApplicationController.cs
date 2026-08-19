@@ -1,22 +1,9 @@
-﻿using Amazon.Runtime.Internal;
-using DataIntegrityTool.Db;
+﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Services;
 using DataIntegrityTool.Shared;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
-using System.Collections.Generic;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
-using System.Xml.Linq;
-using System.Xml.Schema;
-using Swashbuckle.AspNetCore.Annotations;
-using NSwag.Annotations;
 
 namespace DataIntegrityTool.Controllers
 {
@@ -56,33 +43,7 @@ namespace DataIntegrityTool.Controllers
 
 			return response;
 		}
-		// </snippet_WebLogin>
-
-		// retrieve a lost AES key; this is only for emergencies where fetched data must be decrypted, otherwise log in again and create a new AES
-		/*
-		[HttpGet, Route("RecoverAESKey")]
-		[Produces("application/json")]
-		public async Task<RecoverAESKeyResponse> RecoverAESKey(RecoverAESKeyRequest request)
-		{
-			RecoverAESKeyResponse response = new()
-			{
-				ErrorCode = ErrorCodes.errorNone
-			};
-
-			using (DataContext context = new())
-			{
-				Aes aesCaller   = ServerCryptographyService.GetAesKey(request.wrapperCaller);
-				Aes aesRecovery = ServerCryptographyService.GetAesKey(request.wrapperRecovery);
-
-				response.AesIVCaller   = aesCaller.IV;
-				response.AesKeyRecover = await ServerCryptographyService.EncrypytAES(aesCaller, Convert.ToHexString(aesRecovery.Key));
-
-				context.Dispose();
-			}
-
-			return response;
-		}
-*/
+		
 		[HttpPut, Route("RegisterAdministratorRSA")]
 		[Produces("application/json")]
 		public async Task<string> RegisterAdministratorRSA([FromBody] string registerAdministratorB64)

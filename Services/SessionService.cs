@@ -134,7 +134,7 @@ namespace DataIntegrityTool.Services
 				Users? user		    = context.Users    .Where(us => us.Id.Equals(session.UserId))    .FirstOrDefault();
 
 				session.TimeEnd = DateTime.UtcNow;
-S
+
 				context.SaveChanges();
 				context.Dispose();
 			}

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using DataIntegrityTool.Schema;
-using DataIntegrityTool.Shared;
 using DataIntegrityTool.Services;
-using NuGet.Common;
-using System.Threading.Tasks;
-using Amazon.S3.Model.Internal.MarshallTransformations;
 
 namespace DataIntegrityTool.Controllers
 {
