@@ -38,7 +38,6 @@
     <Compile Remove="20250406171913_Initial.Designer.cs" />
     <Compile Remove="20250426182839_ditaes.cs" />
     <Compile Remove="Controllers\PrivateChatController.cs" />
-    <Compile Remove="Controllers\Test_Controller.cs" />
     <Compile Remove="Services\PrivateChatService.cs" />
     <Compile Remove="Services\PushNotificationService.cs" />
     <Compile Remove="Services\ToolCryptographyService.cs" />
