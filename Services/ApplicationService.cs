@@ -1,7 +1,5 @@
 ﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
-using Microsoft.AspNetCore.Identity;
-using DataIntegrityTool.Shared;
 
 namespace DataIntegrityTool.Services
 {

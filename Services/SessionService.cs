@@ -1,13 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using DataIntegrityTool.Db;
+﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
-using DataIntegrityTool.Shared;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Operations;
-using Microsoft.EntityFrameworkCore.Internal;
-//using NLog;
 
 namespace DataIntegrityTool.Services
 {

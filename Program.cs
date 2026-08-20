@@ -1,13 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using DataIntegrityTool.Db;
-using DataIntegrityTool.Services;
-using System.Configuration;
-using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
-using Microsoft.Extensions.Options;
-using System.Composition.Convention;
-using DataIntegrityTool.Schema;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 /*

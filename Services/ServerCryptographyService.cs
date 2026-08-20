@@ -1,10 +1,6 @@
-﻿using Amazon.Runtime.Internal;
-using DataIntegrityTool.Db;
+﻿using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
 using DataIntegrityTool.Shared;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Operations;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NLog;
 using System.Security.Cryptography;
 using System.Text;

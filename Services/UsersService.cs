@@ -1,20 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DataIntegrityTool.Db;
 using DataIntegrityTool.Schema;
-using DataIntegrityTool.Services;
-using NuGet.Versioning;
-using Amazon.Runtime.Internal;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
-using Humanizer;
-using System.Net;
 using NLog;
-using NLog.LayoutRenderers;
-using System.Text.Json;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Drawing;
-using NuGet.Packaging;
-using System.Globalization;
-using DataIntegrityTool.Shared;
 
 namespace DataIntegrityTool.Services
 {
