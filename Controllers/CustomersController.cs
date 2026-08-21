@@ -227,7 +227,9 @@ namespace DataIntegrityTool.Controllers
 				response = new()
 				{
 					CustomerId = CustomerId,
-					Error      = error
+					Error      = error,
+					expected = expectedKey,
+					apikey = ApiKey
 				};
 			}
 
