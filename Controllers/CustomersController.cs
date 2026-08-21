@@ -195,10 +195,10 @@ namespace DataIntegrityTool.Controllers
 		{
 			AddSubscriptionResponse response;
 
-			string expectedKey = await GetAuthSecret(); 
-			bool   keyMatches = string.IsNullOrEmpty(expectedKey) == false 
-						     && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? String.Empty),
-																	    Encoding.UTF8.GetBytes(expectedKey));
+			string expectedKey = await GetAuthSecret();
+			bool keyMatches = string.IsNullOrEmpty(expectedKey) == false
+							 && expectedKey.Equals(ApiKey); /*CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? String.Empty),
+																	    Encoding.UTF8.GetBytes(expectedKey));*/
 
 			if (keyMatches)
 			{
