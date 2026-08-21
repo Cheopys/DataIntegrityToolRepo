@@ -159,8 +159,16 @@ namespace DataIntegrityTool.Controllers
 			return JsonSerializer.Serialize(subscriptions);
 		}
 
+		public class Secret
+		{
+			public string name { get; set; }
+			public string value { get; set; }
+		};
+
 		static async Task<string> GetAuthSecret()
 		{
+			string value = string.Empty;
+
 			GetSecretValueRequest request = new()
 			{
 				SecretId     = "DITAuthorizationKey",
@@ -172,18 +180,17 @@ namespace DataIntegrityTool.Controllers
 			try
 			{
 				response = await secretsClient.GetSecretValueAsync(request);
+
+				Secret secret = JsonSerializer.Deserialize<Secret>(response.SecretString);
+
+				value = secret.value;
 			}
 			catch (Exception excxeption)
 			{
 				logger.ForExceptionEvent(excxeption).Log();
-
-				response = new()
-				{
-					SecretString = String.Empty
-				};
 			}
 
-			return response.SecretString;
+			return value;
 		}
 
 		[HttpPut, Route("AddCustomerPayment")]
