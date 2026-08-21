@@ -161,7 +161,7 @@ namespace DataIntegrityTool.Controllers
 
 		public class Secret
 		{
-			public string DITAuth { get; set; }
+			public string DITAddSubscriptionKey { get; set; }
 		};
 
 		static async Task<string> GetAuthSecret()
@@ -182,7 +182,7 @@ namespace DataIntegrityTool.Controllers
 
 				Secret secret = JsonSerializer.Deserialize<Secret>(response.SecretString);
 
-				value = secret.DITAuth;
+				value = secret.DITAddSubscriptionKey;
 			}
 			catch (Exception excxeption)
 			{
