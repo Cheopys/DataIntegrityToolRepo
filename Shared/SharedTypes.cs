@@ -186,8 +186,6 @@ public class AddSubscriptionResponse
 	public Int32      CustomerId    { get; set; }
     public DateTime?  Expiration    { get; set; }
 	public ErrorCodes Error         { get; set; }
-	public string expected { get; set; }
-	public string apikey { get; set; }
 }
 
 

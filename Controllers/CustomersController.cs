@@ -201,19 +201,18 @@ namespace DataIntegrityTool.Controllers
 		{
 			AddSubscriptionResponse response;
 
+			DateTime ExpirationDate = DateTimeOffset.FromUnixTimeSeconds(ExpirationDateUNIX).UtcDateTime;
+
 			// ApiKey comes with escaped quotes
 
-			string apikey = ApiKey.Replace("\"", string.Empty);
-
-			string expectedKey = await GetAuthSecret();
-			bool keyMatches = string.IsNullOrEmpty(expectedKey) == false
-							 && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(apikey ?? String.Empty),
-																	    Encoding.UTF8.GetBytes(expectedKey));
+			string apikey		= ApiKey.Replace("\"", string.Empty);
+			string expectedKey	= await GetAuthSecret();
+			bool keyMatches		= string.IsNullOrEmpty(expectedKey) == false
+								&& CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(apikey ?? String.Empty),
+																	       Encoding.UTF8.GetBytes(expectedKey));
 
 			if (keyMatches)
 			{
-				DateTime ExpirationDate = DateTimeOffset.FromUnixTimeSeconds(ExpirationDateUNIX).UtcDateTime;
-
 				response = CustomersService.AddSubscription(CustomerId, SubscriptionType, Amount, ExpirationDate);
 			}
 			else
@@ -237,9 +236,8 @@ namespace DataIntegrityTool.Controllers
 				response = new()
 				{
 					CustomerId = CustomerId,
+					Expiration = ExpirationDate,
 					Error      = error,
-					expected = expectedKey,
-					apikey = ApiKey
 				};
 			}
 

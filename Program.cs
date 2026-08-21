@@ -73,9 +73,6 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
-	//app.UseHttpsRedirection();
 }
 /*
 app.UseForwardedHeaders(new ForwardedHeadersOptions
