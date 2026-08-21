@@ -280,52 +280,7 @@ namespace DataIntegrityTool.Services
 
             return type;
         }
-        /*
-        public static TopupScansResponse TopUpScans(Int32 CustomerId,
-                                                    Int16 Count,
-                                                    Int32 Amount)
-        {
-            TopupScansResponse response = new()
-            {
-                CustomerId = CustomerId,
-                Error = ErrorCodes.errorNone
-            };
 
-            using (DataContext context = new())
-            {
-                Customers customer = context.Customers.Find(CustomerId);
-
-                if (customer != null)
-                {
-                    customer.Scans += Count;
-
-                    context.SaveChanges();
-
-                    response.ScansAfter = customer.Scans;
-
-					context.Add(new CustomerPayments()
-					{
-						CustomerId       = customer.Id,
-						Amount           = Amount,
-						Date             = DateTime.UtcNow,
-						SubscriptionType = null,
-						Scans            = Count
-					});
-
-					context.SaveChanges();
-
-				}
-				else
-                {
-                    response.Error = ErrorCodes.errorInvalidCustomerId;
-                }
-
-                context.Dispose();
-            }
-
-            return response;
-        }
-        */
         public static AddSubscriptionResponse AddSubscription(Int32 CustomerId,
 															  Int32 subscriptionId,
                                                               Int32 Amount,
@@ -425,27 +380,6 @@ namespace DataIntegrityTool.Services
 				return false;
 			}
 		}
-
-		/*
-        public static Int32 CustomerRemainingScans(Int32 customerId)
-        {
-            Int32 scans = 0;
-
-            using (DataContext context = new())
-            {
-                Customers? customer = context.Customers.Find(customerId);
-
-                if (customer != null)
-                {
-                    scans = customer.Scans;
-                }
-
-                context.Dispose();
-            }
-
-                return scans;
-        }
-        */
 
 		public static DateTime? CustomerExpirationDate(Int32 customerId)
 		{

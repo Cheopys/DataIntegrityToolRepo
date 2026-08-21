@@ -112,7 +112,6 @@ public class SubscriptionRefundResponse
 {
 	public Int32 CustomerId     { get; set; }
 	public Int32 SubscriptionId { get; set; }
-//	public Int32 scansRemaining { get; set; }
 	public ErrorCodes ErrorCode { get; set; }	
 }
 
@@ -125,7 +124,6 @@ public class LoginResponse
 public class BeginSessionRequest
 {
     public Int32        UserId      { get; set; }
-//    public LicenseTypes Licensetype { get; set; }
     public ToolTypes    Tooltype    { get; set; }
 }
 
@@ -133,7 +131,6 @@ public class  BeginSessionResponse
 {
     public Int32 SessionId        { get; set; }
     public DateTime? SubscriptionEnd  { get; set; }
-	public Int32 RemainingScans { get; set; }
 	public ErrorCodes Error       { get; set; }
 }
 
@@ -182,13 +179,6 @@ public class ChangePasswordRequest
 	public string AesIVHex     { get; set; }
 	public Int32  Token        { get; set; }
 	public string PasswordNew  { get; set; }
-}
-
-public class TopupScansResponse
-{
-    public Int32 CustomerId { get; set; }
-    public Int32 ScansAfter { get; set; }
-    public ErrorCodes Error { get; set; }
 }
 
 public class AddSubscriptionResponse

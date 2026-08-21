@@ -130,7 +130,6 @@ namespace DataIntegrityTool.Services
 			{
 				CustomerId		= CustomerId,
 				SubscriptionId	= SubscriptionId,
-//				scansRemaining	= 0,
 				ErrorCode		= ErrorCodes.errorNone
 			};
 
@@ -145,28 +144,6 @@ namespace DataIntegrityTool.Services
 					                                                                                      && cs.SubscriptionId.Equals(SubscriptionId))
 																								.OrderBy(cs => cs.Id)
 																							    .LastOrDefault();
-/*			response.scansRemaining = customer.Scans;
-
-					if (customerSubscriptions != null)
-					{
-						if (customer.Scans >= subscription.scans)
-						{
-							customer.Scans -= subscription.scans;
-						}
-						else
-						{
-							customer.Scans = 0;
-						}
-
-						response.scansRemaining = customer.Scans;
-
-						context.CustomerSubscriptions.Remove(customerSubscriptions);
-					}
-					else
-					{
-						response.ErrorCode = ErrorCodes.errorCustomerSubscriptionNotFound;
-					}
-*/
 					await context.SaveChangesAsync();
 				}
 				else
