@@ -201,10 +201,14 @@ namespace DataIntegrityTool.Controllers
 		{
 			AddSubscriptionResponse response;
 
+			// ApiKey comes with escaped quotes
+
+			string apikey = ApiKey.Replace("\"", string.Empty);
+
 			string expectedKey = await GetAuthSecret();
 			bool keyMatches = string.IsNullOrEmpty(expectedKey) == false
-							 && expectedKey.Equals(ApiKey); /*CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(ApiKey ?? String.Empty),
-																	    Encoding.UTF8.GetBytes(expectedKey));*/
+							 && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(apikey ?? String.Empty),
+																	    Encoding.UTF8.GetBytes(expectedKey));
 
 			if (keyMatches)
 			{
