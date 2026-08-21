@@ -6,5 +6,6 @@
 		public string level  { get; set; }
 		public Int16  seats	 { get; set; }
 		public Int16  days   { get; set; }
+//	public Int32 price { get; set; }
 	};
 }
