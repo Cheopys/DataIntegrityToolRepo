@@ -36,6 +36,7 @@ public enum ErrorCodes
 	errorInvalidEmailFormat	  = 15,
 	errorCustomerSubscriptionNotFound = 16,
 	errorNotAuthenticated     = 17,
+	errorKeyNotInSecretsManager = 18
 }
 
 public enum OSType

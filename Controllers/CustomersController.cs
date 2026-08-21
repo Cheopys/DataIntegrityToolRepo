@@ -208,16 +208,26 @@ namespace DataIntegrityTool.Controllers
 			}
 			else
 			{
-				string logMessage = string.IsNullOrEmpty(expectedKey)
-									? "AddCustomerPayment authentication key not found in Secrets Manager"
-									: "AddCustomerPayment authentication key invalid";
+				string logMessage;
+				ErrorCodes error;
+
+				if (string.IsNullOrEmpty(expectedKey))
+				{
+					logMessage = "AddCustomerPayment authentication key not found in Secrets Manager";
+					error      = ErrorCodes.errorKeyNotInSecretsManager;
+				}
+				else
+				{
+					logMessage = "AddCustomerPayment authentication key invalid";
+					error      = ErrorCodes.errorNotAuthenticated;
+				}
 
 				logger.Error(logMessage);
 
 				response = new()
 				{
 					CustomerId = CustomerId,
-					Error      = ErrorCodes.errorNotAuthenticated
+					Error      = error
 				};
 			}
 
